@@ -10,4 +10,59 @@ frame_time          : longblob
 %}
 
 classdef Scan < dj.Imported
-end 
+    methods(Access=protected)
+        
+        function makeTuples(self, key)
+            
+            % find subject and date from acquisition.Session table
+            subj                 = lower(fetch1(subject.Subject & key, 'subject_nickname'));
+            session_date         = erase(fetch1(acquisition.Session & key, 'session_date'), '-');
+            
+            %get main dir for acquisition files
+            rigDir               = fullfile('jukebox', 'Bezos', 'RigData', 'scope' ,'bay3');
+            
+            % list of users to search sessions
+            users = {'edward', 'lucas'};
+            
+            %for each user
+            for i=1:length(users)
+                % make list of all directories for this user
+                userDir =  fullfile(rigDir, userDir{i});
+                dirInfo = genpath(userDir);
+                
+                % get directories with length > subject
+                dirInfo = split(dirInfo,':');
+                %Remove final entry (0x0 char)
+                dirInfo = dirInfo(1:end-1);
+                
+                %Search directories that "end" with subject name
+                lowerDirInfo = lower(dirInfo);
+                indexSubjDir = cellfun(@(x) strcmp(x(end-length(subj)+1:end),subj),...
+                    lowerDirInfo, 'UniformOutput',true);
+                
+                if sum(indexSubjDir == 1)
+                    dirSubj = dirInfo(indexSubjDir);
+                elseif sum(indexSubjDir == 0)
+                    fprintf('directory for subject %s not found\n', subj);
+                    return
+                else
+                    fprintf('more than one directory found for subject %s\n', subj);
+                    return
+                end
+                
+                dirSession = fullfile(dirSubj, session_date);
+                
+                if isempty(dir(dirSession))
+                    fprintf('directory %s not found\n',folder_path)
+                    return
+                end
+                
+                % write full directory where raw tifs are
+                key.scan_directory   = dirSession;
+                
+                self.insert(key)
+                
+            end
+        end
+    end
+end
