@@ -20,7 +20,7 @@ classdef Scan < dj.Imported
             ba = fetch1(reference.BrainArea & "brain_area = 'EC'", 'brain_area');
             
             %get main dir for acquisition files
-            rigDir               = fullfile('jukebox', 'Bezos', 'RigData', 'scope' ,'bay3');
+            rigDir               = fullfile('/jukebox', 'Bezos', 'RigData', 'scope' ,'bay3');
             key.imaging_area = ba;
             key.frame_time = {0};
             
@@ -45,16 +45,20 @@ classdef Scan < dj.Imported
                 
                 if sum(indexSubjDir) == 1
                     dirSubj = dirInfo(indexSubjDir);
+                    dirSession = fullfile(dirSubj, session_date);
                 elseif sum(indexSubjDir) == 0
                     fprintf('directory for subject %s not found\n', subj);
                     return
                 else
-                    sum(indexSubjDir)
-                    fprintf('more than one directory found for subject %s\n', subj);
-                    return
+                    dirInfo = dirInfo(indexSubjDir);
+                    for j=1:length(dirInfo)
+                        dirSubj = dirInfo{j};
+                        dirSession = fullfile(dirSubj, session_date);
+                        if ~isempty(dir(dirSession))
+                            break
+                        end
+                    end
                 end
-                
-                dirSession = fullfile(dirSubj, session_date);
                 
                 if isempty(dir(dirSession))
                     fprintf('directory %s not found\n',folder_path)
