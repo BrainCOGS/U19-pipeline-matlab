@@ -61,7 +61,7 @@ classdef Scan < dj.Imported
                 end
                 
                 if isempty(dir(dirSession))
-                    fprintf('directory %s not found\n',folder_path)
+                    fprintf('directory %s not found\n',dirSession)
                     return
                 end
                 
