@@ -21,4 +21,13 @@ fill_fraction_space     : float             # raster scan spatial fill fraction 
 %}
 
 classdef ScanInfo < dj.Computed
+    methods(Access=protected)
+        
+        function makeTuples(self, key)
+            
+            self.insert(key)
+            
+            
+        end
+    end
 end 

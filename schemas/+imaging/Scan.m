@@ -5,7 +5,7 @@ scan_directory      : varchar(255)
 gdd=null            : float
 wavelength=920      : float           # in nm
 pmt_gain=null       : float
--> reference.BrainArea.proj(imaging_area='brain_area')
+(imaging_area) -> reference.BrainArea(brain_area)
 frame_time          : longblob
 %}
 
@@ -17,9 +17,12 @@ classdef Scan < dj.Imported
             % find subject and date from acquisition.Session table
             subj                 = lower(fetch1(subject.Subject & key, 'subject_nickname'));
             session_date         = erase(fetch1(acquisition.Session & key, 'session_date'), '-');
+            ba = fetch1(reference.BrainArea & "brain_area = 'EC'", 'brain_area');
             
             %get main dir for acquisition files
             rigDir               = fullfile('jukebox', 'Bezos', 'RigData', 'scope' ,'bay3');
+            key.imaging_area = ba;
+            key.frame_time = {0};
             
             % list of users to search sessions
             users = {'edward', 'lucas'};
@@ -27,7 +30,7 @@ classdef Scan < dj.Imported
             %for each user
             for i=1:length(users)
                 % make list of all directories for this user
-                userDir =  fullfile(rigDir, userDir{i});
+                userDir =  fullfile(rigDir, users{i});
                 dirInfo = genpath(userDir);
                 
                 % get directories with length > subject
@@ -40,12 +43,13 @@ classdef Scan < dj.Imported
                 indexSubjDir = cellfun(@(x) strcmp(x(end-length(subj)+1:end),subj),...
                     lowerDirInfo, 'UniformOutput',true);
                 
-                if sum(indexSubjDir == 1)
+                if sum(indexSubjDir) == 1
                     dirSubj = dirInfo(indexSubjDir);
-                elseif sum(indexSubjDir == 0)
+                elseif sum(indexSubjDir) == 0
                     fprintf('directory for subject %s not found\n', subj);
                     return
                 else
+                    sum(indexSubjDir)
                     fprintf('more than one directory found for subject %s\n', subj);
                     return
                 end
@@ -61,8 +65,8 @@ classdef Scan < dj.Imported
                 key.scan_directory   = dirSession;
                 
                 self.insert(key)
-                
             end
         end
     end
+
 end
