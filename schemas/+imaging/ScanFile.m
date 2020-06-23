@@ -1,6 +1,5 @@
 %{
 -> imaging.Scan
-acquisition_number  : int             # acquisition number of a given scan
 file_number         : int             # file number of a given acquisition
 ---
 scan_filename       : varchar(255)
@@ -34,10 +33,9 @@ classdef ScanFile < dj.Computed
                    
                    if (length(acq_string) == 1 && length(number_string) == 1)
                                               
-                       key.acquisition_number = str2double(acq_string{1}(2:end-1));
+                       %key.acquisition_number = str2double(acq_string{1}(2:end-1));
                        key.file_number        = str2double(number_string{1}(2:end-1));
                        key.scan_filename      = tiff_filename;
-                       key
                        self.insert(key)
                    else
                        fprintf('imaging name does not match expected format: subject_date_???_XXXXX_YYYYY.tiff %s\n',tiff_filename)
