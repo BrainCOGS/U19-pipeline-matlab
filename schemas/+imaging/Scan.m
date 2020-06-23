@@ -33,24 +33,19 @@ classdef Scan < dj.Imported
                 userDir =  fullfile(rigDir, users{i});
                 dirInfo = genpath(userDir);
                 
-                dirInfo
-                
                 % get directories with length > subject
                 dirInfo = split(dirInfo,':');
-                
-                dirInfo
                 
                 %Remove final entry (0x0 char)
                 dirInfo = dirInfo(1:end-1);
                 
-                dirInfo
                 %Search directories that "end" with subject name
                 lowerDirInfo = lower(dirInfo);
                 indexSubjDir = cellfun(@(x) strcmp(x(end-length(subj)+1:end),subj),...
                     lowerDirInfo, 'UniformOutput',true);
                 
                 if sum(indexSubjDir) == 1
-                    dirSubj = dirInfo(indexSubjDir);
+                    dirSubj = dirInfo{indexSubjDir};
                     dirSubj
                     dirSession = fullfile(dirSubj, session_date);
                     dirSession
