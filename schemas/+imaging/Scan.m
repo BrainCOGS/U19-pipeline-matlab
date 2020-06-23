@@ -51,15 +51,19 @@ classdef Scan < dj.Imported
                     return
                 else
                     dirInfo = dirInfo(indexSubjDir);
+                    dirInfo
                     for j=1:length(dirInfo)
                         dirSubj = dirInfo{j};
+                        dirSubj
                         dirSession = fullfile(dirSubj, session_date);
+                        dirSession
                         if ~isempty(dir(dirSession))
                             break
                         end
                     end
                 end
                 
+                dirSession
                 if isempty(dir(dirSession))
                     fprintf('directory %s not found\n',dirSession)
                     return
