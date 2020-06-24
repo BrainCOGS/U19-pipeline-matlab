@@ -2,11 +2,6 @@
 -> imaging.ScanFile
 -> imaging.McParameterSet       # meta file, frameMCorr-method
 ---
-x_shifts                        : longblob      # nFrames x 2, meta file, frameMCorr-xShifts
-y_shifts                        : longblob      # nFrames x 2, meta file, frameMCorr-yShifts
-reference_image                 : longblob      # 512 x 512, meta file, frameMCorr-reference
-motion_corrected_average_image  : longblob      # 512 x 512, meta file, activity
-mcorr_metric                    : varchar(64)   # frameMCorr-metric-name
 %}
 
 classdef MotionCorrection < dj.Imported
@@ -96,7 +91,6 @@ classdef MotionCorrection < dj.Imported
                 within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
             end
             
-            insert(imaging.MotionCorrectionWithinFile, within_key)
             
             %% insert within file correction meso.motioncorrectionAcrossFile
             across_key                             = key;
@@ -104,14 +98,16 @@ classdef MotionCorrection < dj.Imported
             across_key.cross_files_y_shifts        = fileMCorr.yShifts;
             across_key.cross_files_reference_image = fileMCorr.reference;
             
-            inserti(meso.MotionCorrectionAcrossFiles, across_key)
-            
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
                 computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
             end
             
+            %% insert key
+            self.insert(key);
+            insert(imaging.MotionCorrectionAcrossFiles, across_key)
+            insert(imaging.MotionCorrectionWithinFile, within_key)
             
         end
     end
