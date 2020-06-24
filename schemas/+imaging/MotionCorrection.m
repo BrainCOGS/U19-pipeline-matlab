@@ -50,7 +50,6 @@ classdef MotionCorrection < dj.Imported
             cfg
             
             %%Get structure for searching in Scan Table
-            scanKey.acquisition_number = key.acquisition_number;
             scanKey.session_number = key.session_number;
             scanKey.session_date = key.session_date;
             scanKey.subject_fullname = key.subject_fullname;
@@ -63,13 +62,12 @@ classdef MotionCorrection < dj.Imported
             
             % Determine whether or not we need to use frame skipping to select only the first channel
             [order,movieFiles]            = fetchn(imaging.ScanFile & scanKey, 'file_number', 'scan_filename');
-            movieFiles                    = cellfun(@(x)([scan_directory x]),movieFiles(order),'uniformoutput',false); % full path
+            movieFiles                    = cellfun(@(x)(fullfile(scan_directory,x)),movieFiles(order),'uniformoutput',false); % full path
+            movieFiles
             info                          = cv.imfinfox(movieFiles{1}, true);
             if numel(info.channels) > 1
                 cfg.mcorr{end+1}            = [0, numel(info.channels)-1];
             end
-            
-            movieFiles
             
             % run motion correction
             if isempty(gcp('nocreate')); poolobj = parpool; end
