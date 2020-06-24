@@ -76,6 +76,69 @@ classdef MotionCorrection < dj.Imported
             
             movieFiles
             
+            % run motion correction
+            if isempty(gcp('nocreate')); poolobj = parpool; end
+            
+            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', cfg.mcorr{:});
+            
+            %% insert within file correction meso.motioncorrectionWithinFile
+            within_key                        = key;
+            within_key.file_number            = [];
+            within_key.within_file_x_shifts   = [];
+            within_key.within_file_y_shifts   = [];
+            within_key.within_reference_image = [];
+            within_key                        = repmat(within_key,[1 numel(frameMCorr)]);
+            
+            for iFile = 1:numel(frameMCorr)
+                within_key(iFile).file_number                   = iFile;
+                within_key(iFile).within_file_x_shifts          = frameMCorr(iFile).xShifts;
+                within_key(iFile).within_file_y_shifts          = frameMCorr(iFile).yShifts;
+                within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
+            end
+            
+            insert(imaging.MotionCorrectionWithinFile, within_key)
+            
+            %% insert within file correction meso.motioncorrectionAcrossFile
+            across_key                             = key;
+            across_key.cross_files_x_shifts        = fileMCorr.xShifts;
+            across_key.cross_files_y_shifts        = fileMCorr.yShifts;
+            across_key.cross_files_reference_image = fileMCorr.reference;
+            
+            inserti(meso.MotionCorrectionAcrossFiles, across_key)
+            
+            %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
+            movieName                     = stripPath(movieFiles);
+            parfor iFile = 1:numel(movieFiles)
+                computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
+            end
+            
+            
         end
     end
+end
+
+%%
+%---------------------------------------------------------------------------------------------------
+function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMCorr, recomputeStats)
+  
+  fprintf(' :   %s\n', movieName);
+
+  % Fluorescence activity raw statistics
+  statsFile                   = regexprep(movieFile, '[.][^.]+$', '.statsDJ.mat');
+  if recomputeStats ||  ~exist(statsFile, 'file')
+    % Load raw data with per-file motion correction
+    F                         = cv.imreadsub(movieFile, {frameMCorr,false});
+    [stats,metric,tailProb]   = highTailActivityMetric(F);
+    clear F;
+    
+    info                      = cv.imfinfox(movieFile);
+    info.movieFile            = stripPath(movieFile);
+    outputFile                = statsFile;
+    parsave(outputFile, info, stats, metric, tailProb);
+  else
+    metric                    = load(statsFile, 'metric');
+    tailProb                  = metric.metric.tailProb;
+  end
+  activity                    = tailProb;
+
 end

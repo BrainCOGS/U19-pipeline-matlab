@@ -1,6 +1,6 @@
 %{
 # scan meta information from the tiff file
--> acquisition.Scan
+-> imaging.Scan
 ---
 nfields=1               : tinyint           # number of fields 
 nchannels               : tinyint           # number of channels

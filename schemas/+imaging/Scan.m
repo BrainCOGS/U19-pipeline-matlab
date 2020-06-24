@@ -46,30 +46,28 @@ classdef Scan < dj.Imported
                 
                 if sum(indexSubjDir) == 1
                     dirSubj = dirInfo{indexSubjDir};
-                    dirSubj
-                    dirSession = fullfile(dirSubj, session_date);
-                    dirSession
+                    dirSession = fullfile(dirSubj, session_date);                  
                 elseif sum(indexSubjDir) == 0
                     fprintf('directory for subject %s not found\n', subj);
                     return
                 else
                     dirInfo = dirInfo(indexSubjDir);
-                    dirInfo
+                    
                     for j=1:length(dirInfo)
                         dirSubj = dirInfo{j};
-                        dirSubj
                         dirSession = fullfile(dirSubj, session_date);
-                        dirSession
+                        
                         if ~isempty(dir(dirSession))
                             break
                         end
                     end
                 end
                 
-                dirSession
                 if isempty(dir(dirSession))
                     fprintf('directory %s not found\n',dirSession)
                     return
+                else
+                    fprintf('directory with files %s found !!\n',dirSession)
                 end
                 
                 % write full directory where raw tifs are
