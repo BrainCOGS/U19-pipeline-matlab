@@ -6,7 +6,7 @@ scan_filename       : varchar(255)
 %}
 
 
-classdef ScanFile < dj.Computed
+classdef ScanFile < dj.Imported
     methods(Access=protected)
         
         function makeTuples(self, key)
