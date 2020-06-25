@@ -95,6 +95,9 @@ classdef MotionCorrection < dj.Imported
             across_key.cross_files_x_shifts        = fileMCorr.xShifts;
             across_key.cross_files_y_shifts        = fileMCorr.yShifts;
             across_key.cross_files_reference_image = fileMCorr.reference;
+            
+            class(fileMCorr.reference)
+            size(fileMCorr.reference)
 
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
