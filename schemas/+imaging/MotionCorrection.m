@@ -1,5 +1,5 @@
 %{
--> imaging.ScanFile
+-> imaging.Scan
 -> imaging.McParameterSet       # meta file, frameMCorr-method
 ---
 %}
@@ -83,10 +83,10 @@ classdef MotionCorrection < dj.Imported
             within_key                        = repmat(within_key,[1 numel(frameMCorr)]);
             
             for iFile = 1:numel(frameMCorr)
-                within_key(iFile).file_number                   = iFile;
-                within_key(iFile).within_file_x_shifts          = frameMCorr(iFile).xShifts;
-                within_key(iFile).within_file_y_shifts          = frameMCorr(iFile).yShifts;
-                within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
+               within_key(iFile).file_number                   = iFile;
+               within_key(iFile).within_file_x_shifts          = frameMCorr(iFile).xShifts;
+               within_key(iFile).within_file_y_shifts          = frameMCorr(iFile).yShifts;
+               within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
             end
             
             
@@ -95,7 +95,7 @@ classdef MotionCorrection < dj.Imported
             across_key.cross_files_x_shifts        = fileMCorr.xShifts;
             across_key.cross_files_y_shifts        = fileMCorr.yShifts;
             across_key.cross_files_reference_image = fileMCorr.reference;
-            
+
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             %parfor iFile = 1:numel(movieFiles)
@@ -105,7 +105,7 @@ classdef MotionCorrection < dj.Imported
             %% insert key
             self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
-            %insert(imaging.MotionCorrectionAcrossFiles, across_key)
+            insert(imaging.MotionCorrectionAcrossFiles, across_key)
             
             
         end

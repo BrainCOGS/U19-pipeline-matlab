@@ -1,6 +1,7 @@
 %{
 # within each tif file, x-y shifts for motion registration
--> imaging.MotionCorrection
+-> imaging.ScanFile
+-> imaging.McParameterSet
 ---
 within_file_x_shifts         : longblob      # nFrames x 2, meta file, frameMCorr-xShifts
 within_file_y_shifts         : longblob      # nFrames x 2, meta file, frameMCorr-yShifts
