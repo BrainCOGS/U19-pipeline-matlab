@@ -12,7 +12,7 @@ region_image_y_range   : blob   # x range of the cropped image after accounting 
 
 classdef SegmentationChunks < dj.Part
   properties(SetAccess=protected)
-    master = meso.Segmentation
+    master = imaging.Segmentation
   end
 end
 

@@ -7,9 +7,7 @@
 classdef MotionCorrection < dj.Imported
     methods (Access=protected)
         function makeTuples(self, key)
-            
-            key
-            
+                        
             %%Get structure for searching in McParameterSetParameter table
             paramKey.mcorr_method = key.mcorr_method;
             paramKey.mc_parameter_set_id = key.mc_parameter_set_id;
@@ -46,9 +44,7 @@ classdef MotionCorrection < dj.Imported
                 cfg.mcorr    = {params.mc_max_shift, params.mc_max_iter, params.mc_extra_param, ...
                     params.mc_stop_below_shift, params.mc_black_tolerance, params.mc_median_rebin};
             end
-            
-            cfg
-            
+                        
             %%Get structure for searching in Scan Table
             scanKey.session_number = key.session_number;
             scanKey.session_date = key.session_date;
