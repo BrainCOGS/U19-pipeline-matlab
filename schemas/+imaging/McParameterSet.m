@@ -12,10 +12,4 @@ classdef McParameterSet < dj.Manual
             make(imaging.McParameterSetParameter, key)
         end
     end
-%     properties
-%         contents = {
-%             'LinearNormalized', 1
-%             'NonLinearNormalized', 1
-%             }
-%     end
 end
