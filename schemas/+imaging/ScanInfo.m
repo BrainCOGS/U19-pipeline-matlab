@@ -47,7 +47,7 @@ classdef ScanInfo < dj.Computed
                 %for iF = 1:numel(fl)
                 for iF = 1:1
                     %Get header and imageDescription
-                    header = imfinfo(fl{iF});
+                    header = imfinfo(fullfile(imaging_directory, fl{iF}));
                     imageDesc = getImageDescriptionTiff(header);
                 end
                 
