@@ -2,7 +2,7 @@
 # scan meta information from the tiff file
 -> imaging.Scan
 ---
-frame_rate
+frame_rate                : float         # imaging frame rate
 %}
 
 %----------------------missing
