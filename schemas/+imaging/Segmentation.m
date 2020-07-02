@@ -28,192 +28,192 @@ classdef Segmentation < dj.Imported
       scan_directory
       params
 
-%       frameRate     = fetch1(meso.ScanInfo & key, 'frame_rate');
-%       
-%       % selectFileChunks
-%       chunk_cfg.auto_select_behav    = params.chunks_auto_select_behav;
-%       chunk_cfg.auto_select_bleach   = params.chunks_auto_select_bleach;
-%       chunk_cfg.filesPerChunk        = params.cnmf_files_per_chunk;
-%       chunk_cfg.T11_minNtrials       = params.chunks_towers_min_n_trials;
-%       chunk_cfg.T11_perfTh           = params.chunks_towers_perf_thresh;
-%       chunk_cfg.T11_biasTh           = params.chunks_towers_bias_thresh;
-%       chunk_cfg.T11_fracBad          = params.chunks_towers_max_frac_bad;
-%       chunk_cfg.T12_minNtrials       = params.chunks_visguide_min_n_trials;
-%       chunk_cfg.T12_perfTh           = params.chunks_visguide_perf_thresh;
-%       chunk_cfg.T12_biasTh           = params.chunks_visguide_bias_thresh;
-%       chunk_cfg.T12_fracBad          = params.chunks_visguide_max_frac_bad;
-%       chunk_cfg.min_NconsecBlocks    = params.chunks_min_num_consecutive_blocks;
-%       chunk_cfg.breakNonConsecBlocks = params.chunks_break_nonconsecutive_blocks;
-% 
-%       % cnmf, general
-%       cnmf_cfg.K                     = params.cnmf_num_components;
-%       cnmf_cfg.tau                   = params.cnmf_tau;
-%       cnmf_cfg.p                     = params.cnmf_p;
-%       cnmf_cfg.iterations            = params.cnmf_num_iter;
-%       cnmf_cfg.filesPerChunk         = params.cnmf_files_per_chunk;
-%       cnmf_cfg.protoNumChunks        = params.cnmf_proto_num_chunks;
-%       cnmf_cfg.zeroIsMinimum         = params.cnmf_zero_is_minimum;
-%       cnmf_cfg.defaultTimeScale      = params.cnmf_default_timescale;
-%       cnmf_cfg.timeResolution        = 1000/frameRate;
-%       cnmf_cfg.dFFRectification      = params.cnmf_dff_rectification;
-%       cnmf_cfg.minROISignificance    = params.cnmf_min_roi_significance;
-%       cnmf_cfg.frameRate             = frameRate;
-%       cnmf_cfg.minNumFrames          = params.cnmf_min_num_frames;
-%       cnmf_cfg.maxCentroidDistance   = params.cnmf_max_centroid_dist;
-%       cnmf_cfg.minDistancePixels     = params.cnmf_min_dist_pixels;
-%       cnmf_cfg.minShapeCorr          = params.cnmf_min_shape_corr;
-%       cnmf_cfg.pixelsSurround        = params.cnmf_pixels_surround;
-% 
-%       % cnmf, goodness of fit
-%       gof_cfg.containEnergy          = params.gof_contain_energy;
-%       gof_cfg.coreEnergy             = params.gof_core_energy;
-%       gof_cfg.noiseRange             = params.gof_noise_range;
-%       gof_cfg.maxBaseline            = params.gof_max_baseline;
-%       gof_cfg.minActivation          = params.gof_min_activation;
-%       gof_cfg.highActivation         = params.gof_high_activation;
-%       gof_cfg.minTimeSpan            = params.gof_min_time_span;
-%       gof_cfg.bkgTimeSpan            = params.gof_bkg_time_span;
-%       gof_cfg.minDeltaFoverF         = params.gof_min_dff;
-%       
-%       %% select tif file chunks based on behavior and bleaching
-%       % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
-%       fileChunk                            = selectFileChunks(key,chunk_cfg); 
-%             
-%       %% run segmentation and populate this table
-%       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
-%       
-%       segmentationMethod = fetch1(meso.SegmentationMethod & key,'segmentation_method');
-%       switch segmentationMethod
-%         case 'cnmf'
-%           outputFiles                      = runCNMF(scan_directory, fileChunk, cnmf_cfg, gof_cfg); 
-%         case 'suite2p'
-%           warning('suite2p is not yet supported in this pipeline')
-%       end
-%       
-%       % just 'posthoc' files
-%       fileidx     = logical(cellfun(@(x)(sum(contains(x,'posthoc')>0)),outputFiles));
-%       outputFiles = outputFiles(fileidx);
-% 
-% %       %% shut down parallel pool
-% %       if ~isempty(gcp('nocreate'))
-% %         if exist('poolobj','var')
-% %           delete(poolobj)
-% %         else
-% %           delete(gcp('nocreate'))
-% %         end
-% %       end
-%       
-%       %% load summary file
-%       reorder = false;
-%       for iFile = 1:numel(outputFiles)
-%         if contains(outputFiles{iFile},'.fig')
-%           outputFiles{iFile} = [outputFiles{iFile}(1:end-3) 'mat'];
-%           reorder = true;
+        frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
+      
+      % selectFileChunks
+      chunk_cfg.auto_select_behav    = params.chunks_auto_select_behav;
+      chunk_cfg.auto_select_bleach   = params.chunks_auto_select_bleach;
+      chunk_cfg.filesPerChunk        = params.cnmf_files_per_chunk;
+      chunk_cfg.T11_minNtrials       = params.chunks_towers_min_n_trials;
+      chunk_cfg.T11_perfTh           = params.chunks_towers_perf_thresh;
+      chunk_cfg.T11_biasTh           = params.chunks_towers_bias_thresh;
+      chunk_cfg.T11_fracBad          = params.chunks_towers_max_frac_bad;
+      chunk_cfg.T12_minNtrials       = params.chunks_visguide_min_n_trials;
+      chunk_cfg.T12_perfTh           = params.chunks_visguide_perf_thresh;
+      chunk_cfg.T12_biasTh           = params.chunks_visguide_bias_thresh;
+      chunk_cfg.T12_fracBad          = params.chunks_visguide_max_frac_bad;
+      chunk_cfg.min_NconsecBlocks    = params.chunks_min_num_consecutive_blocks;
+      chunk_cfg.breakNonConsecBlocks = params.chunks_break_nonconsecutive_blocks;
+
+      % cnmf, general
+      cnmf_cfg.K                     = params.cnmf_num_components;
+      cnmf_cfg.tau                   = params.cnmf_tau;
+      cnmf_cfg.p                     = params.cnmf_p;
+      cnmf_cfg.iterations            = params.cnmf_num_iter;
+      cnmf_cfg.filesPerChunk         = params.cnmf_files_per_chunk;
+      cnmf_cfg.protoNumChunks        = params.cnmf_proto_num_chunks;
+      cnmf_cfg.zeroIsMinimum         = params.cnmf_zero_is_minimum;
+      cnmf_cfg.defaultTimeScale      = params.cnmf_default_timescale;
+      cnmf_cfg.timeResolution        = 1000/frameRate;
+      cnmf_cfg.dFFRectification      = params.cnmf_dff_rectification;
+      cnmf_cfg.minROISignificance    = params.cnmf_min_roi_significance;
+      cnmf_cfg.frameRate             = frameRate;
+      cnmf_cfg.minNumFrames          = params.cnmf_min_num_frames;
+      cnmf_cfg.maxCentroidDistance   = params.cnmf_max_centroid_dist;
+      cnmf_cfg.minDistancePixels     = params.cnmf_min_dist_pixels;
+      cnmf_cfg.minShapeCorr          = params.cnmf_min_shape_corr;
+      cnmf_cfg.pixelsSurround        = params.cnmf_pixels_surround;
+
+      % cnmf, goodness of fit
+      gof_cfg.containEnergy          = params.gof_contain_energy;
+      gof_cfg.coreEnergy             = params.gof_core_energy;
+      gof_cfg.noiseRange             = params.gof_noise_range;
+      gof_cfg.maxBaseline            = params.gof_max_baseline;
+      gof_cfg.minActivation          = params.gof_min_activation;
+      gof_cfg.highActivation         = params.gof_high_activation;
+      gof_cfg.minTimeSpan            = params.gof_min_time_span;
+      gof_cfg.bkgTimeSpan            = params.gof_bkg_time_span;
+      gof_cfg.minDeltaFoverF         = params.gof_min_dff;
+      
+      %% select tif file chunks based on behavior and bleaching
+      % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
+      fileChunk                            = selectFileChunks(key,chunk_cfg); 
+            
+      %% run segmentation and populate this table
+      if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
+      
+      segmentationMethod = fetch1(meso.SegmentationMethod & key,'segmentation_method');
+      switch segmentationMethod
+        case 'cnmf'
+          outputFiles                      = runCNMF(scan_directory, fileChunk, cnmf_cfg, gof_cfg); 
+        case 'suite2p'
+          warning('suite2p is not yet supported in this pipeline')
+      end
+      
+      % just 'posthoc' files
+      fileidx     = logical(cellfun(@(x)(sum(contains(x,'posthoc')>0)),outputFiles));
+      outputFiles = outputFiles(fileidx);
+
+%       %% shut down parallel pool
+%       if ~isempty(gcp('nocreate'))
+%         if exist('poolobj','var')
+%           delete(poolobj)
+%         else
+%           delete(gcp('nocreate'))
 %         end
 %       end
-%       if reorder; outputFiles = unique(outputFiles,'stable'); end
-%       
-%       data                                 = load(outputFiles{1});
-%       num_chunks                           = numel(data.chunk);
-%       result.num_chunks                    = num_chunks;
-%       result.cross_chunks_x_shifts         = data.registration.xShifts;
-%       result.cross_chunks_y_shifts         = data.registration.yShifts;
-%       result.cross_chunks_reference_image  = data.registration.reference;
-%       self.insert(result)
-%       
-%       %% write to meso.SegmentationChunks (some session chunk-specific info)
-%       chunkRange = zeros(num_chunks,2);
-%       chunkdata  = cell(1,num_chunks);
-%       for iChunk = 1:num_chunks
-%         result                       = keydata;
-%         chunkdata{iChunk}            = load(outputFiles{1+iChunk});
-%         result.segmentation_chunk_id = iChunk;
-%         result.tif_file_list         = chunkdata{iChunk}.source.movieFile;
-%         result.region_image_size     = chunkdata{iChunk}.source.cropping.selectSize;
-%         result.region_image_x_range  = chunkdata{iChunk}.source.cropping.xRange;
-%         result.region_image_y_range  = chunkdata{iChunk}.source.cropping.yRange;
-%         
-%         % figure out imaging frame range in the chunk (with respect to whole session)
-%         frame_range_first            = fetch1(meso.FieldOfViewFile & key & ...
-%                                               sprintf('fov_filename="%s"',result.tif_file_list{1}),'file_frame_range');
-%         frame_range_last             = fetch1(meso.FieldOfViewFile & key & ...
-%                                               sprintf('fov_filename="%s"',result.tif_file_list{end}),'file_frame_range');   
-%         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
-%         result.imaging_frame_range   = chunkRange(iChunk,:);
-%         
-%         inserti(meso.SegmentationChunks, result)
-%         clear result 
-%         
-%         % write global background (neuropil) activity data to meso.SegmentationBackground
-%         result                       = keydata;
-%         result.segmentation_chunk_id = iChunk;
-%         result.background_spatial    = reshape(chunkdata{iChunk}.cnmf.bkgSpatial,chunkdata{iChunk}.cnmf.region.ImageSize);
-%         result.background_temporal   = chunkdata{iChunk}.cnmf.bkgTemporal;
-%         
-%         inserti(meso.SegmentationBackground, result)
-%         clear result
-%       end
-%             
-%       %% write ROI-specific info into relevant tables
-%       fprintf('inserting data in ROI tables...\n')
-%       % initialize data structures
-%       globalXY      = data.registration.globalXY;
-%       nROIs         = size(globalXY,2);
-%       totalFrames   = fetch1(meso.ScanInfo & key,'nframes');
-%       roi_data      = keydata;
-%       morpho_data   = keydata;
-%       trace_data    = keydata;
-%       
-%       
-%       % loop through ROIs
-%       for iROI = 1:nROIs
-%         roi_data.roi_idx                    = iROI;  
-%         morpho_data.roi_idx                 = iROI;
-%         trace_data.roi_idx                  = iROI;
-%         
-%         roi_data.roi_global_xy              = globalXY(:,iROI);
-%         roi_data.roi_is_in_chunks           = [];   
-%         roi_data.roi_spatial                = [];
-%         
-%         trace_data.time_constants           = data.cnmf.timeConstants{iROI};
-%         trace_data.init_concentration       = data.cnmf.initConcentration{iROI};
-%         trace_data.dff_roi                  = nan(1,totalFrames);
-%         trace_data.dff_surround             = nan(1,totalFrames);
-%         trace_data.spiking                  = nan(1,totalFrames);
-%         trace_data.dff_roi_is_significant   = nan(1,totalFrames);
-%         trace_data.dff_roi_is_baseline      = nan(1,totalFrames);
-%         
-%         % now look in file chunks and fill activity etc
-%         for iChunk = 1:numel(chunkdata)
-%           % find roi in chunks
-%           localIdx                          = data.chunk.globalID == iROI;
-%           if sum(localIdx) == 0; continue; end
-%           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-%             
-%           % activity traces
-%           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
-%           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
-%           uniqueBase                                  = halfSampleMode(uniqueData');
-%           surroundData                                = chunkdata{iChunk}.cnmf.surroundData(localIdx,:);
-%           trace_data.dff_roi(frameIdx)                = uniqueData / uniqueBase - 1;
-%           trace_data.dff_surround(frameIdx)           = surroundData / uniqueBase - 1;
-%           trace_data.spiking(frameIdx)                = chunkdata{iChunk}.cnmf.spiking(localIdx,:);
-%           trace_data.dff_roi_is_significant(frameIdx) = chunkdata{iChunk}.cnmf.isSignificant(localIdx,:);
-%           trace_data.dff_roi_is_baseline(frameIdx)    = chunkdata{iChunk}.cnmf.isBaseline(localIdx,:);
-%           
-%           % roi: shape and morphological classification
-%           if isempty(roi_data.roi_spatial)
-%             roi_data.roi_spatial      = reshape(full(chunkdata{iChunk}.cnmf.spatial(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
-%             roi_data.surround_spatial = reshape(full(chunkdata{iChunk}.cnmf.surround(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
-%             morpho_data.morphology    = char(chunkdata{iChunk}.cnmf.morphology(localIdx));
-%           end
-%         end
-%         
-%         % insert in tables
-%         inserti(meso.SegmentationRoi, roi_data)
-%         inserti(meso.SegmentationRoiMorphologyAuto, morpho_data)
-%         inserti(meso.Trace, trace_data)
-%       end
+      
+      %% load summary file
+      reorder = false;
+      for iFile = 1:numel(outputFiles)
+        if contains(outputFiles{iFile},'.fig')
+          outputFiles{iFile} = [outputFiles{iFile}(1:end-3) 'mat'];
+          reorder = true;
+        end
+      end
+      if reorder; outputFiles = unique(outputFiles,'stable'); end
+      
+      data                                 = load(outputFiles{1});
+      num_chunks                           = numel(data.chunk);
+      result.num_chunks                    = num_chunks;
+      result.cross_chunks_x_shifts         = data.registration.xShifts;
+      result.cross_chunks_y_shifts         = data.registration.yShifts;
+      result.cross_chunks_reference_image  = data.registration.reference;
+      self.insert(result)
+      
+      %% write to meso.SegmentationChunks (some session chunk-specific info)
+      chunkRange = zeros(num_chunks,2);
+      chunkdata  = cell(1,num_chunks);
+      for iChunk = 1:num_chunks
+        result                       = keydata;
+        chunkdata{iChunk}            = load(outputFiles{1+iChunk});
+        result.segmentation_chunk_id = iChunk;
+        result.tif_file_list         = chunkdata{iChunk}.source.movieFile;
+        result.region_image_size     = chunkdata{iChunk}.source.cropping.selectSize;
+        result.region_image_x_range  = chunkdata{iChunk}.source.cropping.xRange;
+        result.region_image_y_range  = chunkdata{iChunk}.source.cropping.yRange;
+        
+        % figure out imaging frame range in the chunk (with respect to whole session)
+        frame_range_first            = fetch1(meso.FieldOfViewFile & key & ...
+                                              sprintf('fov_filename="%s"',result.tif_file_list{1}),'file_frame_range');
+        frame_range_last             = fetch1(meso.FieldOfViewFile & key & ...
+                                              sprintf('fov_filename="%s"',result.tif_file_list{end}),'file_frame_range');   
+        chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
+        result.imaging_frame_range   = chunkRange(iChunk,:);
+        
+        inserti(meso.SegmentationChunks, result)
+        clear result 
+        
+        % write global background (neuropil) activity data to meso.SegmentationBackground
+        result                       = keydata;
+        result.segmentation_chunk_id = iChunk;
+        result.background_spatial    = reshape(chunkdata{iChunk}.cnmf.bkgSpatial,chunkdata{iChunk}.cnmf.region.ImageSize);
+        result.background_temporal   = chunkdata{iChunk}.cnmf.bkgTemporal;
+        
+        inserti(meso.SegmentationBackground, result)
+        clear result
+      end
+            
+      %% write ROI-specific info into relevant tables
+      fprintf('inserting data in ROI tables...\n')
+      % initialize data structures
+      globalXY      = data.registration.globalXY;
+      nROIs         = size(globalXY,2);
+      totalFrames   = fetch1(meso.ScanInfo & key,'nframes');
+      roi_data      = keydata;
+      morpho_data   = keydata;
+      trace_data    = keydata;
+      
+      
+      % loop through ROIs
+      for iROI = 1:nROIs
+        roi_data.roi_idx                    = iROI;  
+        morpho_data.roi_idx                 = iROI;
+        trace_data.roi_idx                  = iROI;
+        
+        roi_data.roi_global_xy              = globalXY(:,iROI);
+        roi_data.roi_is_in_chunks           = [];   
+        roi_data.roi_spatial                = [];
+        
+        trace_data.time_constants           = data.cnmf.timeConstants{iROI};
+        trace_data.init_concentration       = data.cnmf.initConcentration{iROI};
+        trace_data.dff_roi                  = nan(1,totalFrames);
+        trace_data.dff_surround             = nan(1,totalFrames);
+        trace_data.spiking                  = nan(1,totalFrames);
+        trace_data.dff_roi_is_significant   = nan(1,totalFrames);
+        trace_data.dff_roi_is_baseline      = nan(1,totalFrames);
+        
+        % now look in file chunks and fill activity etc
+        for iChunk = 1:numel(chunkdata)
+          % find roi in chunks
+          localIdx                          = data.chunk.globalID == iROI;
+          if sum(localIdx) == 0; continue; end
+          roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
+            
+          % activity traces
+          frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
+          uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
+          uniqueBase                                  = halfSampleMode(uniqueData');
+          surroundData                                = chunkdata{iChunk}.cnmf.surroundData(localIdx,:);
+          trace_data.dff_roi(frameIdx)                = uniqueData / uniqueBase - 1;
+          trace_data.dff_surround(frameIdx)           = surroundData / uniqueBase - 1;
+          trace_data.spiking(frameIdx)                = chunkdata{iChunk}.cnmf.spiking(localIdx,:);
+          trace_data.dff_roi_is_significant(frameIdx) = chunkdata{iChunk}.cnmf.isSignificant(localIdx,:);
+          trace_data.dff_roi_is_baseline(frameIdx)    = chunkdata{iChunk}.cnmf.isBaseline(localIdx,:);
+          
+          % roi: shape and morphological classification
+          if isempty(roi_data.roi_spatial)
+            roi_data.roi_spatial      = reshape(full(chunkdata{iChunk}.cnmf.spatial(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
+            roi_data.surround_spatial = reshape(full(chunkdata{iChunk}.cnmf.surround(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
+            morpho_data.morphology    = char(chunkdata{iChunk}.cnmf.morphology(localIdx));
+          end
+        end
+        
+        % insert in tables
+        inserti(meso.SegmentationRoi, roi_data)
+        inserti(meso.SegmentationRoiMorphologyAuto, morpho_data)
+        inserti(meso.Trace, trace_data)
+      end
 
     end
   end
