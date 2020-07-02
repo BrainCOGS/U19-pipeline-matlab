@@ -38,17 +38,24 @@ classdef ScanInfo < dj.Computed
             dir_info          = dir(imaging_directory);
             dir_info          = {dir_info(:).name};
             
+            %Filter tiff files
             tiff_idx = ~cellfun(@isempty,regexp(dir_info,patt_tiff_file),'UniformOutput',true);
             fl = dir_info(tiff_idx);
             
-            for iF = 1:numel(fl)
-                header = imfinfo(fl{iF});
-                imageDesc = getImageDescriptionTiff(header);                
+            % If there is at least one tif file in directory
+            if(~isempty(fl))
+                %for iF = 1:numel(fl)
+                for iF = 1:1
+                    %Get header and imageDescription
+                    header = imfinfo(fl{iF});
+                    imageDesc = getImageDescriptionTiff(header);
+                end
+                
+                % insert record
+                key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
+                self.insert(key)
             end
-            
-            key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
-            self.insert(key)
             
         end
     end
-end 
+end
