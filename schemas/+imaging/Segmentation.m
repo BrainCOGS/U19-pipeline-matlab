@@ -82,7 +82,7 @@ classdef Segmentation < dj.Imported
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
       
-      segmentationMethod = fetch1(meso.SegmentationMethod & key,'segmentation_method');
+      segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
         case 'cnmf'
           outputFiles                      = runCNMF(scan_directory, fileChunk, cnmf_cfg, gof_cfg); 
@@ -228,7 +228,7 @@ function fileChunk = selectFileChunks(key,chunk_cfg)
 % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
 
 %% check if enforcing this is actually desired
-file_ids       = fetchn(meso.FieldOfViewFile & key,'file_number');
+file_ids       = fetchn(imaging.ScanFile & key,'file_number');
 nfiles         = numel(file_ids);
 
 if ~chunk_cfg.auto_select_behav && ~chunk_cfg.auto_select_bleach && nfiles < chunk_cfg.filesPerChunk
