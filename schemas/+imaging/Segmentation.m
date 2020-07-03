@@ -24,7 +24,7 @@ classdef Segmentation < dj.Imported
       %%Get structure for searching in SegParameterSetParameter table      
       params        = getParametersFromQuery(imaging.SegParameterSetParameter & key);
       
-      cd scan_directory
+      cd(scan_directory)
       scan_directory
       params
 
