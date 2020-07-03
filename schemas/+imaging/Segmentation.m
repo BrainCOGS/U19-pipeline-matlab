@@ -80,9 +80,10 @@ classdef Segmentation < dj.Imported
       fileChunk                            = selectFileChunks(key,chunk_cfg); 
             
       %% run segmentation and populate this table
+      segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
+      
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
       
-      segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
         case 'cnmf'
           outputFiles                      = runCNMF(scan_directory, fileChunk, cnmf_cfg, gof_cfg); 
