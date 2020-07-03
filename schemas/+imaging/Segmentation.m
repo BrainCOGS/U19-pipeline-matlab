@@ -553,8 +553,10 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   
   
   %% Save output and figures
-  save(protoFile, 'prototypes', '-v7.3');
-  savefig(fig, figFile, 'compact');
+  fprintf('====  SAVING to %s\n', protoFile);
+  %save(protoFile, 'prototypes', '-v7.3');
+  fprintf('====  SAVING to %s\n', figFile);
+  %savefig(fig, figFile, 'compact');
   close(fig);
   
   outputFiles{end+1}  = protoFile;
@@ -895,12 +897,13 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   fprintf(' %.3g s\n', toc(startTime));
 
   fprintf('====  SAVING to %s\n', roiFile);
-  save(roiFile, 'cnmf', 'source', 'repository', '-v7.3');
+  %save(roiFile, 'cnmf', 'source', 'repository', '-v7.3');
   outputFiles{end+1}= roiFile;
 
   temp              = source;
   source            = rmfield(source, {'prototypes', 'protoCfg'});
-  save(summaryFile, 'binnedF', 'source', '-v7.3');
+  fprintf('====  SAVING to %s\n', summaryFile);
+  %save(summaryFile, 'binnedF', 'source', '-v7.3');
   outputFiles{end+1}= summaryFile;
   source            = temp;
 
@@ -930,7 +933,7 @@ function [info, outputFiles] = postprocessROIs(info, index, roiFile, summaryFile
     fprintf(' %.3g s\n', toc(startTime));
 
     fprintf('====  SAVING to %s\n', roiFile);
-    save(roiFile, 'cnmf', 'source', 'gof', 'roi', 'repository', '-v7.3');
+    %save(roiFile, 'cnmf', 'source', 'gof', 'roi', 'repository', '-v7.3');
     outputFiles{end+1}= roiFile;
   end
 
@@ -1297,7 +1300,8 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     
     data.cnmf                   = cnmf;
     data.roi                    = roi;
-    save(roiFile, '-struct', 'data', '-v7.3');
+    fprintf('====  SAVING to %s\n', roiFile);
+    %save(roiFile, '-struct', 'data', '-v7.3');
     outputFiles{end+1}          = roiFile;
   end
   fprintf(' in %.3g s\n', toc(startTime));
@@ -1332,7 +1336,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
   
 
   fprintf('====  SAVING to %s\n', regFile);
-  save(regFile, 'chunk', 'registration', 'cnmf', 'repository', '-v7.3');
+  %save(regFile, 'chunk', 'registration', 'cnmf', 'repository', '-v7.3');
   outputFiles{end+1}          = regFile;
   
   %% Update user-defined morphology information by considering that global IDs can have changed
