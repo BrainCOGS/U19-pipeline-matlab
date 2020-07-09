@@ -61,7 +61,7 @@ classdef ScanInfo < dj.Computed
                        filekey.file_number   = str2double(number_string{1}(2:end-1));
                        filekey.scan_filename   = fl{iF};
                    end
-                   filekey.file_frame_range = [prefile_frame_range+1 numel(iheader)];
+                   filekey.file_frame_range = [prefile_frame_range+1 numel(header)];
                    prefile_frame_range = filekey.file_frame_range(1);
                    
                    insert(imaging.ScanFile, filekey)
