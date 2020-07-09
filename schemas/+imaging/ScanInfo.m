@@ -31,6 +31,8 @@ classdef ScanInfo < dj.Computed
         
         function makeTuples(self, key)
             
+            patt_acq_number  = '_[0-9]{5}_';
+            patt_file_number = '_[0-9]{5}\.';
             patt_tiff_file   = '\.tif$';
             
             %Get imaging directory
@@ -44,14 +46,29 @@ classdef ScanInfo < dj.Computed
             
             % If there is at least one tif file in directory
             if(~isempty(fl))
-                %for iF = 1:numel(fl)
-                for iF = 1:1
+                prefile_frame_range = 0;
+                for iF = 1:numel(fl)
+                    filekey = key;
+                %for iF = 1:1
                     %Get header and imageDescription
                     header = imfinfo(fullfile(imaging_directory, fl{iF}));
                     imageDesc = getImageDescriptionTiff(header);
+                    
+                    acq_string = regexp(fl{iF}, patt_acq_number, 'match');
+                    number_string = regexp(fl{iF}, patt_file_number, 'match');
+                   
+                   if (length(acq_string) == 1 && length(number_string) == 1)
+                       filekey.file_number   = str2double(number_string{1}(2:end-1));
+                       filekey.scan_filename   = fl{iF};
+                   end
+                   filekey.file_frame_range = [prefile_frame_range+1 numel(iheader)];
+                   prefile_frame_range = filekey.file_frame_range(1);
+                   
+                   insert(imaging.ScanFile, filekey)
+                                              
                 end
                 
-                % insert record
+                % insert record on scaninfo
                 key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
                 self.insert(key)
             end
