@@ -41,75 +41,75 @@ classdef SyncImagingBehavior < dj.Computed
       scan_directory                = fetch1(imaging.Scan & key,'scan_directory');
       [order,movieFiles]            = fetchn(imaging.ScanFile & key, 'file_number', 'scan_filename');
       movieFiles                    = cellfun(@(x)([scan_directory x]),movieFiles(order),'uniformoutput',false); % full path
-      imaging                       = struct('movieFile', movieFiles);
+      imagingF                       = struct('movieFile', movieFiles);
       
       fprintf('==[ SYNCHRONIZATION ]==   %s\n', fov_directory);
       
       for iFile = 1:numel(movieFiles)        
         
         % Synchronization info
-        [imaging(iFile).acquisition, imaging(iFile).epoch, imaging(iFile).frameTime, imaging(iFile).syncTime, data]   ...
+        [imagingF(iFile).acquisition, imagingF(iFile).epoch, imagingF(iFile).frameTime, imagingF(iFile).syncTime, data]   ...
                                     = cv.getSyncInfo(movieFiles{iFile}, 'uint16', []);
         fileAcquis                  = regexp(movieFiles{iFile}, '_([0-9]+)_[0-9]+[.][^.]+$', 'tokens', 'once');
         if ~isempty(fileAcquis)
           fileAcquis                = str2double(fileAcquis{:});
-          if fileAcquis ~= imaging(iFile).acquisition
-            warning ( 'processImagingInfo:acquisition'                                                                ...
+          if fileAcquis ~= imagingF(iFile).acquisition
+            warning ( 'processimagingInfo:acquisition'                                                                ...
                     , 'Acquisition number according to file name (%d) not equal to that stored (%d) in file %s.'      ...
-                    , fileAcquis, imaging(iFile).acquisition, movieFiles{iFile}                                       ...
+                    , fileAcquis, imagingF(iFile).acquisition, movieFiles{iFile}                                       ...
                     );
-            imaging(iFile).acquisition  = fileAcquis;
+            imagingF(iFile).acquisition  = fileAcquis;
           end
         end
         
         if iFile == 1
-          refEpoch                  = imaging(iFile).epoch;
+          refEpoch                  = imagingF(iFile).epoch;
         else
-          timeOffset                = etime(imaging(iFile).epoch, refEpoch);
-          imaging(iFile).frameTime  = imaging(iFile).frameTime + timeOffset;
-          imaging(iFile).syncTime   = imaging(iFile).syncTime  + timeOffset;
+          timeOffset                = etime(imagingF(iFile).epoch, refEpoch);
+          imagingF(iFile).frameTime  = imagingF(iFile).frameTime + timeOffset;
+          imagingF(iFile).syncTime   = imagingF(iFile).syncTime  + timeOffset;
         end
         
-        imaging(iFile).numFrames    = numel(imaging(iFile).frameTime);
-        startTime                   = datenum( imaging(iFile).epoch );
-        imaging(iFile).clockTime    = arrayfun(@(x) addtodate(startTime,x,'second'), round(imaging(iFile).frameTime));
+        imagingF(iFile).numFrames    = numel(imagingF(iFile).frameTime);
+        startTime                   = datenum( imagingF(iFile).epoch );
+        imagingF(iFile).clockTime    = arrayfun(@(x) addtodate(startTime,x,'second'), round(imagingF(iFile).frameTime));
         if isempty(data)
-          imaging(iFile).block      = zeros(1,numel(imaging(iFile).syncTime));
-          imaging(iFile).trial      = zeros(1,numel(imaging(iFile).syncTime));
-          imaging(iFile).iteration  = zeros(1,numel(imaging(iFile).syncTime));
+          imagingF(iFile).block      = zeros(1,numel(imagingF(iFile).syncTime));
+          imagingF(iFile).trial      = zeros(1,numel(imagingF(iFile).syncTime));
+          imagingF(iFile).iteration  = zeros(1,numel(imagingF(iFile).syncTime));
         else
-          imaging(iFile).block      = double(data(1,:));
-          imaging(iFile).trial      = double(data(2,:));
-          imaging(iFile).iteration  = double(data(3,:));
+          imagingF(iFile).block      = double(data(1,:));
+          imagingF(iFile).trial      = double(data(2,:));
+          imagingF(iFile).iteration  = double(data(3,:));
         end
         
-        if imaging(iFile).acquisition > currentAcquis
-          currentAcquis             = imaging(iFile).acquisition;
+        if imagingF(iFile).acquisition > currentAcquis
+          currentAcquis             = imagingF(iFile).acquisition;
           totalFrames               = 0;
-        elseif imaging(iFile).acquisition < currentAcquis
-          error('processImagingInfo:acquisition', 'Encountered decreasing acquisition number while processing supposedly sorted files.');
+        elseif imagingF(iFile).acquisition < currentAcquis
+          error('processimagingFInfo:acquisition', 'Encountered decreasing acquisition number while processing supposedly sorted files.');
         end
         
-        frames                      = 1:imaging(iFile).numFrames;
+        frames                      = 1:imagingF(iFile).numFrames;
         syncFrame(end + frames)     = frames;
         syncGlobal(end + frames)    = totalFrames + frames;
-        totalFrames                 = totalFrames + imaging(iFile).numFrames;
+        totalFrames                 = totalFrames + imagingF(iFile).numFrames;
       end
-      meta.imaging                  = imaging;
+      meta.imagingF                  = imagingF;
       
       %-------------------------------------------------------------------------------------------------
       
       %% Detect frames with no synchronization info but only due to incommensurate frame rates
-      frameTime                     = [imaging.frameTime];
-      syncTime                      = [imaging.syncTime];
+      frameTime                     = [imagingF.frameTime];
+      syncTime                      = [imagingF.syncTime];
       frameDeltaT                   = diff(frameTime);
-      if any(diff([imaging.acquisition]) < 0)
+      if any(diff([imagingF.acquisition]) < 0)
         %     keyboard
-        error('processImagingInfo:sanity', 'Imaging acquisition numbers are not in non-decreasing order for %s. Are the file timestamps correct?', fov_directory);
+        error('processimagingInfo:sanity', 'imagingF acquisition numbers are not in non-decreasing order for %s. Are the file timestamps correct?', fov_directory);
       end
       if any(frameDeltaT <= 0)
         %     keyboard
-        error('processImagingInfo:sanity', 'Imaging frame times are not in strictly ascending order for %s. Are the file timestamps correct?', fov_directory);
+        error('processimagingInfo:sanity', 'imagingF frame times are not in strictly ascending order for %s. Are the file timestamps correct?', fov_directory);
       end
       frameDeltaT                   = mean(frameDeltaT);
       
@@ -123,13 +123,13 @@ classdef SyncImagingBehavior < dj.Computed
       
       poorSync                      = (deltaTime > cfg.minBehaviorSecs);
       if any(poorSync)
-        warning('processImagingInfo:HACK', 'Extremely long lags encountered between behav frames: %s', num2str(deltaTime(poorSync)));
+        warning('processimagingInfo:HACK', 'Extremely long lags encountered between behav frames: %s', num2str(deltaTime(poorSync)));
       end
       
       %% Patch all missing chunks using the nearest past frame that has sync info
-      syncBlock                     = [imaging.block];
-      syncTrial                     = [imaging.trial];
-      syncIter                      = [imaging.iteration];
+      syncBlock                     = [imagingF.block];
+      syncTrial                     = [imagingF.trial];
+      syncIter                      = [imagingF.iteration];
       for iMiss = 1:numel(i1)
         iRange                      = i1(iMiss):i2(iMiss);
         syncBlock(iRange)           = syncBlock(i1(iMiss) - 1);
@@ -139,7 +139,7 @@ classdef SyncImagingBehavior < dj.Computed
       
       %% test sync success
       if any((syncBlock == 0) ~= (syncTrial == 0))
-        error('processImagingInfo:HACK', 'Incompatible presence of block/trial synchronization info for %s.', fov_directory);
+        error('processimagingInfo:HACK', 'Incompatible presence of block/trial synchronization info for %s.', fov_directory);
         %     keyboard
         %     iChange = 1 + find(diff(syncBlock) ~= 0 | diff(syncTrial) ~= 0)';
         %     [syncBlock([iChange-1, iChange, iChange+1]), syncTrial([iChange-1, iChange, iChange+1]), syncIter([iChange-1, iChange, iChange+1])]
@@ -156,46 +156,46 @@ classdef SyncImagingBehavior < dj.Computed
         iSync                       = bracket(iBlock,1):bracket(iBlock,2);
         maxTrial                    = max(syncTrial(iSync));
         if maxTrial == numel(block(jBlock).trialType) + 1
-          warning('processImagingInfo:sanity', 'Nonexistent trial %d recorded in imaging data (%s) for behavioral block %d (%d trials); will assume that it was aborted.', maxTrial, fov_directory, jBlock, numel(block(jBlock).trialType));
+          warning('processimagingInfo:sanity', 'Nonexistent trial %d recorded in imagingF data (%s) for behavioral block %d (%d trials); will assume that it was aborted.', maxTrial, fov_directory, jBlock, numel(block(jBlock).trialType));
           iErase                    = iSync(1)-1 + find(syncTrial(iSync) == maxTrial);
           syncBlock(iErase)         = 0;
           syncTrial(iErase)         = 0;
           syncIter(iErase)          = 0;
         elseif maxTrial > numel(block(jBlock).trialType)
-          error('processImagingInfo:sanity', 'Trial %d recorded in imaging data (%s) for behavioral block %d which only has %d trials.', maxTrial, fov_directory, jBlock, numel(block(jBlock).trialType));
+          error('processimagingInfo:sanity', 'Trial %d recorded in imagingF data (%s) for behavioral block %d which only has %d trials.', maxTrial, fov_directory, jBlock, numel(block(jBlock).trialType));
         end
       end
 
       % Write back into the file-based storage structure
       prevFrames                    = 0;
       for iFile = 1:numel(movieFiles)
-        iSync                       = prevFrames + (1:imaging(iFile).numFrames);
-        imaging(iFile).block        = syncBlock(iSync);
-        imaging(iFile).trial        = syncTrial(iSync);
-        imaging(iFile).iteration    = syncIter(iSync);
-        prevFrames                  = prevFrames + imaging(iFile).numFrames;
+        iSync                       = prevFrames + (1:imagingF(iFile).numFrames);
+        imagingF(iFile).block        = syncBlock(iSync);
+        imagingF(iFile).trial        = syncTrial(iSync);
+        imagingF(iFile).iteration    = syncIter(iSync);
+        prevFrames                  = prevFrames + imagingF(iFile).numFrames;
       end
       
       
       %-------------------------------------------------------------------------------------------------
       %% Store synchronization info indexed by a global time coordinate
       
-      % First lay this out using the imaging frames
-      sync                          = [ syncFrame; syncGlobal; imaging.block; imaging.trial; imaging.iteration ];
+      % First lay this out using the imagingF frames
+      sync                          = [ syncFrame; syncGlobal; imagingF.block; imagingF.trial; imagingF.iteration ];
       sync                          = cell2struct(num2cell(sync), {'frame', 'global', 'block', 'trial', 'iteration'}, 1);
       prevFrames                    = 0;
       for iFile = 1:numel(movieFiles)
-        iSync                       = prevFrames + (1:imaging(iFile).numFrames);
-        [sync(iSync).imaging]       = deal(iFile);
-        [sync(iSync).acquisition]   = deal(imaging(iFile).acquisition);
-        prevFrames                  = prevFrames + imaging(iFile).numFrames;
+        iSync                       = prevFrames + (1:imagingF(iFile).numFrames);
+        [sync(iSync).imagingF]       = deal(iFile);
+        [sync(iSync).acquisition]   = deal(imagingF(iFile).acquisition);
+        prevFrames                  = prevFrames + imagingF(iFile).numFrames;
       end
       
       
       % Tabulate imaging vs. behav wall clock times
       blockTime                     = cellfun(@datenum, {block.start});
       [imgBlock, bracket]           = SplitVec([sync.block], 'equal', 'firstval', 'bracket');
-      imgTime                       = [imaging.clockTime];
+      imgTime                       = [imagingF.clockTime];
       imgTime                       = imgTime(bracket(:,1));
       hasImg                        = ( imgBlock > 0 );
 
@@ -203,7 +203,7 @@ classdef SyncImagingBehavior < dj.Computed
       hasImg                        = find(hasImg);
       blockIndex                    = binarySearch(imgTime, blockTime, -1, 0.5);
       if any(abs(blockIndex(imgBlock(hasImg)) - hasImg) > cfg.syncTolerance)
-        warning('processImagingInfo:sanity', 'Encountered large deviations %s of computed vs. actual behavioral block index w.r.t. imaging in %s.', num2str(blockIndex(imgBlock(hasImg)) - hasImg), fov_directory);
+        warning('processimagingInfo:sanity', 'Encountered large deviations %s of computed vs. actual behavioral block index w.r.t. imagingF in %s.', num2str(blockIndex(imgBlock(hasImg)) - hasImg), fov_directory);
       end
       
       % Account for asynchronous clock drifts by using relative positioning
@@ -214,10 +214,10 @@ classdef SyncImagingBehavior < dj.Computed
       % Sanity check that the above time alignment worked
       if any(diff(blockIndex) <= 0)
         %     keyboard
-        error('processImagingInfo:sanity', 'Behavioral block index w.r.t. imaging must be strictly monotonic; this is not true in %s.', fov_directory);
+        error('processimagingInfo:sanity', 'Behavioral block index w.r.t. imagingF must be strictly monotonic; this is not true in %s.', fov_directory);
       end
       if ~issorted(imgTime(hasImg))
-        error('processImagingInfo:sanity', 'Expected blocks recorded during imaging to be non-decreasing; this is not true in %s.', fov_directory);
+        error('processimagingInfo:sanity', 'Expected blocks recorded during imagingF to be non-decreasing; this is not true in %s.', fov_directory);
       end
       
       
@@ -254,17 +254,17 @@ classdef SyncImagingBehavior < dj.Computed
       %% Record transition indices
       index                         = struct();
       span                          = struct();
-      for field = {'imaging', 'acquisition', 'block'}
+      for field = {'imagingF', 'acquisition', 'block'}
         [index.(field{:}), span.(field{:})]       ...
           = SplitVec([sync.(field{:})], 'equal', 'firstval', 'bracket');
       end
       
       % Sanity checks
-      if ~issorted(index.imaging(index.imaging > 0))
-        error('processImagingInfo:sanity', 'Invalid parsing of image file indices.');
+      if ~issorted(index.imagingF(index.imagingF > 0))
+        error('processimagingInfo:sanity', 'Invalid parsing of image file indices.');
       end
       if ~issorted(index.block(index.block > 0))
-        error('processImagingInfo:sanity', 'Invalid parsing of behavioral block indices.');
+        error('processimagingInfo:sanity', 'Invalid parsing of behavioral block indices.');
       end
       
       
@@ -411,7 +411,7 @@ function sync = newTrials(nTrials, iBlock, trialDur, frameDeltaT, firstTrial)
                         , 'block'         , repmat({iBlock}, nSync, 1)                ...
                         , 'trial'         , num2cell(firstTrial-1 + iTrial(:))        ...
                         , 'iteration'     , noInfo                                    ...
-                        , 'imaging'       , noInfo                                    ...
+                        , 'imagingF'      , noInfo                                    ...
                         , 'acquisition'   , noInfo                                    ...
                         );
   
