@@ -97,9 +97,9 @@ classdef MotionCorrection < dj.Imported
 
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
-            %parfor iFile = 1:numel(movieFiles)
-            %    computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
-            %end
+            parfor iFile = 1:numel(movieFiles)
+                computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
+            end
             
             %% insert key
             self.insert(key);
@@ -128,7 +128,9 @@ function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMC
     info                      = cv.imfinfox(movieFile);
     info.movieFile            = stripPath(movieFile);
     outputFile                = statsFile;
-    parsave(outputFile, info, stats, metric, tailProb);
+    if ~isfile(outputFile)
+        parsave(outputFile, info, stats, metric, tailProb);
+    end
   else
     metric                    = load(statsFile, 'metric');
     tailProb                  = metric.metric.tailProb;

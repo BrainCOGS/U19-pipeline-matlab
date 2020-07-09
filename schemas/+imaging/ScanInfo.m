@@ -48,30 +48,31 @@ classdef ScanInfo < dj.Computed
             % If there is at least one tif file in directory
             if(~isempty(fl))
                 prefile_frame_range = 0;
-                %for iF = 1:numel(fl)
+                for iF = 1:numel(fl)
                     filekey = key;
-                for iF = 1:1
                     %Get header and imageDescription
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
                      imageDesc = getImageDescriptionTiff(header);
-%                     
-%                     acq_string = regexp(fl{iF}, patt_acq_number, 'match');
-%                     number_string = regexp(fl{iF}, patt_file_number, 'match');
-%                    
-%                    if (length(acq_string) == 1 && length(number_string) == 1)
-%                        filekey.file_number   = str2double(number_string{1}(2:end-1));
-%                        filekey.scan_filename   = fl{iF};
-%                    end
-%                    filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
-%                    prefile_frame_range = filekey.file_frame_range(2);
-%                    
-%                    insert(imaging.ScanFile, filekey)
-%                                               
+                    
+                    acq_string = regexp(fl{iF}, patt_acq_number, 'match');
+                    number_string = regexp(fl{iF}, patt_file_number, 'match');
+                   
+                   if (length(acq_string) == 1 && length(number_string) == 1)
+                       filekey.file_number   = str2double(number_string{1}(2:end-1));
+                       filekey.scan_filename   = fl{iF};
+                   end
+                   
+                   filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
+                   prefile_frame_range = filekey.file_frame_range(2);
+                   
+                   insert(imaging.ScanFile, filekey)
+                                              
                 end
                 
                 % insert record on scaninfo
                 key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
-                key.nframes = imageDesc.frameTimestamps_sec;
+                %Last frame range (from last file) is our nframes
+                key.nframes = filekey.file_frame_range(2);
                 self.insert(key)
             end
             
