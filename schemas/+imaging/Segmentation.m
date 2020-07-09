@@ -122,7 +122,7 @@ classdef Segmentation < dj.Imported
       result.cross_chunks_reference_image  = data.registration.reference;
       self.insert(result)
       
-      %% write to meso.SegmentationChunks (some session chunk-specific info)
+      %% write to imaging.SegmentationChunks (some session chunk-specific info)
       chunkRange = zeros(num_chunks,2);
       chunkdata  = cell(1,num_chunks);
       for iChunk = 1:num_chunks
@@ -146,16 +146,16 @@ classdef Segmentation < dj.Imported
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
         
-        inserti(meso.SegmentationChunks, result)
+        inserti(imaging.SegmentationChunks, result)
         clear result 
         
-        % write global background (neuropil) activity data to meso.SegmentationBackground
+        % write global background (neuropil) activity data to imaging.SegmentationBackground
         result                       = keydata;
         result.segmentation_chunk_id = iChunk;
         result.background_spatial    = reshape(chunkdata{iChunk}.cnmf.bkgSpatial,chunkdata{iChunk}.cnmf.region.ImageSize);
         result.background_temporal   = chunkdata{iChunk}.cnmf.bkgTemporal;
         
-        inserti(meso.SegmentationBackground, result)
+        inserti(imaging.SegmentationBackground, result)
         clear result
       end
             
@@ -164,7 +164,7 @@ classdef Segmentation < dj.Imported
       % initialize data structures
       globalXY      = data.registration.globalXY;
       nROIs         = size(globalXY,2);
-      totalFrames   = fetch1(meso.ScanInfo & key,'nframes');
+      totalFrames   = fetch1(imaging.ScanInfo & key,'nframes');
       roi_data      = keydata;
       morpho_data   = keydata;
       trace_data    = keydata;
@@ -215,9 +215,9 @@ classdef Segmentation < dj.Imported
         end
         
         % insert in tables
-        inserti(meso.SegmentationRoi, roi_data)
-        inserti(meso.SegmentationRoiMorphologyAuto, morpho_data)
-        inserti(meso.Trace, trace_data)
+        %inserti(imaging.SegmentationRoi, roi_data)
+        %inserti(imaging.SegmentationRoiMorphologyAuto, morpho_data)
+        %inserti(imaging.Trace, trace_data)
       end
 
     end
