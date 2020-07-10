@@ -194,9 +194,10 @@ classdef Segmentation < dj.Imported
           localIdx                          = data.chunk.globalID == iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-            
+          
+          disp({'iROI', iROI, 'nROIs', nROIs});
           disp({'iChunk', iChunk, 'numel(chunkdata)', numel(chunkdata)});
-          disp({'size(localIdx)', size(localIdx)});
+          disp({'size(localIdx)', size(localIdx), 'localIdx', localIdx});
           disp({'size(chunkdata{iChunk}.cnmf.uniqueData)', size(chunkdata{iChunk}.cnmf.uniqueData)});
           
           % activity traces
