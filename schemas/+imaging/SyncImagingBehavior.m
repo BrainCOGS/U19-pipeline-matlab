@@ -20,8 +20,8 @@ classdef SyncImagingBehavior < dj.Computed
     function makeTuples(self, key)
       
       %% behav
-      data_dir  = formatFilePath(fetch1(behavior.DataDirectory & key, 'combined_file_name'),false,true);
-      behavdata = load(data_dir, 'log');
+      fov_directory  = formatFilePath(fetch1(behavior.DataDirectory & key, 'combined_file_name'),false,true);
+      behavdata = load(fov_directory, 'log');
       block     = behavdata.log.block;
       
       %% add some stuff that for whatever reason isn't on some mesosocope logs
