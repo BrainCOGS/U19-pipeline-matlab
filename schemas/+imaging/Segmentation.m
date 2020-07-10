@@ -197,8 +197,8 @@ classdef Segmentation < dj.Imported
           
           disp({'iROI', iROI, 'nROIs', nROIs});
           disp({'iChunk', iChunk, 'numel(chunkdata)', numel(chunkdata)});
-          disp({'size(localIdx)', size(localIdx), 'localIdx', localIdx});
-          disp({'size(chunkdata{iChunk}.cnmf.uniqueData)', size(chunkdata{iChunk}.cnmf.uniqueData)});
+          disp({'size(localIdx)', localIdx});
+          disp({'size(chunkdata{iChunk}.cnmf.uniqueData)', chunkdata{iChunk}.cnmf.uniqueData});
           
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
