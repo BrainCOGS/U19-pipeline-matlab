@@ -195,6 +195,11 @@ classdef Segmentation < dj.Imported
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
             
+          iChunk
+          data.chunk.globalID
+          localIdx
+          chunkdata{iChunk}.cnmf.uniqueData
+          
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
