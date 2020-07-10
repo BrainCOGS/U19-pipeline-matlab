@@ -40,7 +40,7 @@ classdef SyncImagingBehavior < dj.Computed
       % path
       scan_directory                = fetch1(imaging.Scan & key,'scan_directory');
       [order,movieFiles]            = fetchn(imaging.ScanFile & key, 'file_number', 'scan_filename');
-      movieFiles                    = cellfun(@(x)([scan_directory x]),movieFiles(order),'uniformoutput',false); % full path
+      movieFiles                    = cellfun(@(x)(fullfile(scan_directory,x)),movieFiles(order),'uniformoutput',false); % full path
       imagingF                       = struct('movieFile', movieFiles);
       
       fprintf('==[ SYNCHRONIZATION ]==   %s\n', fov_directory);
