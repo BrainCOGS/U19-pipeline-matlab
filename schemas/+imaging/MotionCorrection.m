@@ -118,7 +118,7 @@ function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMC
   fprintf(' :   %s\n', movieName);
 
   % Fluorescence activity raw statistics
-  statsFile                   = regexprep(movieFile, '[.][^.]+$', '.statsDJ.mat');
+  statsFile                   = regexprep(movieFile, '[.][^.]+$', '.stats.mat');
   if recomputeStats ||  ~exist(statsFile, 'file')
     % Load raw data with per-file motion correction
     F                         = cv.imreadsub(movieFile, {frameMCorr,false});

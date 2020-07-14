@@ -220,9 +220,9 @@ classdef Segmentation < dj.Imported
         end
         
         % insert in tables
-        %inserti(imaging.SegmentationRoi, roi_data)
-        %inserti(imaging.SegmentationRoiMorphologyAuto, morpho_data)
-        %inserti(imaging.Trace, trace_data)
+        inserti(imaging.SegmentationRoi, roi_data)
+        inserti(imaging.SegmentationRoiMorphologyAuto, morpho_data)
+        inserti(imaging.Trace, trace_data)
       end
 
     end
