@@ -63,9 +63,9 @@ classdef ScanInfo2 < dj.Imported
       stridx   = regexp(fl{1},'_[0-9]{5}.tif');
       basename = fl{1}(1:stridx);
       
-      if isempty(gcp('nocreate')); poolobj = parpool; end
+      %if isempty(gcp('nocreate')); poolobj = parpool; end
       
-      parfor iF = 1:numel(fl)
+      for iF = 1:numel(fl)
         [imheader{iF},parsedInfo{iF}] = parseMesoscopeTifHeader(fl{iF});
       end
       
