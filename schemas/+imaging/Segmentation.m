@@ -1,6 +1,6 @@
 %{
 # ROI segmentation
--> imaging.Scan
+-> imaging.FieldOfView
 -> imaging.SegParameterSet
 ---
 num_chunks                      : tinyint           # number of different segmentation chunks within the session
@@ -15,9 +15,15 @@ classdef Segmentation < dj.Imported
     function makeTuples(self, key)
       
       %% imaging directory      
-      % Get scan directory           
-      scan_directory  = fullfile(fetch1(imaging.Scan & key,'scan_directory'));
-      keydata         = key;
+      if isstruct(key)
+        fovdata       = fetch(imaging.FieldOfView & key,'fov_directory');
+        fov_directory = formatFilePath(fovdata.fov_directory,true,true);
+        keydata       = key;
+      else
+        fov_directory = formatFilePath(fetch1(imaging.FieldOfView & key,'fov_directory'),true,true);
+        keydata       = fetch(key);
+      end
+      
       result          = keydata;
       
       %% analysis params
@@ -28,7 +34,7 @@ classdef Segmentation < dj.Imported
       scan_directory
       params
 
-        frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
+      frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
       
       % selectFileChunks
       chunk_cfg.auto_select_behav    = params.chunks_auto_select_behav;
@@ -86,7 +92,7 @@ classdef Segmentation < dj.Imported
       
       switch segmentationMethod
         case 'cnmf'
-          outputFiles                      = runCNMF(scan_directory, fileChunk, cnmf_cfg, gof_cfg); 
+          outputFiles                      = runCNMF(fov_directory, fileChunk, cnmf_cfg, gof_cfg); 
         case 'suite2p'
           warning('suite2p is not yet supported in this pipeline')
       end

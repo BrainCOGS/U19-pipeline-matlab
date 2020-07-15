@@ -1,5 +1,5 @@
 %{
--> imaging.Scan
+-> imaging.FieldOfView
 -> imaging.McParameterSet       # meta file, frameMCorr-method
 ---
 %}
@@ -46,18 +46,22 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %%Get structure for searching in Scan Table
-            scanKey.session_number = key.session_number;
-            scanKey.session_date = key.session_date;
-            scanKey.subject_fullname = key.subject_fullname;
+            %scanKey.session_number = key.session_number;
+            %scanKey.session_date = key.session_date;
+            %scanKey.subject_fullname = key.subject_fullname;
             
             %Get scan directory
-            scan_directory  = fetch1(imaging.Scan & scanKey,'scan_directory');
+            %scan_directory  = fetch1(imaging.FieldOfView & scanKey,'scan_directory');
+            % path
+            fov_directory  = formatFilePath(fetch1(imaging.FieldOfView & key,'fov_directory'),true,true);
+
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
-            fprintf('==[ PROCESSING ]==   %s\n', scan_directory);
+            fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
             
             % Determine whether or not we need to use frame skipping to select only the first channel
-            [order,movieFiles]            = fetchn(imaging.ScanFile & scanKey, 'file_number', 'scan_filename');
+            %[order,movieFiles]            = fetchn(imaging.ScanFile & scanKey, 'file_number', 'scan_filename');
+            [order,movieFiles]            = fetchn(imaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
             movieFiles                    = cellfun(@(x)(fullfile(scan_directory,x)),movieFiles(order),'uniformoutput',false); % full path
             movieFiles
             info                          = cv.imfinfox(movieFiles{1}, true);

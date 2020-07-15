@@ -1,6 +1,6 @@
 %{
 # within each tif file, x-y shifts for motion registration
--> imaging.ScanFile
+-> imaging.FieldOfViewFile
 -> imaging.McParameterSet
 ---
 within_file_x_shifts         : longblob      # nFrames x 2, meta file, frameMCorr-xShifts
