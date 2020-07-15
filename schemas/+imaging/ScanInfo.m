@@ -73,6 +73,7 @@ classdef ScanInfo < dj.Computed
                    inserti(imaging.ScanFile, filekey)
                    
                    filekey.fov_filename = filekey.scan_filename;
+                   filekey = rmfield(filekey, 'scan_filename');
                    inserti(imaging.FieldOfViewFile, filekey)
                                               
                 end
