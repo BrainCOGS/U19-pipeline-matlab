@@ -70,10 +70,10 @@ classdef ScanInfo < dj.Computed
                    filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
                    prefile_frame_range = filekey.file_frame_range(2);
                    
-                   insert(imaging.ScanFile, filekey)
+                   inserti(imaging.ScanFile, filekey)
                    
                    filekey.fov_filename = filekey.scan_filename;
-                   insert(imaging.FieldOfViewFile, filekey)
+                   inserti(imaging.FieldOfViewFile, filekey)
                                               
                 end
 
