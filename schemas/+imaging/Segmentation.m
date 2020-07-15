@@ -30,8 +30,8 @@ classdef Segmentation < dj.Imported
       %%Get structure for searching in SegParameterSetParameter table      
       params        = getParametersFromQuery(imaging.SegParameterSetParameter & key);
       
-      cd(scan_directory)
-      scan_directory
+      cd(fov_directory)
+      fov_directory
       params
 
       frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
@@ -142,12 +142,12 @@ classdef Segmentation < dj.Imported
         
         % figure out imaging frame range in the chunk (with respect to whole session)
         file_key_first = key;
-        file_key_first.scan_filename = result.tif_file_list{1};
-        frame_range_first            = fetch1(imaging.ScanFile & file_key_first,'file_frame_range');
+        file_key_first.fov_filename = result.tif_file_list{1};
+        frame_range_first            = fetch1(imaging.FieldOfViewFile & file_key_first,'file_frame_range');
         
         file_key_last = key;
-        file_key_last.scan_filename = result.tif_file_list{end};                                 
-        frame_range_last             = fetch1(imaging.ScanFile & file_key_last,'file_frame_range');   
+        file_key_last.fov_filename = result.tif_file_list{end};                                 
+        frame_range_last             = fetch1(imaging.FieldOfViewFile & file_key_last,'file_frame_range');   
         
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
@@ -244,7 +244,7 @@ function fileChunk = selectFileChunks(key,chunk_cfg)
 % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
 
 %% check if enforcing this is actually desired
-file_ids       = fetchn(imaging.ScanFile & key,'file_number');
+file_ids       = fetchn(imaging.FieldOfViewFile & key,'file_number');
 nfiles         = numel(file_ids);
 
 if ~chunk_cfg.auto_select_behav && ~chunk_cfg.auto_select_bleach && nfiles < chunk_cfg.filesPerChunk
