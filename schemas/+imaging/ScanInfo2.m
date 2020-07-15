@@ -53,7 +53,7 @@ classdef ScanInfo2 < dj.Imported
         skipParsing = false;
       end
       
-      skipParsing = true;
+      %skipParsing = true;
       
       %% loop through files to read all image headers
       
