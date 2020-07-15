@@ -45,6 +45,11 @@ classdef ScanInfo < dj.Computed
             tiff_idx = ~cellfun(@isempty,regexp(dir_info,patt_tiff_file),'UniformOutput',true);
             fl = dir_info(tiff_idx);
             
+                            
+            %Dummy values to insert in FieldOFView
+            insert_FieldOfView(key, imaging_directory);    
+                
+            
             % If there is at least one tif file in directory
             if(~isempty(fl))
                 prefile_frame_range = 0;
@@ -66,8 +71,12 @@ classdef ScanInfo < dj.Computed
                    prefile_frame_range = filekey.file_frame_range(2);
                    
                    insert(imaging.ScanFile, filekey)
+                   
+                   filekey.fov_filename = filekey.scan_filename;
+                   insert(imaging.FieldOfViewFile, filekey)
                                               
                 end
+
                 
                 % insert record on scaninfo
                 key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
@@ -79,3 +88,20 @@ classdef ScanInfo < dj.Computed
         end
     end
 end
+
+
+function insert_FieldOfView(key, imaging_directory)
+
+key.fov = 1;
+key.fov_directory = imaging_directory;
+key.fov_depth = 0;
+key.fov_center_xy = 0;
+key.fov_size_xy = 0;
+key.fov_rotation_degrees = 0;
+key.fov_pixel_resolution_xy = 0;
+key.fov_discrete_plane_mode = 0;
+
+insert(imaging.FieldOfView, key)
+
+end
+
