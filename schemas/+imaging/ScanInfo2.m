@@ -53,6 +53,8 @@ classdef ScanInfo2 < dj.Imported
         skipParsing = false;
       end
       
+      skipParsing = true;
+      
       %% loop through files to read all image headers
       
       % get header with parfor loop
@@ -63,10 +65,10 @@ classdef ScanInfo2 < dj.Imported
       stridx   = regexp(fl{1},'_[0-9]{5}.tif');
       basename = fl{1}(1:stridx);
       
-      %if isempty(gcp('nocreate')); poolobj = parpool; end
+      if isempty(gcp('nocreate')); poolobj = parpool; end
       
       for iF = 1:numel(fl)
-        [imheader{iF},parsedInfo{iF}] = parseMesoscopeTifHeader(fl{iF});
+        [imheader{iF},parsedInfo{iF}] = parseMesoscopeTifHeader_light(fl{iF});
       end
       
       % get recording info from headers
