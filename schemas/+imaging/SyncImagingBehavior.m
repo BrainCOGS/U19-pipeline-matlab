@@ -1,6 +1,6 @@
 %{
 # synchronization between imaging and behavior
--> imaging.Scan
+-> imaging.FieldOfView
 ---
 sync_im_frame                      :    longblob   # frame number within tif file
 sync_im_frame_global               :    longblob   # global frame number in scan
@@ -38,10 +38,10 @@ classdef SyncImagingBehavior < dj.Computed
       totalFrames                   = 0;
       
       % path
-      scan_directory                = fetch1(imaging.Scan & key,'scan_directory');
-      [order,movieFiles]            = fetchn(imaging.ScanFile & key, 'file_number', 'scan_filename');
-      movieFiles                    = cellfun(@(x)(fullfile(scan_directory,x)),movieFiles(order),'uniformoutput',false); % full path
-      imagingF                       = struct('movieFile', movieFiles);
+      fov_directory                 = fetch1(imaging.FieldOfView & key,'fov_directory');
+      [order,movieFiles]            = fetchn(imaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
+      movieFiles                    = cellfun(@(x)(fullfile(fov_directory,x)),movieFiles(order),'uniformoutput',false); % full path
+      imagingF                      = struct('movieFile', movieFiles);
       
       fprintf('==[ SYNCHRONIZATION ]==   %s\n', fov_directory);
       
