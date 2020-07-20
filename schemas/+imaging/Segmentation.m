@@ -29,10 +29,6 @@ classdef Segmentation < dj.Imported
       %% analysis params
       %%Get structure for searching in SegParameterSetParameter table      
       params        = getParametersFromQuery(imaging.SegParameterSetParameter & key);
-      
-      cd(fov_directory)
-      fov_directory
-      params
 
       frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
       
@@ -86,10 +82,9 @@ classdef Segmentation < dj.Imported
       fileChunk                            = selectFileChunks(key,chunk_cfg); 
             
       %% run segmentation and populate this table
-      segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
-      
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
       
+      segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
         case 'cnmf'
           outputFiles                      = runCNMF(fov_directory, fileChunk, cnmf_cfg, gof_cfg); 
@@ -152,7 +147,7 @@ classdef Segmentation < dj.Imported
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
         
-        inserti(imaging.SegmentationChunks, result)
+        insert(imaging.SegmentationChunks, result)
         clear result 
         
         % write global background (neuropil) activity data to imaging.SegmentationBackground
@@ -161,7 +156,7 @@ classdef Segmentation < dj.Imported
         result.background_spatial    = reshape(chunkdata{iChunk}.cnmf.bkgSpatial,chunkdata{iChunk}.cnmf.region.ImageSize);
         result.background_temporal   = chunkdata{iChunk}.cnmf.bkgTemporal;
         
-        inserti(imaging.SegmentationBackground, result)
+        insert(imaging.SegmentationBackground, result)
         clear result
       end
             
@@ -200,12 +195,7 @@ classdef Segmentation < dj.Imported
           localIdx                          = data.chunk.globalID == iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-          
-          disp({'iROI', iROI, 'nROIs', nROIs});
-          disp({'iChunk', iChunk, 'numel(chunkdata)', numel(chunkdata)});
-          disp({'size(localIdx)', localIdx});
-          disp({'size(chunkdata{iChunk}.cnmf.uniqueData)', chunkdata{iChunk}.cnmf.uniqueData});
-          
+            
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
@@ -226,9 +216,9 @@ classdef Segmentation < dj.Imported
         end
         
         % insert in tables
-        inserti(imaging.SegmentationRoi, roi_data)
-        inserti(imaging.SegmentationRoiMorphologyAuto, morpho_data)
-        inserti(imaging.Trace, trace_data)
+        insert(imaging.SegmentationRoi, roi_data)
+        insert(imaging.SegmentationRoiMorphologyAuto, morpho_data)
+        insert(imaging.Trace, trace_data)
       end
 
     end

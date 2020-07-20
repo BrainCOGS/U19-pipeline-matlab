@@ -7,29 +7,10 @@
 classdef MotionCorrection < dj.Imported
     methods (Access=protected)
         function makeTuples(self, key)
-                        
-            %%Get structure for searching in McParameterSetParameter table
-            paramKey.mcorr_method = key.mcorr_method;
-            paramKey.mc_parameter_set_id = key.mc_parameter_set_id;
+            
             
             %Get Parameters from McParameterSetParameter table
-            params         = fetch(imaging.McParameterSetParameter & paramKey, '*');
-            %Convert struct 2 table (easier to index)
-            paramTable     = struct2table(params,'AsArray',true);
-            
-            %Convert table as a single entry params structure
-            params = struct();
-            for i=1:size(paramTable,1)
-                %get name of parameter
-                paramName = paramTable.mc_parameter_name{i};
-                %get value of parameter
-                paramValue = paramTable.value(i);
-                if iscell(paramValue)
-                    params.(paramName) = paramValue{1};
-                else
-                    params.(paramName) = paramValue;
-                end
-            end
+            params        = getParametersFromQuery(imaging.McParameterSetParameter & key);
             
             %Correct mc_black_tolerance parameter
             if params.mc_black_tolerance < 0
@@ -45,22 +26,14 @@ classdef MotionCorrection < dj.Imported
                     params.mc_stop_below_shift, params.mc_black_tolerance, params.mc_median_rebin};
             end
                         
-            %%Get structure for searching in Scan Table
-            %scanKey.session_number = key.session_number;
-            %scanKey.session_date = key.session_date;
-            %scanKey.subject_fullname = key.subject_fullname;
-            
             %Get scan directory
-            %scan_directory  = fetch1(imaging.FieldOfView & scanKey,'scan_directory');
-            % path
             fov_directory  = formatFilePath(fetch1(imaging.FieldOfView & key,'fov_directory'),true,true);
-
+            
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
             
             % Determine whether or not we need to use frame skipping to select only the first channel
-            %[order,movieFiles]            = fetchn(imaging.ScanFile & scanKey, 'file_number', 'scan_filename');
             [order,movieFiles]            = fetchn(imaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
             movieFiles                    = cellfun(@(x)(fullfile(fov_directory,x)),movieFiles(order),'uniformoutput',false); % full path
             movieFiles
@@ -83,10 +56,10 @@ classdef MotionCorrection < dj.Imported
             within_key                        = repmat(within_key,[1 numel(frameMCorr)]);
             
             for iFile = 1:numel(frameMCorr)
-               within_key(iFile).file_number                   = iFile;
-               within_key(iFile).within_file_x_shifts          = frameMCorr(iFile).xShifts;
-               within_key(iFile).within_file_y_shifts          = frameMCorr(iFile).yShifts;
-               within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
+                within_key(iFile).file_number                   = iFile;
+                within_key(iFile).within_file_x_shifts          = frameMCorr(iFile).xShifts;
+                within_key(iFile).within_file_y_shifts          = frameMCorr(iFile).yShifts;
+                within_key(iFile).within_reference_image        = frameMCorr(iFile).reference;
             end
             
             
@@ -98,7 +71,7 @@ classdef MotionCorrection < dj.Imported
             
             class(fileMCorr.reference)
             size(fileMCorr.reference)
-
+            
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
@@ -106,10 +79,9 @@ classdef MotionCorrection < dj.Imported
             end
             
             %% insert key
-            self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
             insert(imaging.MotionCorrectionAcrossFiles, across_key)
-            
+            self.insert(key);
             
         end
     end
@@ -118,12 +90,12 @@ end
 %%
 %---------------------------------------------------------------------------------------------------
 function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMCorr, recomputeStats)
-  
-  fprintf(' :   %s\n', movieName);
 
-  % Fluorescence activity raw statistics
-  statsFile                   = regexprep(movieFile, '[.][^.]+$', '.stats.mat');
-  if recomputeStats ||  ~exist(statsFile, 'file')
+fprintf(' :   %s\n', movieName);
+
+% Fluorescence activity raw statistics
+statsFile                   = regexprep(movieFile, '[.][^.]+$', '.stats.mat');
+if recomputeStats ||  ~exist(statsFile, 'file')
     % Load raw data with per-file motion correction
     F                         = cv.imreadsub(movieFile, {frameMCorr,false});
     [stats,metric,tailProb]   = highTailActivityMetric(F);
@@ -135,10 +107,10 @@ function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMC
     if ~isfile(outputFile)
         parsave(outputFile, info, stats, metric, tailProb);
     end
-  else
+else
     metric                    = load(statsFile, 'metric');
     tailProb                  = metric.metric.tailProb;
-  end
-  activity                    = tailProb;
+end
+activity                    = tailProb;
 
 end

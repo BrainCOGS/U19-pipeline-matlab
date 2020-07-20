@@ -70,12 +70,10 @@ classdef ScanInfo < dj.Computed
                    filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
                    prefile_frame_range = filekey.file_frame_range(2);
                    
-                   inserti(imaging.ScanFile, filekey)
-                   
                    filekey.fov_filename = filekey.scan_filename;
                    filekey.fov = 1;
                    filekey = rmfield(filekey, 'scan_filename');
-                   filekey
+                   
                    insert(imaging.FieldOfViewFile, filekey)
                                               
                 end

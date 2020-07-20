@@ -29,9 +29,9 @@ columnNames = paramTable.Properties.VariableNames;
 Index = find(contains(columnNames,TemplateParamNameCol));
 
 if isempty(Index)
-    error(['No column named as xx', TemplateParamNameCol, ' in param table']);
+    error(['No column named as ', TemplateParamNameCol, ' in param table']);
 elseif length(Index) > 1
-    warning(['Many columns named as xx', TemplateParamNameCol, ' in param table, getting first']);
+    warning(['Many columns named as ', TemplateParamNameCol, ' in param table, getting first']);
 end
 paramNameCol = columnNames{Index(1)};
 
