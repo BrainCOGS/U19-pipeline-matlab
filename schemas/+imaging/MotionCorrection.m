@@ -79,9 +79,9 @@ classdef MotionCorrection < dj.Imported
             end
             
             %% insert key
+            self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
             insert(imaging.MotionCorrectionAcrossFiles, across_key)
-            self.insert(key);
             
         end
     end
