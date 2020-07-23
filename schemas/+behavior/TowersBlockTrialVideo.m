@@ -1,13 +1,13 @@
 %{
 -> behavior.TowersBlockTrial
 ---
-video:                      longblob # frame by frame video for trial
+filepath           :  varchar(511)   # the absolute directory created for this video
 %}
 
-classdef TowersBlockTrialVideo < dj.Manual
-%     methods
-%         %function insert(self, key)
-%         %    self.insert(key);
-%         %end
-%     end
+classdef TowersBlockTrialVideo < dj.Imported
+  methods(Access=protected)
+    function makeTuples(self, key)
+      %self.insert(key)
+    end
+  end
 end
