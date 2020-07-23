@@ -49,12 +49,17 @@ classdef ScanInfo < dj.Computed
             %Dummy values to insert in FieldOFView
             insert_FieldOfView(key, imaging_directory);    
                 
+            filekey = key;
+            filekey.fov                = 1; 
+            filekey.file_number        = [];
+            filekey.fov_filename       = '';
+            filekey.file_frame_range   = '';
+            filekey                    = repmat(filekey,[1 numel(fl)]);
             
             % If there is at least one tif file in directory
             if(~isempty(fl))
                 prefile_frame_range = 0;
                 for iF = 1:numel(fl)
-                    filekey = key;
                     %Get header and imageDescription
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
                      imageDesc = getImageDescriptionTiff(header);
@@ -63,18 +68,15 @@ classdef ScanInfo < dj.Computed
                     number_string = regexp(fl{iF}, patt_file_number, 'match');
                    
                    if (length(acq_string) == 1 && length(number_string) == 1)
+                       filekey.fov = 1;
                        filekey.file_number   = str2double(number_string{1}(2:end-1));
-                       filekey.scan_filename   = fl{iF};
+                       filekey.fov_filename   = fl{iF};
+                   
+                       filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
+                       prefile_frame_range = filekey.file_frame_range(2);
+                   
+                       insert(imaging.FieldOfViewFile, filekey)
                    end
-                   
-                   filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
-                   prefile_frame_range = filekey.file_frame_range(2);
-                   
-                   filekey.fov_filename = filekey.scan_filename;
-                   filekey.fov = 1;
-                   filekey = rmfield(filekey, 'scan_filename');
-                   
-                   insert(imaging.FieldOfViewFile, filekey)
                                               
                 end
 
