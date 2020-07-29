@@ -128,7 +128,10 @@ classdef Scan < dj.Imported
             userDir        =  fullfile(local_path, user_nick);
             
             %Get all child directories from user
+            disp('start genpath')
+            tic
             dirInfo = genpath(userDir);
+            toc
             dirInfo = split(dirInfo,':');
             
             %Remove final entry (0x0 char)
