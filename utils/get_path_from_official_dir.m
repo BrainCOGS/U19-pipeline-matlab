@@ -46,8 +46,8 @@ if ispc
     %For pc the accesible path is the net_location field
     local_path  = fullfile(path_record.net_location{:}, baseDir);
     %Correct bucket path to have "linux" slashes
-    bucket_path = strep(bucket_path,'\','/');
-    bucket_path = strep(bucket_path,'//','/');
+    bucket_path = strrep(bucket_path,'\','/');
+    bucket_path = strrep(bucket_path,'//','/');
 else
     %For mac and linux the accesible path is the local_path field
     local_path = fullfile(path_record.local_path{:}, baseDir);
