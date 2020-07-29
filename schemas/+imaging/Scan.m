@@ -74,11 +74,11 @@ classdef Scan < dj.Imported
             % scan_directory = directory with tiff imaging files
             
             %get main dir for acquisition files
-            [bucket_path, local_path] = get_path_from_official_dir(self.mesoscope_base_dir);
+            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.mesoscope_base_dir);
             
             %If running locally, check if it is connected
             if ~isThisSpock
-                status = check_mounted_location(local_path);
+                status = u19_dj_utils.check_mounted_location(local_path);
                 if ~status
                     error ([local_path ' is not mounted in your system'])
                 end
@@ -114,11 +114,11 @@ classdef Scan < dj.Imported
             scan_directory = '';
             
             %get main dir for acquisition files
-            [bucket_path, local_path] = get_path_from_official_dir(self.photon_micro_base_dir);
+            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.photon_micro_base_dir);
             
             %If running locally, check if it is connected
             if ~isThisSpock
-                status = check_mounted_location(local_path);
+                status = u19_dj_utils.check_mounted_location(local_path);
                 if ~status
                     error ([local_path ' is not mounted in your system'])
                 end

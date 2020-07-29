@@ -1,15 +1,16 @@
 function format_dir = format_bucket_path(bucket_dir)
 
-if isThisSpock
+%If we are in spock already directory is the same
+if u19_dj_utils.isThisSpock()
     format_dir = bucket_dir;
     return
 end
 
 %Get all path table from u19_lab.Path ("official sites")
-[path_table] = get_path_table();
+[path_table] = u19_dj_utils.get_path_table();
 
 %Get OS of the system
-system = get_OS();
+system = u19_dj_utils.get_OS();
 
 %Check the base dir corresponds to which global path
 idx_basedir = cellfun(@(s) contains(bucket_dir, s), path_table.global_path);
@@ -22,6 +23,7 @@ elseif size(path_record,1) > 1
     error('The base directory makes reference to more than one official location of the u19')
 end
 
+%Remove bucket "base" dir from path 
 bucket_base_dir  = path_record.bucket_path{:};
 extra_bucket_dir = strrep(bucket_dir,bucket_base_dir, '');
 
@@ -38,6 +40,7 @@ else
     baseDir = path_record.local_path{:};
 end
 
+%Format the local directory 
 format_dir = fullfile(baseDir, extra_bucket_dir);
 
 end
