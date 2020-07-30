@@ -82,12 +82,12 @@ classdef ScanInfo < dj.Imported
             stridx   = regexp(fl{1},'_[0-9]{5}.tif');
             basename = fl{1}(1:stridx);
             
-            if isempty(gcp('nocreate')); poolobj = parpool; end
+            %if isempty(gcp('nocreate')); poolobj = parpool; end
             
             %If mesoscope variable set before parfoor lope
             ifMesoscope = any(contains(self.mesoscope_acq, acq_type));
             
-            parfor iF = 1:numel(fl)
+            for iF = 1:numel(fl)
                 [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
                 if ifMesoscope
