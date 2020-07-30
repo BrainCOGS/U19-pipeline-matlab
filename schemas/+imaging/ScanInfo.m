@@ -88,7 +88,13 @@ classdef ScanInfo < dj.Imported
                 %If is mesoscope get also roi info from header
                 if ifMesoscope
                     parsedROI{iF} = u19_dj_utils.parse_roi_info_tif_header(imheader{iF});
-                    parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
+                end
+            end
+            
+            %Complete parsedInfo structure with parsedROI if ithi is mesoscope
+            if ifMesoscope
+                for iF = 1:numel(fl)
+            parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
                 end
             end
             
