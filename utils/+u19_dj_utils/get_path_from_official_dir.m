@@ -54,7 +54,7 @@ else
 end
 
 %If this system is spock, local and bucket path is the same
-if u19_dj_utils.isThisSpock()
+if u19_dj_utils.is_this_spock()
     local_path = bucket_path;
 end
       

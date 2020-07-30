@@ -1,7 +1,7 @@
 function format_dir = format_bucket_path(bucket_dir)
 
 %If we are in spock already directory is the same
-if u19_dj_utils.isThisSpock()
+if u19_dj_utils.is_this_spock()
     format_dir = bucket_dir;
     return
 end

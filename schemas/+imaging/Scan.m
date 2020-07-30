@@ -77,11 +77,8 @@ classdef Scan < dj.Imported
             [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.mesoscope_base_dir);
             
             %If running locally, check if it is connected
-            if ~isThisSpock
-                status = u19_dj_utils.check_mounted_location(local_path);
-                if ~status
-                    error ([local_path ' is not mounted in your system'])
-                end
+            if ~u19_dj_utils.is_this_spock()
+                u19_dj_utils.assert_mounted_location(local_path);
             end
             
             %complete local and bucket path for scan directory
@@ -117,11 +114,8 @@ classdef Scan < dj.Imported
             [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.photon_micro_base_dir);
             
             %If running locally, check if it is connected
-            if ~isThisSpock
-                status = u19_dj_utils.check_mounted_location(local_path);
-                if ~status
-                    error ([local_path ' is not mounted in your system'])
-                end
+            if ~u19_dj_utils.is_this_spock()
+                u19_dj_utils.assert_mounted_location(local_path);
             end
             
             %Parent folder starts with user nicknames
