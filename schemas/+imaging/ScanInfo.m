@@ -60,11 +60,15 @@ classdef ScanInfo < dj.Imported
             
             fprintf('------------ preparing %s --------------\n',scan_directory)
             
-            if isempty(dir('*tif')) && exist([scan_directory 'originalStacks'],'dir') > 0
+            originalStacksdir = fullfile(scan_directory, 'originalStacks');
+            
+            if isempty(dir('*tif')) && exist(originalStacksdir,'dir')
                 cd originalStacks
                 skipParsing = true;
             else
-                mkdir('originalStacks');
+                if ~exist(originalStacksdir,'dir')
+                    mkdir('originalStacks');
+                end
                 skipParsing = false;
             end
             

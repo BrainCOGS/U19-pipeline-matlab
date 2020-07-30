@@ -31,7 +31,15 @@ catch
         parsedInfo.Zs           = mesoscopeParams.zFactor .* eval(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.userZs = \d+','match')),'\d+','match')));
     catch
         temp                    = regexp(scopeStr,'SI.hFastZ.userZs = \[.+\]\n','match');
+        idx_zs = strfind(scopeStr,'SI.hFastZ.userZs')
+        if ~isempty(idx_zs)
+            disp('se encontro la frase SI.hFastZ.userZs')
+            scopeStr(idx_zs(1)-30:idx_zs(1)+50)
+        end
+        disp('try catch 2 Here for Zs')
+        temp
         idx                     = regexp(temp,'\n');
+        idx
         temp                    = temp{1}(1:idx{1}(1)-1);
         parsedInfo.Zs           = eval(cell2mat(regexp(temp,'\[.+\]','match')));
     end
