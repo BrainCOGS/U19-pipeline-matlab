@@ -102,9 +102,9 @@ classdef ScanInfo < dj.Imported
                 end
             end
             
-            recInfo = self.get_recording_info(fl, imheader, parsedInfo);
+            [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
             
-            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(skipParsing, scan_directory);
+            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
             
             % get acqTime
             if isempty(recInfo.AcqTime)
@@ -159,7 +159,7 @@ classdef ScanInfo < dj.Imported
         end
         
         %% get recording info to recinfo var
-        function recInfo = get_recording_info(self, fl, imheader, parsedInfo)
+        function [recInfo, framesPerFile] = get_recording_info(self, fl, imheader, parsedInfo)
             
             % get recording info from headers
             framesPerFile = zeros(numel(fl),1);
@@ -180,7 +180,7 @@ classdef ScanInfo < dj.Imported
         end
         
         %% find out last good frame based on bleaching
-        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, skipParsing, scan_directory)
+        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, skipParsing, scan_directory)
             
             if skipParsing
                 lastGoodFile        = selectFilesFromMeanF([scan_directory 'originalStacks']);
