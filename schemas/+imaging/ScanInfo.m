@@ -82,12 +82,12 @@ classdef ScanInfo < dj.Imported
             stridx   = regexp(fl{1},'_[0-9]{5}.tif');
             basename = fl{1}(1:stridx);
             
-            %if isempty(gcp('nocreate')); poolobj = parpool; end
+            if isempty(gcp('nocreate')); poolobj = parpool; end
             
             %If mesoscope variable set before parfoor lope
             ifMesoscope = any(contains(self.mesoscope_acq, acq_type));
             
-            for iF = 1:numel(fl)
+            parfor iF = 1:numel(fl)
                 [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
                 if ifMesoscope
@@ -102,7 +102,7 @@ classdef ScanInfo < dj.Imported
                 end
             end
             
-            recInfo = self.get_recording_info(imheader, parsedInfo);
+            recInfo = self.get_recording_info(fl, imheader, parsedInfo);
             
             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(skipParsing, scan_directory);
             
@@ -159,7 +159,7 @@ classdef ScanInfo < dj.Imported
         end
         
         %% get recording info to recinfo var
-        function recInfo = get_recording_info(self, imheader, parsedInfo)
+        function recInfo = get_recording_info(self, fl, imheader, parsedInfo)
             
             % get recording info from headers
             framesPerFile = zeros(numel(fl),1);
