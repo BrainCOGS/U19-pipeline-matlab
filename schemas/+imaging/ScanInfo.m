@@ -383,7 +383,7 @@ classdef ScanInfo < dj.Imported
         end
         
         %% Inser FOV and FOV field tables for 2 and 3photon
-        function self.insert_fov_photonmicro(self, fl, key, imheader, scan_directory)
+        function insert_fov_photonmicro(self, fl, key, imheader, scan_directory)
             
             key.fov = 1;
             key.fov_directory = scan_directory;
