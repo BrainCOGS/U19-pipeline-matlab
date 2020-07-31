@@ -85,24 +85,28 @@ classdef ScanInfo < dj.Imported
             if isempty(gcp('nocreate')); poolobj = parpool; end
             
             %If mesoscope variable set before parfoor lope
-            ifMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
             
             parfor iF = 1:numel(fl)
                 [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
-                if ifMesoscope
+                if isMesoscope
                     parsedROI{iF} = u19_dj_utils.parse_roi_info_tif_header(imheader{iF});
                 end
             end
             
-            %Complete parsedInfo structure with parsedROI if ithi is mesoscope
-            if ifMesoscope
+            %Complete parsedInfo structure with parsedROI if this is mesoscope
+            if isMesoscope
                 for iF = 1:numel(fl)
             parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
                 end
             end
             
+            %Get recInfo field
             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
+            
+            %get nfovs field
+            recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
             
             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
             
@@ -113,7 +117,9 @@ classdef ScanInfo < dj.Imported
             end
             
             
-            %% write to this table
+            %% Insert to ScanInfo
+            self.inser_scaninfo(key, recInfo, 
+            
             originalkey                   = key;
             key_data                      = fetch(imaging.Scan & originalkey);
             key                           = key_data;
@@ -138,7 +144,8 @@ classdef ScanInfo < dj.Imported
             key.flyback_time_per_frame    = recInfo.Scope.flybackTimePerFrame;
             key.flyto_time_per_scan_field = recInfo.Scope.flytoTimePerScanfield;
             key.fov_corner_points         = recInfo.Scope.fovCornerPoints;
-            key.nfovs                     = sum(cell2mat(cellfun(@(x)(numel(x)),{recInfo.ROI(:).Zs},'uniformoutput',false)));
+            
+            key.nfovs                     = recInfo.nfovs;
             key.nframes                   = recInfo.nFrames;
             key.nframes_good              = cumulativeFrames(lastGoodFile);
             key.last_good_file            = lastGoodFile;
@@ -158,6 +165,17 @@ classdef ScanInfo < dj.Imported
             
         end
         
+        %% get nfovs depending of acquisition type
+        function nfovs = get_nfovs(self, recInfo, isMesoscope)
+        
+        if isMesoscope
+            nfovs = sum(cell2mat(cellfun(@(x)(numel(x)),{recInfo.ROI(:).Zs},'uniformoutput',false)));
+        else
+            nfovs = 1;
+        end
+        
+        end
+            
         %% get recording info to recinfo var
         function [recInfo, framesPerFile] = get_recording_info(self, fl, imheader, parsedInfo)
             
