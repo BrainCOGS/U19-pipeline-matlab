@@ -404,7 +404,7 @@ classdef ScanInfo < dj.Imported
             filekeys.file_number        = [];
             filekeys.fov_filename       = '';
             filekeys.file_frame_range   = '';
-            filekeys                    = repmat(filekey,[1 numel(fl)]);
+            filekeys                    = repmat(filekeys,[1 numel(fl)]);
             
             % If there is at least one tif file in directory
             if(~isempty(fl))
