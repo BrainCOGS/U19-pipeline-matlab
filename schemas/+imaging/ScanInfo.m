@@ -108,6 +108,7 @@ classdef ScanInfo < dj.Imported
             %get nfovs field
             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
             
+            %Get last "good" file because of bleaching
             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
             recInfo.last_good_file            = lastGoodFile;
@@ -125,7 +126,7 @@ classdef ScanInfo < dj.Imported
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
                 self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
-            % Just insertion of fov and fov fiels for 2 and 3 photon   
+                % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
                 self.insert_fov_photonmicro(fl, key, imheader, scan_directory)
             else
@@ -177,11 +178,11 @@ classdef ScanInfo < dj.Imported
             else
                 lastGoodFile        = selectFilesFromMeanF(scan_directory);
             end
-            lastGoodFile
+            
             cumulativeFrames    = cumsum(framesPerFile);
             %       lastGoodFile        = find(cumulativeFrames >= lastGoodFrame,1,'first');
             %       lastFrameInFile     = lastGoodFrame - cumulativeFrames(max([1 lastGoodFile-1]));
-            cumulativeFrames
+            
         end
         
         function insert_scan_info(self, key, recInfo)

@@ -1,6 +1,6 @@
-function [header,parsedInfo] = parseMesoscopeTifHeader(tifFn,skipBehavSync)
+function [header,parsedInfo] = parse_tif_header(tifFn,skipBehavSync)
 
-% [header,parsedInfo] = parseMesoscopeTifHeader(tifFn,skipBehavSync)
+% [header,parsedInfo] = parse_tif_header(tifFn,skipBehavSync)
 % parses tif headers saved by scan image in multi-ROI mode
 % INPUT: tiffn is string with file name; skipBehavSync boolean to skip I2C
 % data
@@ -22,7 +22,7 @@ parsedInfo.AcqTime          = cell2mat(regexp(cell2mat(regexp(header(1).ImageDes
 if ~isempty(regexp(scopeStr,'SI.hFastZ.numFramesPerVolume = [0-9]+','match'))
     parsedInfo.nDepths          = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.numFramesPerVolume = [0-9]+','match')),'\d+','match')));
 else
-    parsedInfo.nDepths          = [];
+    parsedInfo.nDepths          = 0;
 end
 try
     parsedInfo.Zs             = mesoscopeParams.zFactor .* eval(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.userZs =.\[(.\d+.)+\]','match')),'.\[(.\d+.)+\]','match')));
@@ -104,7 +104,7 @@ parsedInfo.Scope.flytoTimePerScanfield = str2double(cell2mat(regexp(cell2mat(reg
 if contains(scopeStr,'fovCornerPoints')
     parsedInfo.Scope.fovCornerPoints   = resolutionFactor .* eval(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hScan2D.fovCornerPoints = (\[-).{2,80}\]\n','match')),'\[-\d.+\d\]','match')));
 else
-    parsedInfo.Scope.fovCornerPoints   = [];
+    parsedInfo.Scope.fovCornerPoints   = 0;
 end
 
 end
