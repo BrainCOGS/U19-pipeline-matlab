@@ -98,7 +98,7 @@ classdef ScanInfo < dj.Imported
             %Complete parsedInfo structure with parsedROI if this is mesoscope
             if isMesoscope
                 for iF = 1:numel(fl)
-            parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
+                    parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
                 end
             end
             
@@ -109,6 +109,8 @@ classdef ScanInfo < dj.Imported
             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
             
             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
+            recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
+            recInfo.last_good_file            = lastGoodFile;
             
             % get acqTime
             if isempty(recInfo.AcqTime)
@@ -118,46 +120,16 @@ classdef ScanInfo < dj.Imported
             
             
             %% Insert to ScanInfo
-            self.inser_scaninfo(key, recInfo, 
+            self.insert_scan_info(key, recInfo)
             
-            originalkey                   = key;
-            key_data                      = fetch(imaging.Scan & originalkey);
-            key                           = key_data;
-            key.file_name_base            = recInfo.Filename;
-            key.scan_width                = recInfo.Width;
-            key.scan_height               = recInfo.Height;
-            key.acq_time                  = datetime_scanImage2sql(recInfo.AcqTime);
-            key.n_depths                  = recInfo.nDepths;
-            key.scan_depths               = recInfo.Zs;
-            key.frame_rate                = recInfo.frameRate;
-            key.inter_fov_lag_sec         = recInfo.interROIlag_sec;
-            key.frame_ts_sec              = recInfo.Timing.Frame_ts_sec;
-            key.power_percent             = recInfo.Scope.Power_percent;
-            key.channels                  = recInfo.Scope.Channels;
-            key.cfg_filename              = recInfo.Scope.cfgFilename;
-            key.usr_filename              = recInfo.Scope.usrFilename;
-            key.fast_z_lag                = recInfo.Scope.fastZ_lag;
-            key.fast_z_flyback_time       = recInfo.Scope.fastZ_flybackTime;
-            key.line_period               = recInfo.Scope.linePeriod;
-            key.scan_frame_period         = recInfo.Scope.scanFramePeriod;
-            key.scan_volume_rate          = recInfo.Scope.scanVolumeRate;
-            key.flyback_time_per_frame    = recInfo.Scope.flybackTimePerFrame;
-            key.flyto_time_per_scan_field = recInfo.Scope.flytoTimePerScanfield;
-            key.fov_corner_points         = recInfo.Scope.fovCornerPoints;
-            
-            key.nfovs                     = recInfo.nfovs;
-            key.nframes                   = recInfo.nFrames;
-            key.nframes_good              = cumulativeFrames(lastGoodFile);
-            key.last_good_file            = lastGoodFile;
-            self.insert(key)
-            
-            %% FOV ROI Processing
+            %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
                 self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+            % Just insertion of fov and fov fiels for 2 and 3 photon   
             elseif any(contains(self.photon_micro_acq, acq_type))
                 self.insert_fov_photonmicro(fl, key, imheader, scan_directory)
             else
-                error('Not a valid acquisition for this pipeline, hoe did you get here !!')
+                error('Not a valid acquisition for this pipeline, hoe did you get here ??')
             end
             
             cd(curr_dir)
@@ -167,15 +139,15 @@ classdef ScanInfo < dj.Imported
         
         %% get nfovs depending of acquisition type
         function nfovs = get_nfovs(self, recInfo, isMesoscope)
-        
-        if isMesoscope
-            nfovs = sum(cell2mat(cellfun(@(x)(numel(x)),{recInfo.ROI(:).Zs},'uniformoutput',false)));
-        else
-            nfovs = 1;
-        end
-        
-        end
             
+            if isMesoscope
+                nfovs = sum(cell2mat(cellfun(@(x)(numel(x)),{recInfo.ROI(:).Zs},'uniformoutput',false)));
+            else
+                nfovs = 1;
+            end
+            
+        end
+        
         %% get recording info to recinfo var
         function [recInfo, framesPerFile] = get_recording_info(self, fl, imheader, parsedInfo)
             
@@ -212,8 +184,43 @@ classdef ScanInfo < dj.Imported
             cumulativeFrames
         end
         
+        function insert_scan_info(self, key, recInfo)
+            
+            originalkey                   = key;
+            key_data                      = fetch(imaging.Scan & originalkey);
+            key                           = key_data;
+            key.file_name_base            = recInfo.Filename;
+            key.scan_width                = recInfo.Width;
+            key.scan_height               = recInfo.Height;
+            key.acq_time                  = datetime_scanImage2sql(recInfo.AcqTime);
+            key.n_depths                  = recInfo.nDepths;
+            key.scan_depths               = recInfo.Zs;
+            key.frame_rate                = recInfo.frameRate;
+            key.inter_fov_lag_sec         = recInfo.interROIlag_sec;
+            key.frame_ts_sec              = recInfo.Timing.Frame_ts_sec;
+            key.power_percent             = recInfo.Scope.Power_percent;
+            key.channels                  = recInfo.Scope.Channels;
+            key.cfg_filename              = recInfo.Scope.cfgFilename;
+            key.usr_filename              = recInfo.Scope.usrFilename;
+            key.fast_z_lag                = recInfo.Scope.fastZ_lag;
+            key.fast_z_flyback_time       = recInfo.Scope.fastZ_flybackTime;
+            key.line_period               = recInfo.Scope.linePeriod;
+            key.scan_frame_period         = recInfo.Scope.scanFramePeriod;
+            key.scan_volume_rate          = recInfo.Scope.scanVolumeRate;
+            key.flyback_time_per_frame    = recInfo.Scope.flybackTimePerFrame;
+            key.flyto_time_per_scan_field = recInfo.Scope.flytoTimePerScanfield;
+            key.fov_corner_points         = recInfo.Scope.fovCornerPoints;
+            
+            key.nfovs                     = recInfo.nfovs;
+            key.nframes                   = recInfo.nFrames;
+            key.nframes_good              = recInfo.nframes_good;
+            key.last_good_file            = recInfo.last_good_file;
+            self.insert(key)
+            
+        end
+        
         %% Fov and Fov file tables for mesoscope imaging
-        function self.insert_fov_mesoscope(self, fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+        function insert_fov_mesoscope(self, fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
             
             nROI                          = recInfo.nROIs;
             % scan image concatenates FOVs (ROIs) by adding rows, with padding between them.
@@ -374,7 +381,7 @@ classdef ScanInfo < dj.Imported
             end
         end
         
-        %% Inser FOV and FOV field tables for photon
+        %% Inser FOV and FOV field tables for 2 and 3photon
         function self.insert_fov_photonmicro(self, fl, key, imheader, scan_directory)
             
             key.fov = 1;
