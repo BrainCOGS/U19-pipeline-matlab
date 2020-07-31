@@ -385,6 +385,9 @@ classdef ScanInfo < dj.Imported
         %% Inser FOV and FOV field tables for 2 and 3photon
         function insert_fov_photonmicro(self, fl, key, imheader, scan_directory)
             
+            patt_acq_number  = '_[0-9]{5}_';
+            patt_file_number = '_[0-9]{5}\.';
+            
             key.fov = 1;
             key.fov_directory = scan_directory;
             key.fov_depth = 0;
@@ -396,26 +399,36 @@ classdef ScanInfo < dj.Imported
             
             insert(imaging.FieldOfView, key)
             
+            filekeys                    = key;
+            filekeys.fov                = 1; 
+            filekeys.file_number        = [];
+            filekeys.fov_filename       = '';
+            filekeys.file_frame_range   = '';
+            filekeys                    = repmat(filekey,[1 numel(fl)]);
+            
             % If there is at least one tif file in directory
             if(~isempty(fl))
                 prefile_frame_range = 0;
                 for iF = 1:numel(fl)
                     
+                    % check for files to have this structure: 'E84_20190614_40per_00001_00001.tif'
                     acq_string = regexp(fl{iF}, patt_acq_number, 'match');
                     number_string = regexp(fl{iF}, patt_file_number, 'match');
                     
+                    %If regexp of file is there ..
                     if (length(acq_string) == 1 && length(number_string) == 1)
-                        filekey.fov = 1;
-                        filekey.file_number   = str2double(number_string{1}(2:end-1));
-                        filekey.fov_filename   = fl{iF};
+                        %Get file number
+                        filekeys(fl).file_number   = str2double(number_string{1}(2:end-1));
+                        filekeys(fl).fov_filename   = fl{iF};
                         
-                        filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(imheader{iF})];
-                        prefile_frame_range = filekey.file_frame_range(2);
+                        %Calculate file frame range for this file
+                        filekeys(fl).file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(imheader{iF})];
+                        prefile_frame_range = filekeys.file_frame_range(2);
                         
-                        insert(imaging.FieldOfViewFile, filekey)
                     end
                     
                 end
+                insert(imaging.FieldOfViewFile, filekeys)
             end
             
             
