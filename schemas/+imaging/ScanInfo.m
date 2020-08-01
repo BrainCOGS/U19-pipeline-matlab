@@ -418,16 +418,12 @@ classdef ScanInfo < dj.Imported
                     %If regexp of file is there ..
                     if (length(acq_string) == 1 && length(number_string) == 1)
                         %Get file number
-                        disp('aqui number string')
-                        number_string
-                        number_string{1}
-                        number_string{1}(2:end-1)
-                        filekeys
-                        filekeys(fl).file_number   = str2double(number_string{1}(2:end-1));
-                        filekeys(fl).fov_filename   = fl{iF};
+
+                        filekeys(iF).file_number   = str2double(number_string{1}(2:end-1));
+                        filekeys(iF).fov_filename   = fl{iF};
                         
                         %Calculate file frame range for this file
-                        filekeys(fl).file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(imheader{iF})];
+                        filekeys(iF).file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(imheader{iF})];
                         prefile_frame_range = filekeys.file_frame_range(2);
                         
                     end
