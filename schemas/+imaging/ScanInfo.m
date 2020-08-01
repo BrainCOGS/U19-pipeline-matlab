@@ -418,6 +418,11 @@ classdef ScanInfo < dj.Imported
                     %If regexp of file is there ..
                     if (length(acq_string) == 1 && length(number_string) == 1)
                         %Get file number
+                        disp('aqui number string')
+                        number_string
+                        number_string{1}
+                        number_string{1}(2:end-1)
+                        filekeys
                         filekeys(fl).file_number   = str2double(number_string{1}(2:end-1));
                         filekeys(fl).fov_filename   = fl{iF};
                         
