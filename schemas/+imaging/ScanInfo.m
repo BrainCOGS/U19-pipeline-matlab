@@ -116,7 +116,7 @@ classdef ScanInfo < dj.Imported
             recInfo.last_good_file            = lastGoodFile;
             
             % check acqTime is valid, and if not, correct it
-            recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime);
+            recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
             
             
             %% Insert to ScanInfo
@@ -171,7 +171,7 @@ classdef ScanInfo < dj.Imported
             
         end
         
-        function AcqTime = check_acqtime(self, AcqTime)
+        function AcqTime = check_acqtime(self, AcqTime, scan_directory)
             
             %Pass acqtime to sql format
             AcqTime = datetime_scanImage2sql(AcqTime);
