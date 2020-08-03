@@ -126,9 +126,11 @@ classdef ScanInfo < dj.Imported
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
                 self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
-                % Just insertion of fov and fov fiels for 2 and 3 photon
+            
+            % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
-                self.insert_fov_photonmicro(fl, key, imheader, scan_directory)
+                self.insert_fov_photonmicro(key, scan_directory)
+                self.insert_fovfile_photonmicro(key, fl, imheader)
             else
                 error('Not a valid acquisition for this pipeline, hoe did you get here ??')
             end
@@ -381,23 +383,29 @@ classdef ScanInfo < dj.Imported
                 end
             end
         end
+
+        %% Insert FOV table for 2 and 3photon
+        function insert_fov_photonmicro(self, key, scan_directory)
+            
+            fovkey = key;
+            fovkey.fov = 1;
+            fovkey.fov_directory = scan_directory;
+            fovkey.fov_depth = 0;
+            fovkey.fov_center_xy = 0;
+            fovkey.fov_size_xy = 0;
+            fovkey.fov_rotation_degrees = 0;
+            fovkey.fov_pixel_resolution_xy = 0;
+            fovkey.fov_discrete_plane_mode = 0;
+            
+            insert(imaging.FieldOfView, fovkey)
+            
+        end
         
-        %% Inser FOV and FOV field tables for 2 and 3photon
-        function insert_fov_photonmicro(self, fl, key, imheader, scan_directory)
+        %% Inser FOV file field tables for 2 and 3photon
+        function insert_fovfile_photonmicro(self, key, fl, imheader)
             
             patt_acq_number  = '_[0-9]{5}_';
             patt_file_number = '_[0-9]{5}\.';
-            
-            key.fov = 1;
-            key.fov_directory = scan_directory;
-            key.fov_depth = 0;
-            key.fov_center_xy = 0;
-            key.fov_size_xy = 0;
-            key.fov_rotation_degrees = 0;
-            key.fov_pixel_resolution_xy = 0;
-            key.fov_discrete_plane_mode = 0;
-            
-            insert(imaging.FieldOfView, key)
             
             filekeys                    = key;
             filekeys.fov                = 1; 
