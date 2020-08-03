@@ -38,6 +38,8 @@ classdef ScanInfo < dj.Imported
         photon_micro_acq       = {'2photon' '3photon'};
         mesoscope_acq          = {'mesoscope'};
         
+        date_fmt               = 'yyyy mm dd HH:MM:SS.FFF';
+        
     end
     
     methods(Access=protected)
@@ -113,16 +115,19 @@ classdef ScanInfo < dj.Imported
             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
             recInfo.last_good_file            = lastGoodFile;
             
-            % get acqTime
-            disp('aqui check empty acqtime')
-            recInfo.AcqTime
-            if isempty(recInfo.AcqTime)
+            % check acqTime is valid,
+            recInfo.AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
+            checkacqTime = datestr(datenum(recInfo.AcqTime,self.date_fmt),self.date_fmt)
+            % if acqtime is not valid
+            if ~strcmp(recInfo.AcqTime, checkacqTime)
                 disp('aqui scan dir')
                 scan_directory
+                %get date from directory
                 [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
                 disp('aqui this date')
                 thisdate
                 recInfo.AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
+                recInfo.AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
             end
             
             
@@ -203,7 +208,7 @@ classdef ScanInfo < dj.Imported
             key.scan_height               = recInfo.Height;
             disp('display acqtime2')
             recInfo.AcqTime
-            key.acq_time                  = datetime_scanImage2sql(recInfo.AcqTime);
+            key.acq_time                  = recInfo.AcqTime;
             key.n_depths                  = recInfo.nDepths;
             key.scan_depths               = recInfo.Zs;
             key.frame_rate                = recInfo.frameRate;
