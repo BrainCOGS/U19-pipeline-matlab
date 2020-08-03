@@ -195,6 +195,8 @@ classdef ScanInfo < dj.Imported
             key.file_name_base            = recInfo.Filename;
             key.scan_width                = recInfo.Width;
             key.scan_height               = recInfo.Height;
+            disp('display acqtime2')
+            recInfo.AcqTime
             key.acq_time                  = datetime_scanImage2sql(recInfo.AcqTime);
             key.n_depths                  = recInfo.nDepths;
             key.scan_depths               = recInfo.Zs;

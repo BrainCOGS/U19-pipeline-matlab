@@ -19,6 +19,9 @@ parsedInfo.Filename         = header(1).Filename;
 parsedInfo.Width            = header(1).Width;
 parsedInfo.Height           = header(1).Height;
 parsedInfo.AcqTime          = cell2mat(regexp(cell2mat(regexp(header(1).ImageDescription,'epoch = \[[0-9]{4}.+\d\]\n','match')),'[0-9]{4}(.[0-9]+.)+.[0-9]+.[0-9]+','match'));
+idx_epoch  = strfind(header(1).ImageDescription,'epoch =')
+disp('display acqtime')
+header(1).ImageDescription(idx_epoch(1)-30:idx_epoch(1)+50)
 if ~isempty(regexp(scopeStr,'SI.hFastZ.numFramesPerVolume = [0-9]+','match'))
     parsedInfo.nDepths          = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.numFramesPerVolume = [0-9]+','match')),'\d+','match')));
 else
