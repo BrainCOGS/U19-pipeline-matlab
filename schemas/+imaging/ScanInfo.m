@@ -114,8 +114,14 @@ classdef ScanInfo < dj.Imported
             recInfo.last_good_file            = lastGoodFile;
             
             % get acqTime
+            disp('aqui check empty acqtime')
+            recInfo.AcqTime
             if isempty(recInfo.AcqTime)
+                disp('aqui scan dir')
+                scan_directory
                 [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
+                disp('aqui this date')
+                thisdate
                 recInfo.AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
             end
             
