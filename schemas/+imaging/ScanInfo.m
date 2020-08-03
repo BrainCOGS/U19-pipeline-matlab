@@ -424,7 +424,7 @@ classdef ScanInfo < dj.Imported
                         
                         %Calculate file frame range for this file
                         filekeys(iF).file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(imheader{iF})];
-                        prefile_frame_range = filekeys.file_frame_range(2);
+                        prefile_frame_range = filekeys(iF).file_frame_range(2);
                         
                     end
                     
