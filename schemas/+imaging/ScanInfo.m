@@ -115,20 +115,8 @@ classdef ScanInfo < dj.Imported
             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
             recInfo.last_good_file            = lastGoodFile;
             
-            % check acqTime is valid,
-            recInfo.AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
-            checkacqTime = datestr(datenum(recInfo.AcqTime,self.date_fmt),self.date_fmt)
-            % if acqtime is not valid
-            if ~strcmp(recInfo.AcqTime, checkacqTime)
-                disp('aqui scan dir')
-                scan_directory
-                %get date from directory
-                [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
-                disp('aqui this date')
-                thisdate
-                recInfo.AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
-                recInfo.AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
-            end
+            % check acqTime is valid, and if not, correct it
+            recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime);
             
             
             %% Insert to ScanInfo
@@ -181,6 +169,39 @@ classdef ScanInfo < dj.Imported
             end
             recInfo.nFrames     = numel(recInfo.Timing.Frame_ts_sec);
             
+        end
+        
+        function AcqTime = check_acqtime(self, AcqTime)
+            
+            %Pass acqtime to sql format
+            AcqTime = datetime_scanImage2sql(AcqTime);
+            
+            isRealDate = true;
+            isSameDate = true;
+            %Check if acqtime is real date
+            try
+                %convert to date and reconvert to string ..
+                checkacqTime = datestr(datenum(AcqTime,self.date_fmt),self.date_fmt);
+                %check date strings, should be the same
+                if ~strcmp(AcqTime, checkacqTime)
+                    isSameDate = false;
+                end
+            catch
+                isRealDate = false;
+                isSameDate = false;
+            end
+            
+            % if acqtime is not valid, generate a new one
+            if ~isRealDate || ~isSameDate
+                disp('aqui scan dir')
+                scan_directory
+                %get date from directory
+                [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
+                disp('aqui this date')
+                thisdate
+                AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
+                AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
+            end
         end
         
         %% find out last good frame based on bleaching
