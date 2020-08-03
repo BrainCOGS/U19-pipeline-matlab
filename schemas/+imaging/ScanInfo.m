@@ -200,7 +200,7 @@ classdef ScanInfo < dj.Imported
                 disp('aqui this date')
                 thisdate
                 AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
-                AcqTime = datetime_scanImage2sql(recInfo.AcqTime);
+                AcqTime = datetime_scanImage2sql(AcqTime);
             end
         end
         
