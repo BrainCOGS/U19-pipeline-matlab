@@ -227,15 +227,13 @@ classdef ScanInfo < dj.Imported
         end
         
         function AcqTime = check_acqtime(self, AcqTime, scan_directory)
-            
-            %Pass acqtime to sql format
-            AcqTime = datetime_scanImage2sql(AcqTime);
-            
+                        
             isRealDate = true;
             isSameDate = true;
             %Check if acqtime is real date
             try
                 %convert to date and reconvert to string ..
+                AcqTime = datetime_scanImage2sql(AcqTime);
                 checkacqTime = datestr(datenum(AcqTime,self.date_fmt),self.date_fmt);
                 %check date strings, should be the same
                 if ~strcmp(AcqTime, checkacqTime)
