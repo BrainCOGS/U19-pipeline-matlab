@@ -82,7 +82,7 @@ classdef ScanInfo < dj.Imported
             end
             
             %% loop through files to read all image headers            
-            [fl, basename] = self.check_tif_files(tif_dir);
+            [fl, basename, isCompressed] = self.check_tif_files(tif_dir);
  
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
@@ -119,6 +119,12 @@ classdef ScanInfo < dj.Imported
             else
                 error('Not a valid acquisition for this pipeline, how did you get here ??')
             end
+            
+            %If original files where compressed
+            if isCompressed
+                u19_dj_utils.remove_tif_if_gz(fl, scan_directory);
+            end
+                
             
             cd(curr_dir)
             fprintf('\tdone after %1.1f min\n',toc(generalTimer)/60)
@@ -160,18 +166,7 @@ classdef ScanInfo < dj.Imported
             basename = fl{1}(1:stridx);
             
         end
-        
-        function remove_tif_if_gz(fl)
-            
-        for iF = 1:numel(fl)
-            if exist([fl{iF} '.gz'],'file')
-                disp(['we would delete ' fl{iF} ' agree'])
-                %delete(fl{iF})
-            end
-        end
-             
-        end
-        
+                
         function [imheader, parsedInfo] = get_parsed_info(self, fl, isMesoscope)
             
             if isempty(gcp('nocreate'))
