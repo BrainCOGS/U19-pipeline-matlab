@@ -39,6 +39,11 @@ classdef ScanInfo < dj.Imported
         mesoscope_acq          = {'mesoscope'};
         
         date_fmt               = 'yyyy mm dd HH:MM:SS.FFF';
+        tif_number_fmt         = '_[0-9]{5}.tif';
+        tif_gz_number_fmt      = '_[0-9]{5}.tif.gz';
+        
+        patt_acq_number        = '_[0-9]{5}_';
+        patt_file_number       = '_[0-9]{5}\.';
         
     end
     
@@ -64,46 +69,25 @@ classdef ScanInfo < dj.Imported
             
             originalStacksdir = fullfile(scan_directory, 'originalStacks');
             
-            if isempty(dir('*tif')) && exist(originalStacksdir,'dir')
+            if (isempty(dir('*tif*')) && exist(originalStacksdir,'dir'))
+                tif_dir = fullfile(scan_directory, 'originalStacks');
                 cd originalStacks
                 skipParsing = true;
             else
+                tif_dir = scan_directory;
                 if ~exist(originalStacksdir,'dir')
                     mkdir('originalStacks');
                 end
                 skipParsing = false;
             end
             
-            %% loop through files to read all image headers
-            
+            %% loop through files to read all image headers            
+            [fl, basename] = self.check_tif_files(tif_dir);
+ 
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
-            
-            fl       = dir('*tif'); % tif file list
-            fl       = {fl(:).name};
-            stridx   = regexp(fl{1},'_[0-9]{5}.tif');
-            basename = fl{1}(1:stridx);
-            
-            if isempty(gcp('nocreate')); poolobj = parpool; end
-            
-            %If mesoscope variable set before parfoor lope
-            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
-            
-            parfor iF = 1:numel(fl)
-                [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
-                %If is mesoscope get also roi info from header
-                if isMesoscope
-                    parsedROI{iF} = u19_dj_utils.parse_roi_info_tif_header(imheader{iF});
-                end
-            end
-            
-            %Complete parsedInfo structure with parsedROI if this is mesoscope
-            if isMesoscope
-                for iF = 1:numel(fl)
-                    parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
-                end
-            end
-            
+            [imheader, parsedInfo] = self.get_parsed_info(fl);
+                        
             %Get recInfo field
             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
             
@@ -131,7 +115,7 @@ classdef ScanInfo < dj.Imported
                 self.insert_fov_photonmicro(key, scan_directory)
                 self.insert_fovfile_photonmicro(key, fl, imheader)
             else
-                error('Not a valid acquisition for this pipeline, hoe did you get here ??')
+                error('Not a valid acquisition for this pipeline, how did you get here ??')
             end
             
             cd(curr_dir)
@@ -139,6 +123,78 @@ classdef ScanInfo < dj.Imported
             
         end
         
+        %% Check if tif or tif.gz files exist
+        function [fl, basename, is_compressed] = check_tif_files(self, tif_dir)
+            
+            is_compressed = 0;
+            
+            %Save current directory and enter tif directory
+            curr_dir = pwd;
+            cd(tif_dir);
+
+            %Check for tif files (or tif.gz if there are not tif)
+            fl       = dir('*tif'); % tif file list
+            if isempty(fl)
+                is_compressed = 1;
+                fl_gz       = dir('*tif.gz'); % check for compressed videos
+                
+                if ~isempty(fl_gz)
+                    % unzip gz videos
+                    gunzip(fl_gz(:).name)
+                    fl       = dir('*tif'); % tif file list
+                else
+                    error('There are no tif or tif.gz files in scan directory')
+                end
+            end
+                            
+            %Check for base name 
+            fl       = {fl(:).name};
+            stridx   = regexp(fl{1},self.tif_number_fmt);
+            
+            if isempty(stridx)
+                error(['Files are not in correct format ' fl{1} ' ~= ' fmt_cmp])
+            end
+            
+            basename = fl{1}(1:stridx);
+            
+        end
+        
+        function remove_tif_if_gz(fl)
+            
+        for iF = 1:numel(fl)
+            if exist([fl{iF} '.gz'],'file')
+                disp(['we would delete ' fl{iF} ' agree'])
+                %delete(fl{iF})
+            end
+        end
+             
+        end
+        
+        function [imheader, parsedInfo] = get_parsed_info(self, fl)
+            
+            if isempty(gcp('nocreate'))
+                parpool; 
+            end
+            
+            %If mesoscope variable set before parfoor lope
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            
+            parfor iF = 1:numel(fl)
+                [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
+                %If is mesoscope get also roi info from header
+                if isMesoscope
+                    parsedROI{iF} = u19_dj_utils.parse_roi_info_tif_header(imheader{iF});
+                end
+            end
+            
+            %Complete parsedInfo structure with parsedROI if this is mesoscope
+            if isMesoscope
+                for iF = 1:numel(fl)
+                    parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
+                end
+            end
+        end
+            
         %% get nfovs depending of acquisition type
         function nfovs = get_nfovs(self, recInfo, isMesoscope)
             
@@ -438,8 +494,6 @@ classdef ScanInfo < dj.Imported
         %% Inser FOV file field tables for 2 and 3photon
         function insert_fovfile_photonmicro(self, key, fl, imheader)
             
-            patt_acq_number  = '_[0-9]{5}_';
-            patt_file_number = '_[0-9]{5}\.';
             
             filekeys                    = key;
             filekeys.fov                = 1; 
@@ -454,8 +508,8 @@ classdef ScanInfo < dj.Imported
                 for iF = 1:numel(fl)
                     
                     % check for files to have this structure: 'E84_20190614_40per_00001_00001.tif'
-                    acq_string = regexp(fl{iF}, patt_acq_number, 'match');
-                    number_string = regexp(fl{iF}, patt_file_number, 'match');
+                    acq_string = regexp(fl{iF}, self.patt_acq_number, 'match');
+                    number_string = regexp(fl{iF}, self.patt_file_number, 'match');
                     
                     %If regexp of file is there ..
                     if (length(acq_string) == 1 && length(number_string) == 1)
