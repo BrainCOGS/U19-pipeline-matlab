@@ -86,7 +86,9 @@ classdef ScanInfo < dj.Imported
  
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
-            [imheader, parsedInfo] = self.get_parsed_info(fl);
+            %If mesoscope variable set before parfoor lope
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
                         
             %Get recInfo field
             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
@@ -170,15 +172,12 @@ classdef ScanInfo < dj.Imported
              
         end
         
-        function [imheader, parsedInfo] = get_parsed_info(self, fl)
+        function [imheader, parsedInfo] = get_parsed_info(self, fl, isMesoscope)
             
             if isempty(gcp('nocreate'))
                 parpool; 
             end
-            
-            %If mesoscope variable set before parfoor lope
-            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
-            
+                        
             parfor iF = 1:numel(fl)
                 [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
