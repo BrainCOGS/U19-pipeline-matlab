@@ -9,10 +9,16 @@ function remove_tif_if_gz(fl, directory)
 curr_dir = pwd;
 cd(directory)
 
+fl
+directory
+
+
 for iF = 1:numel(fl)
     if exist([fl{iF} '.gz'],'file')
         disp(['we would delete ' fl{iF} ' agree'])
         delete(fl{iF})
+    else
+        disp(['we didnt find compressed ' fl{iF}])
     end
 end
 

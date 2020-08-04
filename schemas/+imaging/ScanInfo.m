@@ -84,41 +84,41 @@ classdef ScanInfo < dj.Imported
             %% loop through files to read all image headers            
             [fl, basename, isCompressed] = self.check_tif_files(tif_dir);
  
-            % get header with parfor loop
-            fprintf('\tgetting headers...\n')
-            %If mesoscope variable set before parfoor lope
-            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
-            [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
-                        
-            %Get recInfo field
-            [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
-            
-            %get nfovs field
-            recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
-            
-            %Get last "good" file because of bleaching
-            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
-            recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
-            recInfo.last_good_file            = lastGoodFile;
-            
-            % check acqTime is valid, and if not, correct it
-            recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
-            
-            
-            %% Insert to ScanInfo
-            self.insert_scan_info(key, recInfo)
-            
-            %% FOV ROI Processing for mesoscope
-            if any(contains(self.mesoscope_acq, acq_type))
-                self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
-            
-            % Just insertion of fov and fov fiels for 2 and 3 photon
-            elseif any(contains(self.photon_micro_acq, acq_type))
-                self.insert_fov_photonmicro(key, scan_directory)
-                self.insert_fovfile_photonmicro(key, fl, imheader)
-            else
-                error('Not a valid acquisition for this pipeline, how did you get here ??')
-            end
+%             % get header with parfor loop
+%             fprintf('\tgetting headers...\n')
+%             %If mesoscope variable set before parfoor lope
+%             isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+%             [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
+%                         
+%             %Get recInfo field
+%             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
+%             
+%             %get nfovs field
+%             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
+%             
+%             %Get last "good" file because of bleaching
+%             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
+%             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
+%             recInfo.last_good_file            = lastGoodFile;
+%             
+%             % check acqTime is valid, and if not, correct it
+%             recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
+%             
+%             
+%             %% Insert to ScanInfo
+%             self.insert_scan_info(key, recInfo)
+%             
+%             %% FOV ROI Processing for mesoscope
+%             if any(contains(self.mesoscope_acq, acq_type))
+%                 self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+%             
+%             % Just insertion of fov and fov fiels for 2 and 3 photon
+%             elseif any(contains(self.photon_micro_acq, acq_type))
+%                 self.insert_fov_photonmicro(key, scan_directory)
+%                 self.insert_fovfile_photonmicro(key, fl, imheader)
+%             else
+%                 error('Not a valid acquisition for this pipeline, how did you get here ??')
+%             end
             
             %If original files where compressed
             if isCompressed
@@ -139,14 +139,16 @@ classdef ScanInfo < dj.Imported
             %Save current directory and enter tif directory
             curr_dir = pwd;
             cd(tif_dir);
-
+            
             %Check for tif files (or tif.gz if there are not tif)
             fl       = dir('*tif'); % tif file list
+            
             if isempty(fl)
-                is_compressed = 1;
+                
                 fl_gz       = dir('*tif.gz'); % check for compressed videos
                 
                 if ~isempty(fl_gz)
+                    is_compressed = 1;
                     % unzip gz videos
                     gunzip({fl_gz(:).name});
                     fl       = dir('*tif'); % tif file list
