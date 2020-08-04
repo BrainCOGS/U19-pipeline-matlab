@@ -84,44 +84,45 @@ classdef ScanInfo < dj.Imported
             %% loop through files to read all image headers            
             [fl, basename, isCompressed] = self.check_tif_files(tif_dir);
  
-%             % get header with parfor loop
-%             fprintf('\tgetting headers...\n')
-%             %If mesoscope variable set before parfoor lope
-%             isMesoscope = any(contains(self.mesoscope_acq, acq_type));
-%             [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
-%                         
-%             %Get recInfo field
-%             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
-%             
-%             %get nfovs field
-%             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
-%             
-%             %Get last "good" file because of bleaching
-%             [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
-%             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
-%             recInfo.last_good_file            = lastGoodFile;
-%             
-%             % check acqTime is valid, and if not, correct it
-%             recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
-%             
-%             
-%             %% Insert to ScanInfo
-%             self.insert_scan_info(key, recInfo)
-%             
-%             %% FOV ROI Processing for mesoscope
-%             if any(contains(self.mesoscope_acq, acq_type))
-%                 self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
-%             
-%             % Just insertion of fov and fov fiels for 2 and 3 photon
-%             elseif any(contains(self.photon_micro_acq, acq_type))
-%                 self.insert_fov_photonmicro(key, scan_directory)
-%                 self.insert_fovfile_photonmicro(key, fl, imheader)
-%             else
-%                 error('Not a valid acquisition for this pipeline, how did you get here ??')
-%             end
+            % get header with parfor loop
+            fprintf('\tgetting headers...\n')
+            %If mesoscope variable set before parfoor lope
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
+                        
+            %Get recInfo field
+            [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
+            
+            %get nfovs field
+            recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
+            
+            %Get last "good" file because of bleaching
+            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
+            recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
+            recInfo.last_good_file            = lastGoodFile;
+            
+            % check acqTime is valid, and if not, correct it
+            recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
+            
+            
+            %% Insert to ScanInfo
+            self.insert_scan_info(key, recInfo)
+            
+            %% FOV ROI Processing for mesoscope
+            if any(contains(self.mesoscope_acq, acq_type))
+                self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+            
+            % Just insertion of fov and fov fiels for 2 and 3 photon
+            elseif any(contains(self.photon_micro_acq, acq_type))
+                self.insert_fov_photonmicro(key, scan_directory)
+                self.insert_fovfile_photonmicro(key, fl, imheader)
+            else
+                error('Not a valid acquisition for this pipeline, how did you get here ??')
+            end
             
             %If original files where compressed
             if isCompressed
+                disp('it started as compressed files, removing uncompressed')
                 u19_dj_utils.remove_tif_if_gz(fl, scan_directory);
             end
                 
@@ -243,12 +244,10 @@ classdef ScanInfo < dj.Imported
             
             % if acqtime is not valid, generate a new one
             if ~isRealDate || ~isSameDate
-                disp('aqui scan dir')
-                scan_directory
+
                 %get date from directory
                 [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
-                disp('aqui this date')
-                thisdate
+
                 AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
                 AcqTime = datetime_scanImage2sql(AcqTime);
             end
