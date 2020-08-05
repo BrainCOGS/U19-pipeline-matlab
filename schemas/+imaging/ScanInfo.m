@@ -110,7 +110,7 @@ classdef ScanInfo < dj.Imported
             
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
-                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_directory)
             
             % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
@@ -306,7 +306,7 @@ classdef ScanInfo < dj.Imported
         end
         
         %% Fov and Fov file tables for mesoscope imaging
-        function insert_fov_mesoscope(self, fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+        function insert_fov_mesoscope(self, fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_directory)
             
             nROI                          = recInfo.nROIs;
             % scan image concatenates FOVs (ROIs) by adding rows, with padding between them.
