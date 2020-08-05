@@ -14,7 +14,11 @@ if nargin < 2; skipBehavSync = false; end
 header                      = imfinfo(tifFn);
 
 %% general image info
-scopeStr                    = header(1).ImageDescription;
+if isfield(header(1), 'Software')
+    scopeStr                    = header(1).Software;
+else
+    scopeStr                    = header(1).ImageDescription;
+end
 parsedInfo.Filename         = header(1).Filename;
 parsedInfo.Width            = header(1).Width;
 parsedInfo.Height           = header(1).Height;
