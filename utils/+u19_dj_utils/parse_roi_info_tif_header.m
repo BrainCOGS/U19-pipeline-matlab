@@ -9,8 +9,10 @@ function [parsedInfo] = parse_roi_info_tif_header(header)
 % OUTPUT:
 % header is the unprocessed header string, parsedInfo is matlab data structure
 
+%% microscope info
+scopeStr                           = header(1).Software;
+resolutionFactor                   = mesoscopeParams.xySizeFactor * str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.objectiveResolution = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
 
-%% whole header
 ROIinfo          = header(1).Artist;
 ROImarks         = strfind(ROIinfo,'"scanimage.mroi.Roi"');
 parsedInfo.nROIs = numel(ROImarks);

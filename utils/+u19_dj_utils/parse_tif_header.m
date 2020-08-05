@@ -77,13 +77,6 @@ if ~skipBehavSync
     end
 end
 
-%% microscope info
-if contains(scopeStr,'objectiveResolution')
-    resolutionFactor                   = mesoscopeParams.xySizeFactor * str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.objectiveResolution = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
-else
-    resolutionFactor                   = 1;
-end
-
 parsedInfo.Scope.Power_percent         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hBeams.powers = \d+','match')),'\d+','match')));
 parsedInfo.Scope.Channels              = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hChannels.channelSave = \d+','match')),'\d+','match')));
 parsedInfo.Scope.cfgFilename           = cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hConfigurationSaver.cfgFilename = .+cfg','match')),' .[A-Z].+cfg','match'));
