@@ -436,7 +436,7 @@ classdef ScanInfo < dj.Imported
                     end
                     
                     fov_key.fov_name                = thisname;
-                    fov_key.fov_depth               = recInfo.ROI(iROI).scan_depths(iZ);
+                    fov_key.fov_depth               = recInfo.ROI(iROI).Zs(iZ);
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
                     fov_key.fov_size_xy             = recInfo.ROI(iROI).sizeXY;
                     fov_key.fov_rotation_degrees    = recInfo.ROI(iROI).rotationDegrees;
