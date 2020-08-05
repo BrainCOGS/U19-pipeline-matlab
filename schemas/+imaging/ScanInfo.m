@@ -444,7 +444,7 @@ classdef ScanInfo < dj.Imported
                     fov_key.fov_discrete_plane_mode = recInfo.ROI(iROI).discretePlaneMode;%boolean(recInfo.ROI(iROI).discretePlaneMode);
                     
                     ct = ct+1;
-                    insert(meso.FieldOfView,fov_key)
+                    insert(imaging.FieldOfView,fov_key)
                     
                     % FieldOfViewFiles
                     file_entries                    = key_data;
@@ -462,7 +462,7 @@ classdef ScanInfo < dj.Imported
                         file_entries(iF).file_frame_range  = [cumulativeFrames(iF)+1 cumulativeFrames(iF+1)];
                         
                     end
-                    insert(meso.FieldOfViewFile, file_entries)
+                    insert(imaging.FieldOfViewFile, file_entries)
                 end
             end
         end
