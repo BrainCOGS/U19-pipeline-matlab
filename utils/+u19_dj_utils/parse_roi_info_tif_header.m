@@ -46,6 +46,8 @@ for iROI = 1:numel(ROImarks)
     parsedInfo.ROI(iROI).pixelResolutionXY   = cellfun(@eval,regexp(cell2mat(regexp(thisROI,'"pixelResolutionXY": .(\d+.\d+|\d+).(\d+.\d+|\d+).','match')),'(\d+.\d{,1}|\d+)','match'));
     parsedInfo.ROI(iROI).discretePlaneMode   = logical(str2double(cell2mat(regexp(cell2mat(regexp(thisROI,'"discretePlaneMode": \d','match')),'\d','match'))));
     
+    disp('aqui zs')
+    parsedInfo.ROI(iROI).Zs 
 end
 end
 

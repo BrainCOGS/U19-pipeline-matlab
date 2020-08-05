@@ -188,8 +188,13 @@ classdef ScanInfo < dj.Imported
             if isMesoscope
                 for iF = 1:numel(fl)
                     parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
+                    disp('aqui zs 2')
+                    parsedInfo{iF}.ROI(1).Zs 
                 end
             end
+            
+
+            
         end
             
         %% get nfovs depending of acquisition type
@@ -436,6 +441,7 @@ classdef ScanInfo < dj.Imported
                     end
                     
                     fov_key.fov_name                = thisname;
+                    recInfo.ROI(iROI).Zs
                     fov_key.fov_depth               = recInfo.ROI(iROI).Zs(iZ);
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
                     fov_key.fov_size_xy             = recInfo.ROI(iROI).sizeXY;
