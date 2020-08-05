@@ -421,7 +421,7 @@ classdef ScanInfo < dj.Imported
             cumulativeFrames = [0; cumulativeFrames];
             
             for iROI = 1:nROI
-                ndepths = numel(recInfo.ROI(iROI).scan_depths);
+                ndepths = numel(recInfo.ROI(iROI).Zs);
                 for iZ = 1:ndepths
                     
                     % FieldOfView
