@@ -441,7 +441,15 @@ classdef ScanInfo < dj.Imported
                     end
                     
                     fov_key.fov_name                = thisname;
-                    recInfo.ROI(iROI).Zs
+                    for iROIi = 1:nROI
+                        for iZi = 1:ndepths
+                            disp(['Aqui zs num ' num2str(iROIi) num2str(iZi)])
+                            recInfo.ROI(iROIi).Zs(iZi)
+                            if isnan(recInfo.ROI(iROIi).Zs(iZi))
+                                recInfo.ROI(iROIi).Zs(iZi) = 0;
+                            end
+                        end    
+                    end
                     fov_key.fov_depth               = recInfo.ROI(iROI).Zs(iZ);
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
                     fov_key.fov_size_xy             = recInfo.ROI(iROI).sizeXY;
