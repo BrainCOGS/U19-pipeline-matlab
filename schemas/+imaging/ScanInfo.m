@@ -257,7 +257,7 @@ classdef ScanInfo < dj.Imported
         function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, skipParsing, scan_directory)
             
             if skipParsing
-                lastGoodFile        = selectFilesFromMeanF([scan_directory 'originalStacks']);
+                lastGoodFile        = selectFilesFromMeanF(fullfile(scan_directory, 'originalStacks'));
             else
                 lastGoodFile        = selectFilesFromMeanF(scan_directory);
             end
