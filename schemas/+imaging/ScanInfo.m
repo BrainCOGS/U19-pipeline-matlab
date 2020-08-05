@@ -110,7 +110,7 @@ classdef ScanInfo < dj.Imported
             
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
-                self.insert_fov_mesoscope(fl, key_data, skipParsing, imheader, recInfo, basename, cumulativeFrames)
+                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames)
             
             % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
