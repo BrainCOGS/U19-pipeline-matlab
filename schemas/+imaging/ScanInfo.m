@@ -81,15 +81,15 @@ classdef ScanInfo < dj.Imported
                 skipParsing = false;
             end
             
-            %% loop through files to read all image headers            
+            %% loop through files to read all image headers
             [fl, basename, isCompressed] = self.check_tif_files(tif_dir);
- 
+            
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
             %If mesoscope variable set before parfoor lope
             isMesoscope = any(contains(self.mesoscope_acq, acq_type));
             [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
-                        
+            
             %Get recInfo field
             [recInfo, framesPerFile] = self.get_recording_info(fl, imheader, parsedInfo);
             
@@ -111,8 +111,8 @@ classdef ScanInfo < dj.Imported
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
                 self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_directory)
-            
-            % Just insertion of fov and fov fiels for 2 and 3 photon
+                
+                % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
                 self.insert_fov_photonmicro(key, scan_directory)
                 self.insert_fovfile_photonmicro(key, fl, imheader)
@@ -125,7 +125,7 @@ classdef ScanInfo < dj.Imported
                 disp('it started as compressed files, removing uncompressed')
                 u19_dj_utils.remove_tif_if_gz(fl, scan_directory);
             end
-                
+            
             
             cd(curr_dir)
             fprintf('\tdone after %1.1f min\n',toc(generalTimer)/60)
@@ -157,8 +157,8 @@ classdef ScanInfo < dj.Imported
                     error('There are no tif or tif.gz files in scan directory')
                 end
             end
-                            
-            %Check for base name 
+            
+            %Check for base name
             fl       = {fl(:).name};
             stridx   = regexp(fl{1},self.tif_number_fmt);
             
@@ -169,13 +169,13 @@ classdef ScanInfo < dj.Imported
             basename = fl{1}(1:stridx);
             
         end
-                
+        
         function [imheader, parsedInfo] = get_parsed_info(self, fl, isMesoscope)
             
             if isempty(gcp('nocreate'))
-                parpool; 
+                parpool;
             end
-                        
+            
             parfor iF = 1:numel(fl)
                 [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
@@ -189,14 +189,14 @@ classdef ScanInfo < dj.Imported
                 for iF = 1:numel(fl)
                     parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
                     disp(['aqui zs 2 ', num2str(iF)])
-                    parsedInfo{iF}.ROI.Zs 
+                    parsedInfo{iF}.ROI.Zs
                 end
             end
             
-
+            
             
         end
-            
+        
         %% get nfovs depending of acquisition type
         function nfovs = get_nfovs(self, recInfo, isMesoscope)
             
@@ -230,7 +230,7 @@ classdef ScanInfo < dj.Imported
         end
         
         function AcqTime = check_acqtime(self, AcqTime, scan_directory)
-                        
+            
             isRealDate = true;
             isSameDate = true;
             %Check if acqtime is real date
@@ -249,10 +249,10 @@ classdef ScanInfo < dj.Imported
             
             % if acqtime is not valid, generate a new one
             if ~isRealDate || ~isSameDate
-
+                
                 %get date from directory
                 [~,thisdate]    = mouseAndDateFromFileName(scan_directory);
-
+                
                 AcqTime = [thisdate(1:4) ' ' thisdate(5:6) ' ' thisdate(7:8) ' 00 00 00.000'];
                 AcqTime = datetime_scanImage2sql(AcqTime);
             end
@@ -314,6 +314,10 @@ classdef ScanInfo < dj.Imported
             nROI                          = recInfo.nROIs;
             % scan image concatenates FOVs (ROIs) by adding rows, with padding between them.
             % This part parses and write tifs individually for each FOV
+            
+            %Get stridx again
+            stridx   = regexp(fl{1},self.tif_number_fmt);
+            
             if ~skipParsing
                 if isempty(gcp('nocreate')); poolobj = parpool; end
                 
@@ -333,6 +337,8 @@ classdef ScanInfo < dj.Imported
                     end
                 end
                 
+                
+                
                 parfor iF = 1:numel(fl)
                     fprintf('%s\n',fl{iF})
                     
@@ -349,6 +355,8 @@ classdef ScanInfo < dj.Imported
                     [nr,nc,~]  = size(thisstack);
                     padsize    = (nr - sum(ROInr)) / (nROI - 1);
                     rowct      = 1;
+                    
+                    
                     
                     % create a separate tif for each ROI
                     for iROI = 1:nROI
@@ -445,7 +453,7 @@ classdef ScanInfo < dj.Imported
                         for iZi = 1:ndepths
                             disp(['Aqui zs num ' num2str(iROIi) num2str(iZi)])
                             recInfo.ROI(iROIi).Zs(iZi)
-                        end    
+                        end
                     end
                     fov_key.fov_depth               = recInfo.ROI(iROI).Zs(iZ);
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
@@ -477,7 +485,7 @@ classdef ScanInfo < dj.Imported
                 end
             end
         end
-
+        
         %% Insert FOV table for 2 and 3photon
         function insert_fov_photonmicro(self, key, scan_directory)
             
@@ -500,7 +508,7 @@ classdef ScanInfo < dj.Imported
             
             
             filekeys                    = key;
-            filekeys.fov                = 1; 
+            filekeys.fov                = 1;
             filekeys.file_number        = [];
             filekeys.fov_filename       = '';
             filekeys.file_frame_range   = '';
@@ -518,7 +526,7 @@ classdef ScanInfo < dj.Imported
                     %If regexp of file is there ..
                     if (length(acq_string) == 1 && length(number_string) == 1)
                         %Get file number
-
+                        
                         filekeys(iF).file_number   = str2double(number_string{1}(2:end-1));
                         filekeys(iF).fov_filename   = fl{iF};
                         
