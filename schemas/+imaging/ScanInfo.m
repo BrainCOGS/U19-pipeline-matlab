@@ -323,7 +323,7 @@ classdef ScanInfo < dj.Imported
                 
                 ROInr       = arrayfun(@(x)(x.pixelResolutionXY(2)),recInfo.ROI);
                 ROInc       = arrayfun(@(x)(x.pixelResolutionXY(1)),recInfo.ROI);
-                interROIlag = recInfo.inter_fov_lag_sec;
+                interROIlag = recInfo.interROIlag_sec;
                 Depths      = recInfo.nDepths;
                 
                 % make the folders in advance, before the parfor loop
