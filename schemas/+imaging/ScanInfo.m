@@ -188,7 +188,7 @@ classdef ScanInfo < dj.Imported
             if isMesoscope
                 for iF = 1:numel(fl)
                     parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
-                    disp(['aqui zs 2 ', num2str(fl)])
+                    disp(['aqui zs 2 ', num2str(iF)])
                     parsedInfo{iF}.ROI.Zs 
                 end
             end
@@ -445,9 +445,6 @@ classdef ScanInfo < dj.Imported
                         for iZi = 1:ndepths
                             disp(['Aqui zs num ' num2str(iROIi) num2str(iZi)])
                             recInfo.ROI(iROIi).Zs(iZi)
-                            if isnan(recInfo.ROI(iROIi).Zs(iZi))
-                                recInfo.ROI(iROIi).Zs(iZi) = 0;
-                            end
                         end    
                     end
                     fov_key.fov_depth               = recInfo.ROI(iROI).Zs(iZ);
