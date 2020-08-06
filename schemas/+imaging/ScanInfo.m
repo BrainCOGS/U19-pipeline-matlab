@@ -188,8 +188,8 @@ classdef ScanInfo < dj.Imported
             if isMesoscope
                 for iF = 1:numel(fl)
                     parsedInfo{iF} = u19_dj_utils.cat_struct(parsedInfo{iF}, parsedROI{iF});
-                    disp('aqui zs 2')
-                    parsedInfo{iF}.ROI(1).Zs 
+                    disp(['aqui zs 2 ', num2str(fl)])
+                    parsedInfo{iF}.ROI.Zs 
                 end
             end
             
@@ -281,8 +281,6 @@ classdef ScanInfo < dj.Imported
             key.file_name_base            = recInfo.Filename;
             key.scan_width                = recInfo.Width;
             key.scan_height               = recInfo.Height;
-            disp('display acqtime2')
-            recInfo.AcqTime
             key.acq_time                  = recInfo.AcqTime;
             key.n_depths                  = recInfo.nDepths;
             key.scan_depths               = recInfo.Zs;
@@ -442,6 +440,8 @@ classdef ScanInfo < dj.Imported
                     
                     fov_key.fov_name                = thisname;
                     for iROIi = 1:nROI
+                        disp(['Aqui zs original'])
+                        recInfo.ROI(iROIi).Zs
                         for iZi = 1:ndepths
                             disp(['Aqui zs num ' num2str(iROIi) num2str(iZi)])
                             recInfo.ROI(iROIi).Zs(iZi)
