@@ -8,7 +8,7 @@ value         : blob     # value of parameter
 
 classdef McParameterSetParameter < dj.Part
     properties(SetAccess=protected)
-        master   = previousimaging.McParameterSet
+        master   = imaging.McParameterSet
     end
     methods
         function make(self, key)
@@ -30,7 +30,7 @@ classdef McParameterSetParameter < dj.Part
                 'NonLinearNormalized' , 'mc_black_tolerance' , -1;
                 'NonLinearNormalized' , 'mc_median_rebin' , 10;
                 
-                }, 'VariableNames',{'mcorr_method' 'mc_parameter_name' 'value'});
+                }, 'VariableNames',{'mc_method' 'mc_parameter_name' 'value'});
             
             tableParam.mc_method = categorical(tableParam.mc_method);
             tableParam.mc_parameter_name = categorical(tableParam.mc_parameter_name);
