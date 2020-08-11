@@ -18,7 +18,7 @@ classdef MotionCorrection < dj.Imported
             end
             
             %Define cfg.mcorr with parameters (as in meso pipeline)
-            if contains(key.mcorr_method,'NonLinear')
+            if contains(key.mc_method,'NonLinear')
                 cfg.mcorr    = {params.mc_max_shift, params.mc_max_iter, params.mc_stop_below_shift, ...
                     params.mc_black_tolerance, params.mc_median_rebin};
             else
