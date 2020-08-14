@@ -28,7 +28,7 @@ classdef Segmentation < dj.Imported
       
       %% analysis params
       %%Get structure for searching in SegParameterSetParameter table      
-      params        = getParametersFromQuery(previousimaging.SegParameterSetParameter & key);
+      params        = u19_dj_utils.getParametersFromQuery(previousimaging.SegParameterSetParameter & key);
 
       frameRate     = fetch1(previousimaging.ScanInfo & key, 'frame_rate');
       

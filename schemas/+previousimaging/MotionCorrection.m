@@ -10,7 +10,7 @@ classdef MotionCorrection < dj.Imported
             
             
             %Get Parameters from McParameterSetParameter table
-            params        = getParametersFromQuery(previousimaging.McParameterSetParameter & key);
+            params        = u19_dj_utils.getParametersFromQuery(previousimaging.McParameterSetParameter & key);
             
             %Correct mc_black_tolerance parameter
             if params.mc_black_tolerance < 0
