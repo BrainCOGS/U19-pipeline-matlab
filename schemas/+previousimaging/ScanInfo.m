@@ -67,7 +67,7 @@ classdef ScanInfo < dj.Computed
                 for iF = 1:numel(fl)
                     %Get header and imageDescription
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
-                     if iF == 3
+                     if iF == 1
                         scopeStr                    = header(1).Software;
                         scopeStr
                         idx = strfind(scopeStr, 'scanFrameRate');
@@ -79,18 +79,18 @@ classdef ScanInfo < dj.Computed
                     number_string = regexp(fl{iF}, patt_file_number, 'match');
                    
                    if (length(acq_string) == 1 && length(number_string) == 1)
-                       filekey.fov = 1;
-                       filekey.file_number   = str2double(number_string{1}(2:end-1));
-                       filekey.fov_filename   = fl{iF};
+                       filekey(iF).fov = 1;
+                       filekey(iF).file_number   = str2double(number_string{1}(2:end-1));
+                       filekey(iF).fov_filename   = fl{iF};
                    
-                       filekey.file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
-                       prefile_frame_range = filekey.file_frame_range(2);
+                       filekey(iF).file_frame_range = [prefile_frame_range+1 prefile_frame_range+numel(header)];
+                       prefile_frame_range = filekey(iF).file_frame_range(2);
                    
-                       insert(previousimaging.FieldOfViewFile, filekey)
+                       
                    end
                                               
                 end
-
+                insert(previousimaging.FieldOfViewFile, filekey)
                 
                 % insert record on scaninfo
                 key.frame_rate = scanFrameRate;
