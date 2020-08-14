@@ -40,6 +40,8 @@ classdef MotionCorrection < dj.Imported
             info                          = cv.imfinfox(movieFiles{1}, true);
             info
             file                          = cv.imreadx(movieFiles{1});
+            size(file)
+            class(file)
             if numel(info.channels) > 1
                 cfg.mcorr{end+1}            = [0, numel(info.channels)-1];
             end
