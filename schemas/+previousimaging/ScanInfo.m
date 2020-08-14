@@ -65,13 +65,11 @@ classdef ScanInfo < dj.Computed
             if(~isempty(fl))
                 prefile_frame_range = 0;
                 for iF = 1:numel(fl)
+                    iF
                     %Get header and imageDescription
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
                      if iF == 1
                         scopeStr                    = header(1).Software;
-                        scopeStr
-                        idx = strfind(scopeStr, 'scanFrameRate');
-                        scopeStr(idx-50:idx+50)
                         scanFrameRate         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hRoiManager.scanFrameRate = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
                      end
 
@@ -95,7 +93,7 @@ classdef ScanInfo < dj.Computed
                 % insert record on scaninfo
                 key.frame_rate = scanFrameRate;
                 %Last frame range (from last file) is our nframes
-                key.nframes = filekey.file_frame_range(2);
+                key.nframes = filekey(end).file_frame_range(2);
                 self.insert(key)
             end
             
