@@ -69,7 +69,8 @@ classdef ScanInfo < dj.Computed
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
                      if iF == 1
                         scopeStr                    = header(1).ImageDescription;
-                        idx = strfind(scopeStr, 'scanFrameRate');
+                        scopeStr
+                        idx = strfind(scopeStr, 'scanVolumeRate');
                         scopeStr(idx-50:idx+50)
                         scanFrameRate         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hRoiManager.scanFrameRate = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
                      end
