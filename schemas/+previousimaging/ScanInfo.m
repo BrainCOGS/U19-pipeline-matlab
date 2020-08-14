@@ -38,6 +38,11 @@ classdef ScanInfo < dj.Computed
             
             %Get imaging directory
             imaging_directory = fetch1(previousimaging.Scan & key, 'scan_directory');
+            imaging_directory = u19_dj_utils.format_bucket_path(imaging_directory);
+            
+            %Check if directory exists in system
+            u19_dj_utils.assert_mounted_location(imaging_directory)
+            
             dir_info          = dir(imaging_directory);
             dir_info          = {dir_info(:).name};
             
@@ -62,8 +67,11 @@ classdef ScanInfo < dj.Computed
                 for iF = 1:numel(fl)
                     %Get header and imageDescription
                      header = imfinfo(fullfile(imaging_directory, fl{iF}));
-                     imageDesc = getImageDescriptionTiff(header);
-                    
+                     if iF == 1
+                        scopeStr                    = header(1).ImageDescription;
+                        scanFrameRate         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hRoiManager.scanFrameRate = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
+                     end
+
                     acq_string = regexp(fl{iF}, patt_acq_number, 'match');
                     number_string = regexp(fl{iF}, patt_file_number, 'match');
                    
@@ -82,7 +90,7 @@ classdef ScanInfo < dj.Computed
 
                 
                 % insert record on scaninfo
-                key.frame_rate = imageDesc.scanimage.SI.hRoiManager.scanFrameRate;
+                key.frame_rate = scanFrameRate;
                 %Last frame range (from last file) is our nframes
                 key.nframes = filekey.file_frame_range(2);
                 self.insert(key)

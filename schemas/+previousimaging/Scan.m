@@ -10,6 +10,20 @@ frame_time          : longblob
 %}
 
 classdef Scan < dj.Imported
+    
+    properties (Constant)
+        
+        % Acquisition types for 2,3 photon and mesoscope
+        photon_micro_acq       = {'2photon' '3photon'};
+        mesoscope_acq          = {'mesoscope'};
+        
+        % Base directory for for 2,3 photon and mesoscope
+        photon_micro_base_dir  = fullfile('Bezos', 'RigData', 'scope' ,'bay3');
+        zhihao_micro_base_dir  = fullfile('braininit', 'RigData', 'scope' ,'bay1');
+        mesoscope_base_dir     = fullfile('braininit', 'RigData', 'mesoscope', 'imaging');
+        
+    end
+    
     methods(Access=protected)
         
         function makeTuples(self, key)
@@ -19,63 +33,260 @@ classdef Scan < dj.Imported
             session_date         = erase(fetch1(acquisition.Session & key, 'session_date'), '-');
             ba = fetch1(reference.BrainArea & "brain_area = 'EC'", 'brain_area');
             
-            %get main dir for acquisition files
-            rigDir               = fullfile('/jukebox', 'Bezos', 'RigData', 'scope' ,'bay3');
+            % get acquisition type of session (differentiate mesoscope and 2_3 photon
+            acq_type             = fetch1(proj(acquisition.Session, 'session_location->location') * ...
+                lab.Location & key, 'acquisition_type');
             key.imaging_area = ba;
             key.frame_time = {0};
             
-            % list of users to search sessions
-            users = {'edward', 'lucas'};
-            
-            %for each user
-            for i=1:length(users)
-                % make list of all directories for this user
-                userDir =  fullfile(rigDir, users{i});
-                dirInfo = genpath(userDir);
+            %If is mesoscope
+            if any(contains(self.mesoscope_acq, acq_type))
+                %Get mesoscope scan_directory if exists
+                [status, scan_directory]   = self.get_mesoscope_scan(subj, session_date);
                 
-                % get directories with length > subject
-                dirInfo = split(dirInfo,':');
-                
-                %Remove final entry (0x0 char)
-                dirInfo = dirInfo(1:end-1);
-                
-                %Search directories that "end" with subject name
-                lowerDirInfo = lower(dirInfo);
-                indexSubjDir = cellfun(@(x) strcmp(x(end-length(subj)+1:end),subj),...
-                    lowerDirInfo, 'UniformOutput',true);
-                
-                if sum(indexSubjDir) == 1
-                    dirSubj = dirInfo{indexSubjDir};
-                    dirSession = fullfile(dirSubj, session_date);                  
-                elseif sum(indexSubjDir) == 0
-                    fprintf('directory for subject %s not found\n', subj);
-                    return
+                %If is 2photon or 3photon
+            elseif any(contains(self.photon_micro_acq, acq_type))
+                %Get user nickname to locate scan_directory
+                user_nick = fetch1(subject.Subject * lab.User & key, 'user_nickname');
+                %Get imaging directory if exists
+                %Special case for zhihao
+                if contains(user_nick, 'zhihao')
+                    [status, scan_directory] = self.get_photonmicro_scan_zh(subj, session_date, user_nick);                
                 else
-                    dirInfo = dirInfo(indexSubjDir);
+                   [status, scan_directory] = self.get_photonmicro_scan(subj, session_date, user_nick);    
+                end
+                
+                %If no real "acquisition" was made
+            else
+                disp(key)
+                warning(['This session with acquisition_type: ' acq_type ' should not be processed in this pipeline'])
+                return
+            end
+            
+            %If a non empty scan directory was found
+            if status
+                fprintf('directory with files %s found !!\n',scan_directory)
+                key.scan_directory = scan_directory;
+            else
+                fprintf('directory %s not found\n',scan_directory)
+                return
+            end
+            
+            %Insert key in Scan table
+            self.insert(key)
+        end
+        
+        function [status, scan_directory] = get_mesoscope_scan(self, subj, session_date)
+            % get mesoscope scan directory
+            %
+            % Inputs
+            % subj           = subject nickname
+            % session_date   = date from the acquisition in format YYYYMMDD
+            %
+            % Outputs
+            % status         = true if scan_directory found false otherwise
+            % scan_directory = directory with tiff imaging files
+            
+            %get main dir for acquisition files
+            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.mesoscope_base_dir);
+            
+            %If running locally, check if it is connected
+            if ~u19_dj_utils.is_this_spock()
+                u19_dj_utils.assert_mounted_location(local_path);
+            end
+            
+            %complete local and bucket path for scan directory
+            local_path = fullfile(local_path, subj, session_date);
+            scan_directory = [bucket_path '/' subj '/' session_date];
+            
+            %Check if directory exists and is not empty
+            if isempty(dir(local_path))
+                status = false;
+            else
+                status = true;
+            end
+            
+        end
+        
+        
+        function [status, scan_directory] = get_photonmicro_scan(self, subj, session_date, user_nick)
+            % get 2photon or 3photon scan directory
+            %
+            % Inputs
+            % subj           = subject nickname
+            % session_date   = date from the acquisition in format YYYYMMDD
+            % user_nick      = user nickname (parent folder for scan dir)
+            %
+            % Outputs
+            % status         = true if scan_directory found false otherwise
+            % scan_directory = directory with tiff imaging files
+            
+            status = true;
+            scan_directory = '';
+            
+            %get main dir for acquisition files
+            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.photon_micro_base_dir);
+            
+            %If running locally, check if it is connected
+            if ~u19_dj_utils.is_this_spock()
+                u19_dj_utils.assert_mounted_location(local_path);
+            end
+            
+            %Parent folder starts with user nicknames
+            userDir        =  fullfile(local_path, user_nick);
+            
+            %Get all child directories from user
+            disp('start genpath')
+            tic
+            dirInfo = genpath(userDir);
+            toc
+            dirInfo = split(dirInfo,':');
+            
+            %Remove final entry (0x0 char)
+            dirInfo = dirInfo(1:end-1);
+            
+            %Search directories that "end" with subject nickname
+            indexSubjDir = cellfun(@(x) strcmpi(x(end-length(subj)+1:end),subj),...
+                dirInfo, 'UniformOutput',true);
+            
+            % If only one path "ends" with subject nickname
+            if sum(indexSubjDir) == 1
+                dirSubj = dirInfo{indexSubjDir};
+                dirSession = fullfile(dirSubj, session_date);
+                
+                % If no path "ends" with subject nickname
+            elseif sum(indexSubjDir) == 0
+                status = false;
+                return
+                
+                % If more than one path "ends" with subject nickname
+            else
+                dirInfo = dirInfo(indexSubjDir);
+                
+                %Check every path, first directory with files will make it stop
+                for j=1:length(dirInfo)
+                    dirSubj = dirInfo{j};
+                    dirSession = fullfile(dirSubj, session_date);
                     
-                    for j=1:length(dirInfo)
-                        dirSubj = dirInfo{j};
-                        dirSession = fullfile(dirSubj, session_date);
-                        
-                        if ~isempty(dir(dirSession))
-                            break
-                        end
+                    if ~isempty(dir(dirSession))
+                        break
                     end
                 end
-                
-                if isempty(dir(dirSession))
-                    fprintf('directory %s not found\n',dirSession)
-                    return
-                else
-                    fprintf('directory with files %s found !!\n',dirSession)
-                end
-                
-                % write full directory where raw tifs are
-                key.scan_directory   = dirSession;
-                
-                self.insert(key)
             end
+            
+            %Check if "candidate" directory is empty
+            if ~isempty(dir(dirSession))
+                %Get scan directory from bucket
+                scan_directory = strrep(dirSession, local_path, bucket_path);
+                %Change filesep if we are in windows
+                if ispc
+                    scan_directory = strrep(scan_directory, '\', '/');
+                end
+            else
+                status = false;
+            end
+            
+            
+        end
+        
+        function [status, scan_directory] = get_photonmicro_scan_zh(self, subj, session_date, user_nick)
+            % get 2photon or 3photon scan directory special case for zhihao
+            %
+            % Inputs
+            % subj           = subject nickname
+            % session_date   = date from the acquisition in format YYYYMMDD
+            % user_nick      = user nickname (parent folder for scan dir)
+            %
+            % Outputs
+            % status         = true if scan_directory found false otherwise
+            % scan_directory = directory with tiff imaging files
+            
+            status = true;
+            scan_directory = '';
+            
+            %get main dir for acquisition files
+            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.zhihao_micro_base_dir);
+            
+            %If running locally, check if it is connected
+            if ~u19_dj_utils.is_this_spock()
+                u19_dj_utils.assert_mounted_location(local_path);
+            end
+            
+            %Parent folder starts with user nicknames
+            userDir        =  fullfile(local_path, user_nick);
+            
+            %Get all child directories from user
+            disp('start genpath')
+            tic
+            dirInfo = genpath(userDir);
+            toc
+            dirInfo = split(dirInfo,':');
+            
+            %Remove final entry (0x0 char)
+            dirInfo = dirInfo(1:end-1);
+            
+            %Search directories that "end" with subject nickname
+            indexSubjDir = cellfun(@(x) strcmpi(x(end-length(subj)+1:end),subj),...
+                dirInfo, 'UniformOutput',true);
+            
+            % If only one path "ends" with subject nickname
+            if sum(indexSubjDir) == 1
+                dirSubj = dirInfo{indexSubjDir};
+                dirSession = fullfile(dirSubj, session_date);
+                
+                % If no path "ends" with subject nickname
+            elseif sum(indexSubjDir) == 0
+                status = false;
+                return
+                
+                % If more than one path "ends" with subject nickname
+            else
+                dirInfo = dirInfo(indexSubjDir);
+                
+                %Check every path, first directory with files will make it stop
+                for j=1:length(dirInfo)
+
+                    dirSubj = dirInfo{j};
+                    dirSession = fullfile(dirSubj, session_date);
+                    
+                    if ~isempty(dir(dirSession))
+                        break
+                    end
+                end
+            end
+            
+            %Check if "candidate" directory is empty
+            if ~isempty(dir(dirSession))
+                %Get scan directory from bucket
+                
+                scan_dirs = dir(dirSession);
+                only_dirs = [scan_dirs.isdir];
+                scan_dirs = scan_dirs(only_dirs);
+                    
+                if length(scan_dirs) >= 3
+                    dirSession = fullfile(dirSession, scan_dirs(3).name)
+                else
+                    status = false;
+                end
+                    
+                scan_directory = strrep(dirSession, local_path, bucket_path);
+
+                
+                %Change filesep if we are in windows
+                if ispc
+                    scan_directory = strrep(scan_directory, '\', '/');
+                end
+            else
+                status = false;
+            end
+            
+            
         end
     end
-
+    
 end
+
+
+
+
+
