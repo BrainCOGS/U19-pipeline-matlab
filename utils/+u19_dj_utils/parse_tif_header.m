@@ -79,7 +79,11 @@ end
 
 %% microscope info
 if contains(scopeStr,'objectiveResolution')
+    try
     resolutionFactor                   = mesoscopeParams.xySizeFactor * str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.objectiveResolution = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
+    catch
+    resolutionFactor                   = mesoscopeParams.xySizeFactor * str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.objectiveResolution = \d*','match')),'\d+', 'match')));    
+    end
 else
     resolutionFactor                   = 1;
 end
@@ -90,7 +94,11 @@ parsedInfo.Scope.cfgFilename           = cell2mat(regexp(cell2mat(regexp(scopeSt
 parsedInfo.Scope.usrFilename           = cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hConfigurationSaver.usrFilename = .+usr','match')),' .[A-Z].+usr','match'));
 
 if contains(scopeStr,'actuatorLag')
+    try
     parsedInfo.Scope.fastZ_lag         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.actuatorLag = [0-9]+.[0-9]+','match')),'\d+.\d+','match')));
+    catch
+    parsedInfo.Scope.fastZ_lag         = str2double(cell2mat(regexp(cell2mat(regexp(scopeStr,'SI.hFastZ.actuatorLag = \d*','match')),'\d+', 'match')));    
+    end
 else
     parsedInfo.Scope.fastZ_lag         = 0;
 end

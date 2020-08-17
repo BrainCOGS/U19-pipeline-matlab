@@ -27,8 +27,11 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %Get scan directory
-            fov_directory  = formatFilePath(fetch1(previousimaging.FieldOfView & key,'fov_directory'),true,true);
+            fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
+            fov_directory = u19_dj_utils.format_bucket_path(fov_directory);
             
+            %Check if directory exists in system
+            u19_dj_utils.assert_mounted_location(fov_directory)
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
@@ -50,7 +53,7 @@ classdef MotionCorrection < dj.Imported
             if isempty(gcp('nocreate')); poolobj = parpool; end
             
             movieFiles
-            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', cfg.mcorr{:});
+            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, true, 'off', cfg.mcorr{:});
             
             %% insert within file correction meso.motioncorrectionWithinFile
             within_key                        = key;
