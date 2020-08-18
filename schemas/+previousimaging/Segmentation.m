@@ -85,7 +85,7 @@ classdef Segmentation < dj.Imported
       
       %% select tif file chunks based on behavior and bleaching
       % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
-      if ~isempty(fetch1(behavior.TowersBlock & key,'level'))
+      if ~isempty(fetch(behavior.TowersBlock & key,'level'))
         fileChunk                            = selectFileChunks(key,chunk_cfg); 
       else
         fileChunk = [];
