@@ -53,7 +53,7 @@ classdef MotionCorrection < dj.Imported
             if isempty(gcp('nocreate')); poolobj = parpool; end
             
             movieFiles
-            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, true, 'off', cfg.mcorr{:});
+            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, fallse, 'off', cfg.mcorr{:});
             
             %% insert within file correction meso.motioncorrectionWithinFile
             within_key                        = key;
