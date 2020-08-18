@@ -17,12 +17,18 @@ classdef Segmentation < dj.Imported
       %% imaging directory      
       if isstruct(key)
         fovdata       = fetch(previousimaging.FieldOfView & key,'fov_directory');
-        fov_directory = formatFilePath(fovdata.fov_directory,true,true);
+        fov_directory = u19_dj_utils.format_bucket_path(fovdata.fov_directory);
         keydata       = key;
       else
-        fov_directory = formatFilePath(fetch1(previousimaging.FieldOfView & key,'fov_directory'),true,true);
+        fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
+        fov_directory = u19_dj_utils.format_bucket_path(fov_directory);
         keydata       = fetch(key);
       end
+      
+                  
+      %Check if directory exists in system
+      u19_dj_utils.assert_mounted_location(fov_directory)
+        
       
       result          = keydata;
       
@@ -79,7 +85,11 @@ classdef Segmentation < dj.Imported
       
       %% select tif file chunks based on behavior and bleaching
       % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
-      fileChunk                            = selectFileChunks(key,chunk_cfg); 
+      if ~isempty(fetch1(behavior.TowersBlock & key,'level'))
+        fileChunk                            = selectFileChunks(key,chunk_cfg); 
+      else
+        fileChunk = [];
+      end
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
