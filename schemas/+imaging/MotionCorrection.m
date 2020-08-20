@@ -80,7 +80,7 @@ classdef MotionCorrection < dj.Imported
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
-                computeStatistics(movieName{iFile}, mc_results_directory, frameMCorr(iFile), false);
+                computeStatistics(movieName{iFile}, movieFiles{iFile}, mc_results_directory, frameMCorr(iFile), false);
             end
             
             %% insert key
@@ -94,7 +94,7 @@ end
 
 %%
 %---------------------------------------------------------------------------------------------------
-function [statsFile, activity] = computeStatistics(movieName, mc_results_directory, frameMCorr, recomputeStats)
+function [statsFile, activity] = computeStatistics(movieName, movieFile, mc_results_directory, frameMCorr, recomputeStats)
 
 fprintf(' :   %s\n', movieName);
 
