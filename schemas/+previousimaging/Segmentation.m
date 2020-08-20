@@ -17,24 +17,25 @@ classdef Segmentation < dj.Imported
       %% imaging directory      
       if isstruct(key)
         fovdata       = fetch(previousimaging.FieldOfView & key,'fov_directory');
-        fov_directory = u19_dj_utils.format_bucket_path(fovdata.fov_directory);
+        fov_directory = lab.utils.format_bucket_path(fovdata.fov_directory);
         keydata       = key;
       else
         fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
-        fov_directory = u19_dj_utils.format_bucket_path(fov_directory);
+        fov_directory = lab.utils.format_bucket_path(fov_directory);
         keydata       = fetch(key);
       end
       
                   
       %Check if directory exists in system
-      u19_dj_utils.assert_mounted_location(fov_directory)
+      lab.utils.assert_mounted_location(fov_directory)
         
       
       result          = keydata;
       
       %% analysis params
       %%Get structure for searching in SegParameterSetParameter table      
-      params        = u19_dj_utils.getParametersFromQuery(previousimaging.SegParameterSetParameter & key);
+      params        = imaging.utils.getParametersFromQuery(previousimaging.SegParameterSetParameter & key, ...
+                                                          'seg_parameter_value');
 
       frameRate     = fetch1(previousimaging.ScanInfo & key, 'frame_rate');
       
@@ -1066,7 +1067,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = regFile;
     
     fprintf('====  FOUND %s, skipping global registration\n', regFile);
-    return
+    %return
   end
   
   %% Precompute the safe frame size to contain all centered components 

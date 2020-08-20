@@ -3,7 +3,7 @@
 -> previousimaging.McParameterSet
 -> previousimaging.McParameter
 ---
-value         : blob     # value of parameter
+mc_parameter_value         : blob     # value of parameter
 %}
 
 classdef McParameterSetParameter < dj.Part

@@ -7,7 +7,7 @@ if u19_dj_utils.is_this_spock()
 end
 
 %Get all path table from u19_lab.Path ("official sites")
-[path_table] = u19_dj_utils.get_path_table();
+[path_table] = lab.utils.get_path_table();
 
 %Get OS of the system
 system = u19_dj_utils.get_OS();

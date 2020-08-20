@@ -19,7 +19,7 @@ function [bucket_path, local_path] =  get_path_from_official_dir(baseDir)
 system = u19_dj_utils.get_OS();
 
 %Get all path table from u19_lab.Path ("official sites")
-[path_table] = u19_dj_utils.get_path_table();
+[path_table] = lab.utils.get_path_table();
 
 %Check the base dir corresponds to which global path 
 idx_basedir = cellfun(@(s) contains(baseDir, s), path_table.global_path);

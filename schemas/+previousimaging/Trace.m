@@ -14,9 +14,6 @@ init_concentration     : float             # estimated initial calcium concentra
 
 classdef Trace < dj.Imported
   methods(Access=protected)
-    function makeTuples(self, key)
-      self.insert(key)
-    end
   end
 end
 

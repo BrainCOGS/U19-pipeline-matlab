@@ -1,9 +1,10 @@
-function [params] = getParametersFromQuery(query)
+function [params] = getParametersFromQuery(query, valueNameCol)
 %GETPARAMETERSFROMTABLES
 %  Get all parameters needed from xxParameterSetParameter "like" tables
 
 % Inputs
-%   query   = reference to a query in datajoint
+%  query         = reference to a query in datajoint
+%  valueNameCol  = name of the column where value is stored (eg. mc_parameter_value, seg_parameter_value) 
 
 % Outputs
 %   params  = structure with all corresponding parmaeter, structure:
@@ -14,10 +15,9 @@ function [params] = getParametersFromQuery(query)
 %
 %  table in datajoint need to have two columns:
 %   xxxx_parameter_name = column with name of parameters
-%   value               = column with corresponding value of parameters
+%   "valueNameCol"      = column with corresponding value of parameters
 
 TemplateParamNameCol = 'parameter_name';
-valueNameCol = 'value';
 
 %Get Parameters from xxParameterSetParameter table
 params         = fetch(query, '*');

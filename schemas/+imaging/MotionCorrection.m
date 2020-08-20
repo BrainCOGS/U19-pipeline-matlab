@@ -10,7 +10,8 @@ classdef MotionCorrection < dj.Imported
             
             
             %Get Parameters from McParameterSetParameter table
-            params        = u19_dj_utils.getParametersFromQuery(imaging.McParameterSetParameter & key);
+            params        = imaging.utils.getParametersFromQuery(imaging.McParameterSetParameter & key, ...
+                                                                'mc_parameter_value');
             
             %Correct mc_black_tolerance parameter
             if params.mc_black_tolerance < 0
@@ -27,8 +28,12 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %Get scan directory
-            fov_directory  = formatFilePath(fetch1(imaging.FieldOfView & key,'fov_directory'),true,true);
+            fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
+            fov_directory = lab.utils.format_bucket_path(fov_directory);
             
+            %Check if directory exists in system
+            lab.utils.assert_mounted_location(fov_directory)
+            mc_results_directory = imaging.utils.get_mc_save_directory(fov_directory, key);
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
@@ -45,7 +50,7 @@ classdef MotionCorrection < dj.Imported
             % run motion correction
             if isempty(gcp('nocreate')); poolobj = parpool; end
             
-            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', cfg.mcorr{:});
+            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', mc_results_directory, cfg.mcorr{:});
             
             %% insert within file correction meso.motioncorrectionWithinFile
             within_key                        = key;

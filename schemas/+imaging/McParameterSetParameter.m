@@ -3,7 +3,7 @@
 -> imaging.McParameterSet
 -> imaging.McParameter
 ---
-value         : blob     # value of parameter
+mc_parameter_value         : blob     # value of parameter
 %}
 
 classdef McParameterSetParameter < dj.Part
@@ -30,7 +30,7 @@ classdef McParameterSetParameter < dj.Part
                 'NonLinearNormalized' , 'mc_black_tolerance' , -1;
                 'NonLinearNormalized' , 'mc_median_rebin' , 10;
                 
-                }, 'VariableNames',{'mc_method' 'mc_parameter_name' 'value'});
+                }, 'VariableNames',{'mc_method' 'mc_parameter_name' 'mc_parameter_value'});
             
             tableParam.mc_method = categorical(tableParam.mc_method);
             tableParam.mc_parameter_name = categorical(tableParam.mc_parameter_name);

@@ -54,10 +54,10 @@ classdef ScanInfo < dj.Imported
             % runs a modified version of mesoscopeSetPreproc
             generalTimer   = tic;
             curr_dir       = pwd;
-            scan_directory = u19_dj_utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
+            scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
             
             %Check if directory exists in system
-            u19_dj_utils.assert_mounted_location(scan_directory)
+            lab.utils.assert_mounted_location(scan_directory)
             
             % get acquisition type of session (differentiate mesoscope and 2_3 photon
             acq_type             = fetch1(proj(acquisition.Session, 'session_location->location') * ...
@@ -123,7 +123,7 @@ classdef ScanInfo < dj.Imported
             %If original files where compressed
             if isCompressed
                 disp('it started as compressed files, removing uncompressed')
-                u19_dj_utils.remove_tif_if_gz(fl, scan_directory);
+                imaging.utils.remove_tif_if_gz(fl, scan_directory);
             end
             
             
@@ -177,10 +177,10 @@ classdef ScanInfo < dj.Imported
             end
             
             parfor iF = 1:numel(fl)
-                [imheader{iF},parsedInfo{iF}] = u19_dj_utils.parse_tif_header(fl{iF});
+                [imheader{iF},parsedInfo{iF}] = imaging.utils.parse_tif_header(fl{iF});
                 %If is mesoscope get also roi info from header
                 if isMesoscope
-                    parsedROI{iF} = u19_dj_utils.parse_roi_info_tif_header(imheader{iF});
+                    parsedROI{iF} = imaging.utils.parse_roi_info_tif_header(imheader{iF});
                 end
             end
             

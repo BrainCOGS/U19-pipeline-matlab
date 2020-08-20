@@ -88,11 +88,11 @@ classdef Scan < dj.Imported
             % scan_directory = directory with tiff imaging files
             
             %get main dir for acquisition files
-            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.mesoscope_base_dir);
+            [bucket_path, local_path] = lab.utils.get_path_from_official_dir(self.mesoscope_base_dir);
             
             %If running locally, check if it is connected
             if ~u19_dj_utils.is_this_spock()
-                u19_dj_utils.assert_mounted_location(local_path);
+                lab.utils.assert_mounted_location(local_path);
             end
             
             %complete local and bucket path for scan directory
@@ -125,11 +125,11 @@ classdef Scan < dj.Imported
             scan_directory = '';
             
             %get main dir for acquisition files
-            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.photon_micro_base_dir);
+            [bucket_path, local_path] = lab.utils.get_path_from_official_dir(self.photon_micro_base_dir);
             
             %If running locally, check if it is connected
             if ~u19_dj_utils.is_this_spock()
-                u19_dj_utils.assert_mounted_location(local_path);
+                lab.utils.assert_mounted_location(local_path);
             end
             
             %Parent folder starts with user nicknames
@@ -205,11 +205,11 @@ classdef Scan < dj.Imported
             scan_directory = '';
             
             %get main dir for acquisition files
-            [bucket_path, local_path] = u19_dj_utils.get_path_from_official_dir(self.zhihao_micro_base_dir);
+            [bucket_path, local_path] = lab.utils.get_path_from_official_dir(self.zhihao_micro_base_dir);
             
             %If running locally, check if it is connected
             if ~u19_dj_utils.is_this_spock()
-                u19_dj_utils.assert_mounted_location(local_path);
+                lab.utils.assert_mounted_location(local_path);
             end
             
             %Parent folder starts with user nicknames

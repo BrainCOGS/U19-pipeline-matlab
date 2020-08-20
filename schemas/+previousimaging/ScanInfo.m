@@ -38,10 +38,10 @@ classdef ScanInfo < dj.Computed
             
             %Get imaging directory
             imaging_directory = fetch1(previousimaging.Scan & key, 'scan_directory');
-            imaging_directory = u19_dj_utils.format_bucket_path(imaging_directory);
+            imaging_directory = lab.utils.format_bucket_path(imaging_directory);
             
             %Check if directory exists in system
-            u19_dj_utils.assert_mounted_location(imaging_directory)
+            lab.utils.assert_mounted_location(imaging_directory)
             
             dir_info          = dir(imaging_directory);
             dir_info          = {dir_info(:).name};

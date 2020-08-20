@@ -3,7 +3,7 @@
 -> previousimaging.SegParameterSet
 -> previousimaging.SegParameter
 ---
-value         : blob     # value of parameter
+seg_parameter_value         : blob     # value of parameter
 %}
 
 classdef SegParameterSetParameter < dj.Part

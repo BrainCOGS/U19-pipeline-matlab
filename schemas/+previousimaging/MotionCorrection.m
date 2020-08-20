@@ -10,7 +10,8 @@ classdef MotionCorrection < dj.Imported
             
             
             %Get Parameters from McParameterSetParameter table
-            params        = u19_dj_utils.getParametersFromQuery(previousimaging.McParameterSetParameter & key);
+            params        = imaging.utils.getParametersFromQuery(previousimaging.McParameterSetParameter & key, ...
+                                                                'mc_parameter_value');
             
             %Correct mc_black_tolerance parameter
             if params.mc_black_tolerance < 0
@@ -28,10 +29,10 @@ classdef MotionCorrection < dj.Imported
                         
             %Get scan directory
             fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
-            fov_directory = u19_dj_utils.format_bucket_path(fov_directory);
+            fov_directory = lab.utils.format_bucket_path(fov_directory);
             
             %Check if directory exists in system
-            u19_dj_utils.assert_mounted_location(fov_directory)
+            lab.utils.assert_mounted_location(fov_directory)
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
