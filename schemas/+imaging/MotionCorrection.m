@@ -28,7 +28,7 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %Get scan directory
-            fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
+            fov_directory  = fetch1(imaging.FieldOfView & key,'fov_directory');
             fov_directory = lab.utils.format_bucket_path(fov_directory);
             
             %Check if directory exists in system
