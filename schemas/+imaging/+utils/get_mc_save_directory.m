@@ -10,7 +10,7 @@ function [mc_directory] = get_mc_save_directory(fov_directory,key)
 %   mc_directory         = directory where motion correction results should be stored
 
 %Create a string that defines the current mc_parameter_set
-mc_dir_string = [key.mc_method '_set_' num2str(key.mc_parameter_set_d)];
+mc_dir_string = [key.mc_method '_set_' num2str(key.mc_parameter_set_id)];
 
 %Create directory
 mc_directory = fullfile(fov_directory, mc_dir_string);
