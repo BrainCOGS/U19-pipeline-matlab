@@ -80,7 +80,7 @@ classdef MotionCorrection < dj.Imported
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
-                computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
+                computeStatistics(movieName{iFile}, mc_results_directory, frameMCorr(iFile), false);
             end
             
             %% insert key
@@ -94,12 +94,13 @@ end
 
 %%
 %---------------------------------------------------------------------------------------------------
-function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMCorr, recomputeStats)
+function [statsFile, activity] = computeStatistics(movieName, mc_results_directory, frameMCorr, recomputeStats)
 
 fprintf(' :   %s\n', movieName);
 
 % Fluorescence activity raw statistics
-statsFile                   = regexprep(movieFile, '[.][^.]+$', '.stats.mat');
+statsFile                   = regexprep(fullfile(mc_results_directory, movieName), '[.][^.]+$', '.stats.mat');
+statsFile
 if recomputeStats ||  ~exist(statsFile, 'file')
     % Load raw data with per-file motion correction
     F                         = cv.imreadsub(movieFile, {frameMCorr,false});
