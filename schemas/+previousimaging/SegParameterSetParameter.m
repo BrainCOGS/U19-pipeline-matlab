@@ -20,7 +20,7 @@ classdef SegParameterSetParameter < dj.Part
             
             %Predefined cell with param values for set
             tableParam  = cell2table({
-                'cnmf' , 'chunks_auto_select_behav' , true;
+                'cnmf' , 'chunks_auto_select_behav' , false;
                 'cnmf' , 'chunks_auto_select_bleach' , true;
                 'cnmf' , 'chunks_towers_min_n_trials' , 30;
                 'cnmf' , 'chunks_towers_perf_thresh' , 0.6;
@@ -59,7 +59,7 @@ classdef SegParameterSetParameter < dj.Part
                 'cnmf' , 'gof_bkg_time_span' , 3;
                 'cnmf' , 'gof_min_dff' , 0.3;
                 
-                }, 'VariableNames',{'seg_method' 'seg_parameter_name' 'value'});
+                }, 'VariableNames',{'seg_method' 'seg_parameter_name' 'seg_parameter_value'});
             
             %Transform text columns to categorical (easier to compare == )
             tableParam.seg_method = categorical(tableParam.seg_method);
@@ -71,16 +71,16 @@ classdef SegParameterSetParameter < dj.Part
                 %Search for the corresponding value in the predefined cell
                 key.seg_parameter_name = parameters{i};
                 value_cell = tableParam{tableParam.seg_method == key.seg_method & ...
-                    tableParam.seg_parameter_name == key.seg_parameter_name, 'value'};
+                    tableParam.seg_parameter_name == key.seg_parameter_name, 'seg_parameter_value'};
                 
                 %Check if there is only one value for that specific parameter
                 if size(value_cell,1) > 1
                     warning('More than one value for this key found: %s %d %s',key.seg_method, key.seg_parameter_set_id, key.seg_parameter_name)
-                    key.value = value_cell{1,1};
+                    key.seg_parameter_value = value_cell{1,1};
                 elseif size(value_cell,1) == 0
                     error('No value for this key found: : %s %d %s',key.seg_method, key.seg_parameter_set_id, key.seg_parameter_name)
                 else
-                    key.value = value_cell{1,1};
+                    key.seg_parameter_value = value_cell{1,1};
                 end
                 
                 %Insert parameterset

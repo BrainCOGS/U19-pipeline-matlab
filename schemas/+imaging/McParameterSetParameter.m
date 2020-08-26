@@ -38,15 +38,15 @@ classdef McParameterSetParameter < dj.Part
             for i=1:length(parameters)
                 key.mc_parameter_name = parameters{i};
                 value_cell = tableParam{tableParam.mc_method == key.mc_method & ...
-                                        tableParam.mc_parameter_name == key.mc_parameter_name, 'value'};
+                                        tableParam.mc_parameter_name == key.mc_parameter_name, 'mc_parameter_value'};
             
                 if size(value_cell,1) > 1
                     warning('More than one value for this key found: %s %d %s',key.mc_method, key.mc_parameter_set_id, key.mc_parameter_name)
-                    key.value = value_cell{1,1};
+                    key.mc_parameter_value = value_cell{1,1};
                 elseif size(value_cell,1) == 0
                     error('No value for this key found: : %s %d %s',key.mc_method, key.mc_parameter_set_id, key.mc_parameter_name)
                 else
-                    key.value = value_cell{1,1};
+                    key.mc_parameter_value = value_cell{1,1};
                 end
             
                 self.insert(key);

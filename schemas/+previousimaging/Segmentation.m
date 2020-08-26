@@ -86,11 +86,11 @@ classdef Segmentation < dj.Imported
       
       %% select tif file chunks based on behavior and bleaching
       % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
-      if ~isempty(fetch(behavior.TowersBlock & key,'level'))
+     % if ~isempty(fetch(behavior.TowersBlock & key,'level'))
         fileChunk                            = selectFileChunks(key,chunk_cfg); 
-      else
-        fileChunk = [];
-      end
+      %else
+      %  fileChunk = [];
+      %end
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
@@ -300,10 +300,10 @@ if chunk_cfg.auto_select_behav
   % containing the last good behavior block. Further chunking will depend
   % on max num file criterion / bleaching
   isGoodBlock              = [goodSess.extractThisBlock false];
-  frameRanges              = fetchn(meso.SyncImagingBehavior & key,'sync_im_frame_span_by_behav_block');
+  frameRanges              = fetchn(previousimaging.SyncImagingBehavior & key,'sync_im_frame_span_by_behav_block');
   frameRangesPerBlock      = cell2mat(frameRanges{1}');
   frameRangesPerGoodBlock  = frameRangesPerBlock(goodSess.extractThisBlock,:);
-  frameRangesPerFile       = cell2mat(fetchn(meso.FieldOfViewFile & key,'file_frame_range'));
+  frameRangesPerFile       = cell2mat(fetchn(previousimaging.FieldOfViewFile & key,'file_frame_range'));
   
   % break chunks of non-consecutive blocks if necessary
   if chunk_cfg.breakNonConsecBlocks
@@ -333,7 +333,7 @@ end
 
 % bleaching
 if chunk_cfg.auto_select_bleach
-  lastGoodFile           = fetch1(meso.ScanInfo & key,'last_good_file');
+  lastGoodFile           = fetch1(previousimaging.ScanInfo & key,'last_good_file');
   deleteIdx              = fileChunk(:,1) > lastGoodFile;
   fileChunk(deleteIdx,:) = [];
   if isempty(fileChunk); return; end
