@@ -3,7 +3,8 @@
 -> previousimaging.Scan
 ---
 nframes                 : int               # number of recorded frames
-frame_rate                : float         # imaging frame rate
+frame_rate              : float             # imaging frame rate
+last_good_file          : int               # last good file before bleaching
 %}
 
 %----------------------missing

@@ -247,6 +247,7 @@ function fileChunk = selectFileChunks(key,chunk_cfg)
 %% check if enforcing this is actually desired
 file_ids       = fetchn(previousimaging.FieldOfViewFile & key,'file_number');
 nfiles         = numel(file_ids);
+fileChunk      = [1 nfiles];
 
 if ~chunk_cfg.auto_select_behav && ~chunk_cfg.auto_select_bleach && nfiles < chunk_cfg.filesPerChunk
   fileChunk = [];
