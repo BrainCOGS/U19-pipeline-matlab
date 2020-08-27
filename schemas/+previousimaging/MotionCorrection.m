@@ -1,6 +1,6 @@
 %{
--> imaging.FieldOfView
--> imaging.McParameterSet       # meta file, frameMCorr-method
+-> previousimaging.FieldOfView
+-> previousimaging.McParameterSet       # meta file, frameMCorr-method
 ---
 %}
 
@@ -10,7 +10,7 @@ classdef MotionCorrection < dj.Imported
             
             
             %Get Parameters from McParameterSetParameter table
-            params        = imaging.utils.getParametersFromQuery(imaging.McParameterSetParameter & key, ...
+            params        = imaging.utils.getParametersFromQuery(previousimaging.McParameterSetParameter & key, ...
                                                                 'mc_parameter_value');
             
             %Correct mc_black_tolerance parameter
@@ -19,7 +19,7 @@ classdef MotionCorrection < dj.Imported
             end
             
             %Define cfg.mcorr with parameters (as in meso pipeline)
-            if contains(key.mc_method,'NonLinear')
+            if contains(key.mcorr_method,'NonLinear')
                 cfg.mcorr    = {params.mc_max_shift, params.mc_max_iter, params.mc_stop_below_shift, ...
                     params.mc_black_tolerance, params.mc_median_rebin};
             else
@@ -28,21 +28,24 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %Get scan directory
-            fov_directory  = fetch1(imaging.FieldOfView & key,'fov_directory');
+            fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
             fov_directory = lab.utils.format_bucket_path(fov_directory);
             
             %Check if directory exists in system
             lab.utils.assert_mounted_location(fov_directory)
-            mc_results_directory = imaging.utils.get_mc_save_directory(fov_directory, key);
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
             
             % Determine whether or not we need to use frame skipping to select only the first channel
-            [order,movieFiles]            = fetchn(imaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
+            [order,movieFiles]            = fetchn(previousimaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
             movieFiles                    = cellfun(@(x)(fullfile(fov_directory,x)),movieFiles(order),'uniformoutput',false); % full path
 
-            info                          = cv.imfinfox(movieFiles{1}, true);
+            info                          = cv.imfinfox(movieFiles{2}, true);
+            info
+            %file                          = cv.imreadx(movieFiles{1});
+            %size(file)
+            %class(file)
             if numel(info.channels) > 1
                 cfg.mcorr{end+1}            = [0, numel(info.channels)-1];
             end
@@ -50,7 +53,8 @@ classdef MotionCorrection < dj.Imported
             % run motion correction
             if isempty(gcp('nocreate')); poolobj = parpool; end
             
-            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', 'SaveDir', mc_results_directory, cfg.mcorr{:});
+            movieFiles
+            [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', cfg.mcorr{:});
             
             %% insert within file correction meso.motioncorrectionWithinFile
             within_key                        = key;
@@ -80,13 +84,13 @@ classdef MotionCorrection < dj.Imported
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
-                computeStatistics(movieName{iFile}, movieFiles{iFile}, mc_results_directory, frameMCorr(iFile), false);
+                computeStatistics(movieName{iFile}, movieFiles{iFile}, frameMCorr(iFile), false);
             end
             
             %% insert key
             self.insert(key);
-            insert(imaging.MotionCorrectionWithinFile, within_key)
-            insert(imaging.MotionCorrectionAcrossFiles, across_key)
+            insert(previousimaging.MotionCorrectionWithinFile, within_key)
+            insert(previousimaging.MotionCorrectionAcrossFiles, across_key)
             
         end
     end
@@ -94,13 +98,12 @@ end
 
 %%
 %---------------------------------------------------------------------------------------------------
-function [statsFile, activity] = computeStatistics(movieName, movieFile, mc_results_directory, frameMCorr, recomputeStats)
+function [statsFile, activity] = computeStatistics(movieName, movieFile, frameMCorr, recomputeStats)
 
 fprintf(' :   %s\n', movieName);
 
 % Fluorescence activity raw statistics
-statsFile                   = regexprep(fullfile(mc_results_directory, movieName), '[.][^.]+$', '.stats.mat');
-statsFile
+statsFile                   = regexprep(movieFile, '[.][^.]+$', '.stats.mat');
 if recomputeStats ||  ~exist(statsFile, 'file')
     % Load raw data with per-file motion correction
     F                         = cv.imreadsub(movieFile, {frameMCorr,false});
