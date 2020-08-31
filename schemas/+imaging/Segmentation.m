@@ -1,12 +1,13 @@
 %{
 # ROI segmentation
--> previousimaging.FieldOfView
--> previousimaging.SegParameterSet
+-> imaging.MotionCorrection
+-> imaging.SegParameterSet
 ---
 num_chunks                      : tinyint           # number of different segmentation chunks within the session
 cross_chunks_x_shifts           : blob              # nChunks x niter, 
 cross_chunks_y_shifts           : blob              # nChunks x niter, 
 cross_chunks_reference_image    : longblob          # reference image for cross-chunk registration
+seg_results_directory           : varchar(255)      # directory where segmentation results are stored
 %}
 
 classdef Segmentation < dj.Imported
@@ -16,20 +17,30 @@ classdef Segmentation < dj.Imported
       
       %% imaging directory      
       if isstruct(key)
-        fovdata       = fetch(previousimaging.FieldOfView & key,'fov_directory');
+        fovdata       = fetch(imaging.FieldOfView & key,'fov_directory');
         fov_directory = lab.utils.format_bucket_path(fovdata.fov_directory);
         keydata       = key;
       else
-        fov_directory  = fetch1(previousimaging.FieldOfView & key,'fov_directory');
-        fov_directory = lab.utils.format_bucket_path(fov_directory);
-        keydata       = fetch(key);
+        fov_directory  = fetch1(imaging.FieldOfView & key,'fov_directory');
+        fov_directory  = lab.utils.format_bucket_path(fov_directory);
+        keydata        = fetch(key);
       end
       
-                  
-      %Check if directory exists in system
-      lab.utils.assert_mounted_location(fov_directory)
-        
+      %Get motion correction results directory
+      mcdata = fetch(imaging.MotionCorrection & key,'mc_results_directory');
+      mc_results_directory = lab.utils.format_bucket_path(mcdata.mc_results_directory);
       
+      %Check if fov_directory and mc directory exists in system
+      lab.utils.assert_mounted_location(fov_directory)
+      lab.utils.assert_mounted_location(mc_results_directory)
+      
+      %Get segmentation results directory
+      seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key);
+      key.seg_results_directory = seg_results_directory;
+                
+      %Check if segmentation directory exists in system
+      lab.utils.assert_mounted_location(seg_results_directory)
+        
       result          = keydata;
       
       %% analysis params
@@ -37,11 +48,10 @@ classdef Segmentation < dj.Imported
       params        = imaging.utils.getParametersFromQuery(previousimaging.SegParameterSetParameter & key, ...
                                                           'seg_parameter_value');
 
-      params.frameRate     = fetch1(previousimaging.ScanInfo & key, 'frame_rate');
+      params.frameRate     = fetch1(imaging.ScanInfo & key, 'frame_rate');
       
-      [chunk_cfg, cnmf_cfg, gof_cfg] = imaging.utils.separate_imaging_parameters(params);
-      
-      
+     [chunk_cfg, cnmf_cfg, gof_cfg] = imaging.utils.separate_imaging_parameters(params);
+          
       %% select tif file chunks based on behavior and bleaching
         fileChunk                            = selectFileChunks(key,chunk_cfg); 
             
@@ -51,7 +61,11 @@ classdef Segmentation < dj.Imported
       segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
         case 'cnmf'
-          outputFiles                      = runCNMF(fov_directory, fileChunk, cnmf_cfg, gof_cfg); 
+          %outputFiles                      = runCNMF(fov_directory, fileChunk, cnmf_cfg, gof_cfg); 
+          outputFiles                       = runCNMF(fov_directory, fileChunk, cnmf_cfg, gof_cfg, ...
+                                                      false, true, true, '', ...
+                                                      'SaveDir', seg_results_directory, ...
+                                                      'McDir',   mc_results_directory);
         case 'suite2p'
           warning('suite2p is not yet supported in this pipeline')
       end
@@ -87,7 +101,7 @@ classdef Segmentation < dj.Imported
       result.cross_chunks_reference_image  = data.registration.reference;
       self.insert(result)
       
-      %% write to previousimaging.SegmentationChunks (some session chunk-specific info)
+      %% write to imaging.SegmentationChunks (some session chunk-specific info)
       chunkRange = zeros(num_chunks,2);
       chunkdata  = cell(1,num_chunks);
       for iChunk = 1:num_chunks
@@ -100,27 +114,23 @@ classdef Segmentation < dj.Imported
         result.region_image_y_range  = chunkdata{iChunk}.source.cropping.yRange;
         
         % figure out imaging frame range in the chunk (with respect to whole session)
-        file_key_first = key;
-        file_key_first.fov_filename = result.tif_file_list{1};
-        frame_range_first            = fetch1(previousimaging.FieldOfViewFile & file_key_first,'file_frame_range');
-        
-        file_key_last = key;
-        file_key_last.fov_filename = result.tif_file_list{end};                                 
-        frame_range_last             = fetch1(previousimaging.FieldOfViewFile & file_key_last,'file_frame_range');   
-        
+        frame_range_first            = fetch1(imaging.FieldOfViewFile & key & ...
+                                              sprintf('fov_filename="%s"',result.tif_file_list{1}),'file_frame_range');
+        frame_range_last             = fetch1(imaging.FieldOfViewFile & key & ...
+                                              sprintf('fov_filename="%s"',result.tif_file_list{end}),'file_frame_range');   
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
         
-        insert(previousimaging.SegmentationChunks, result)
+        insert(imaging.SegmentationChunks, result)
         clear result 
         
-        % write global background (neuropil) activity data to previousimaging.SegmentationBackground
+        % write global background (neuropil) activity data to imaging.SegmentationBackground
         result                       = keydata;
         result.segmentation_chunk_id = iChunk;
         result.background_spatial    = reshape(chunkdata{iChunk}.cnmf.bkgSpatial,chunkdata{iChunk}.cnmf.region.ImageSize);
         result.background_temporal   = chunkdata{iChunk}.cnmf.bkgTemporal;
         
-        insert(previousimaging.SegmentationBackground, result)
+        insert(imaging.SegmentationBackground, result)
         clear result
       end
             
@@ -129,7 +139,7 @@ classdef Segmentation < dj.Imported
       % initialize data structures
       globalXY      = data.registration.globalXY;
       nROIs         = size(globalXY,2);
-      totalFrames   = fetch1(previousimaging.ScanInfo & key,'nframes');
+      totalFrames   = fetch1(imaging.ScanInfo & key,'nframes');
       roi_data      = keydata;
       morpho_data   = keydata;
       trace_data    = keydata;
@@ -180,9 +190,9 @@ classdef Segmentation < dj.Imported
         end
         
         % insert in tables
-        insert(previousimaging.SegmentationRoi, roi_data)
-        insert(previousimaging.SegmentationRoiMorphologyAuto, morpho_data)
-        insert(previousimaging.Trace, trace_data)
+        inserti(imaging.SegmentationRoi, roi_data)
+        inserti(imaging.SegmentationRoiMorphologyAuto, morpho_data)
+        inserti(imaging.Trace, trace_data)
       end
 
     end
@@ -198,9 +208,8 @@ function fileChunk = selectFileChunks(key,chunk_cfg)
 % fileChunk is an array of size chunks x 2, where rows are [firstFileIdx lastFileIdx]
 
 %% check if enforcing this is actually desired
-file_ids       = fetchn(previousimaging.FieldOfViewFile & key,'file_number');
+file_ids       = fetchn(imaging.FieldOfViewFile & key,'file_number');
 nfiles         = numel(file_ids);
-fileChunk      = [1 nfiles];
 
 if ~chunk_cfg.auto_select_behav && ~chunk_cfg.auto_select_bleach && nfiles < chunk_cfg.filesPerChunk
   fileChunk = [];
@@ -254,10 +263,10 @@ if chunk_cfg.auto_select_behav
   % containing the last good behavior block. Further chunking will depend
   % on max num file criterion / bleaching
   isGoodBlock              = [goodSess.extractThisBlock false];
-  frameRanges              = fetchn(previousimaging.SyncImagingBehavior & key,'sync_im_frame_span_by_behav_block');
+  frameRanges              = fetchn(imaging.SyncImagingBehavior & key,'sync_im_frame_span_by_behav_block');
   frameRangesPerBlock      = cell2mat(frameRanges{1}');
   frameRangesPerGoodBlock  = frameRangesPerBlock(goodSess.extractThisBlock,:);
-  frameRangesPerFile       = cell2mat(fetchn(previousimaging.FieldOfViewFile & key,'file_frame_range'));
+  frameRangesPerFile       = cell2mat(fetchn(imaging.FieldOfViewFile & key,'file_frame_range'));
   
   % break chunks of non-consecutive blocks if necessary
   if chunk_cfg.breakNonConsecBlocks
@@ -287,7 +296,7 @@ end
 
 % bleaching
 if chunk_cfg.auto_select_bleach
-  lastGoodFile           = fetch1(previousimaging.ScanInfo & key,'last_good_file');
+  lastGoodFile           = fetch1(imaging.ScanInfo & key,'last_good_file');
   deleteIdx              = fileChunk(:,1) > lastGoodFile;
   fileChunk(deleteIdx,:) = [];
   if isempty(fileChunk); return; end
@@ -312,7 +321,7 @@ end
 %% ------------------------------------------------------------------------
 
 %% --------------------------------------------------------------------------------------------------
-function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, redoPostProcessing, fromProtoSegments, lazy, scratchDir)
+function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, redoPostProcessing, fromProtoSegments, lazy, scratchDir, varargin)
   
   warning('off','MATLAB:nargchk:deprecated');       % HACK because of cvx
   
@@ -334,8 +343,23 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
   if nargin < 7 || isempty(lazy)
     lazy                  = true;
   end
-  if nargin < 7
+  if nargin < 8
     scratchDir            = '';
+  end
+  if nargin < 9
+    saveDir            = '';
+    mcdir              = '';
+  else
+      if mod(length(varargin),2 ~= 0)
+          error('Varargin must come in pairs')
+      end
+      for i=1:2:length(varargin)
+          if strcmp(varargin{i}, 'SaveDir')
+              savedir = varargin{i+1};
+          elseif strcmp(varargin{i}, 'McDir')
+              mcdir = varargin{i+1};
+          end
+      end
   end
   
   repository                  = [];
@@ -347,7 +371,7 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
   % segmentation settings
   if fromProtoSegments
     method                = { 'search_method' , 'dilate'                          ... % search locations when updating spatial components
-                            , 'se'            , strel('disk',4)                   ... % morphological element for method Â‘dilateÂ’
+                            , 'se'            , strel('disk',4)                   ... % morphological element for method ‘dilate’
                             };
   else
     method                = { 'search_method' , 'ellipse'                         ... % search locations when updating spatial components
@@ -394,12 +418,12 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
   acquisInfo            = regexp(name, '(.+)[_-]([0-9]+)$', 'tokens', 'once');
   acquisInfo            = cat(1, acquisInfo{:});
   acquis                = unique(acquisInfo(:,1));
-  acquisPrefix          = fullfile(moviePath, acquis{1});
+  acquisPrefix          = fullfile(savedir, acquis{1});
 
   % Proto-segmentation
   if fromProtoSegments
     [protoROI, outputFiles]       ...
-                        = getProtoSegmentation(movieFile, fileChunk, acquisPrefix, lazy, cfg, outputFiles, scratchDir);
+                        = getProtoSegmentation(movieFile, fileChunk, acquisPrefix, lazy, cfg, outputFiles, scratchDir, mcdir);
   else
     protoROI            = [];
   end
@@ -432,7 +456,7 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
 end
 
 %% --------------------------------------------------------------------------------------------------
-function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, prefix, lazy, cfg, outputFiles, scratchDir)
+function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, prefix, lazy, cfg, outputFiles, scratchDir, mcdir)
   
   %% Look for existing work if available
   protoFile       = [prefix, '.proto-roi.mat'];
@@ -453,9 +477,9 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
     fprintf('====  Performing proto-segmentation of %s\n', chunkLabel);
     
     %% Read motion corrected statistics and crop the border to avoid correction artifacts
-    [frameMCorr, fileMCorr]       = getMotionCorrection(chunkFiles, 'never', true);
+    [frameMCorr, fileMCorr]       = getMotionCorrection(chunkFiles, 'never', true, 'SaveDir', mcdir);
     cropping      = getMovieCropping(frameMCorr);
-    metric        = getActivityMetric(chunkFiles, fileMCorr, cropping.selectMask, cropping.selectSize);
+    metric        = getActivityMetric(chunkFiles, fileMCorr, cropping.selectMask, cropping.selectSize, [], mcdir);
     
     %% Read and temporally downsample movie
     startTime     = tic;
@@ -523,14 +547,8 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   
   
   %% Save output and figures
-  fprintf('====  SAVING to %s\n', protoFile);
-  if ~isfile(protoFile)
-    save(protoFile, 'prototypes', '-v7.3');
-  end
-  fprintf('====  SAVING to %s\n', figFile);
-  if ~isfile(figFile)
-    savefig(fig, figFile, 'compact');
-  end
+  save(protoFile, 'prototypes', '-v7.3');
+  savefig(fig, figFile, 'compact');
   close(fig);
   
   outputFiles{end+1}  = protoFile;
@@ -699,7 +717,7 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   
   
   %% Initialize noise estimate and component seeds (for greedy method)
-  %pool              = startParallelPool(scratchDir);
+  pool              = startParallelPool(scratchDir);
   [P,Y]             = preprocess_data(Y, cfg.p, cfg.options);
 
   if isempty(protoROI)
@@ -871,17 +889,12 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   fprintf(' %.3g s\n', toc(startTime));
 
   fprintf('====  SAVING to %s\n', roiFile);
-  if ~isfile(roiFile)
-    save(roiFile, 'cnmf', 'source', 'repository', '-v7.3');
-  end
+  save(roiFile, 'cnmf', 'source', 'repository', '-v7.3');
   outputFiles{end+1}= roiFile;
 
   temp              = source;
   source            = rmfield(source, {'prototypes', 'protoCfg'});
-  fprintf('====  SAVING to %s\n', summaryFile);
-  if ~isfile(summaryFile)
-    save(summaryFile, 'binnedF', 'source', '-v7.3');
-  end
+  save(summaryFile, 'binnedF', 'source', '-v7.3');
   outputFiles{end+1}= summaryFile;
   source            = temp;
 
@@ -911,9 +924,7 @@ function [info, outputFiles] = postprocessROIs(info, index, roiFile, summaryFile
     fprintf(' %.3g s\n', toc(startTime));
 
     fprintf('====  SAVING to %s\n', roiFile);
-    if ~isfile(roiFile)
-        save(roiFile, 'cnmf', 'source', 'gof', 'roi', 'repository', '-v7.3');
-    end
+    save(roiFile, 'cnmf', 'source', 'gof', 'roi', 'repository', '-v7.3');
     outputFiles{end+1}= roiFile;
   end
 
@@ -1021,7 +1032,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = regFile;
     
     fprintf('====  FOUND %s, skipping global registration\n', regFile);
-    %return
+    return
   end
   
   %% Precompute the safe frame size to contain all centered components 
@@ -1280,10 +1291,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     
     data.cnmf                   = cnmf;
     data.roi                    = roi;
-    fprintf('====  SAVING to %s\n', roiFile);
-    if ~isfile(roiFile)
-        save(roiFile, '-struct', 'data', '-v7.3');
-    end
+    save(roiFile, '-struct', 'data', '-v7.3');
     outputFiles{end+1}          = roiFile;
   end
   fprintf(' in %.3g s\n', toc(startTime));
@@ -1318,9 +1326,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
   
 
   fprintf('====  SAVING to %s\n', regFile);
-  if ~isfile(regFile)
-    save(regFile, 'chunk', 'registration', 'cnmf', 'repository', '-v7.3');
-  end
+  save(regFile, 'chunk', 'registration', 'cnmf', 'repository', '-v7.3');
   outputFiles{end+1}          = regFile;
   
   %% Update user-defined morphology information by considering that global IDs can have changed
