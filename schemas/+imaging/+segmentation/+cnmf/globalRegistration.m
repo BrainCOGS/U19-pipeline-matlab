@@ -1,5 +1,8 @@
 function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, outputFiles)
   
+  disp('Here global registration')
+  disp(chunk(1).roiFile)
+
   [~,algoLabel]                 = parsePath(chunk(1).roiFile);
   [~,~,algoLabel]               = parsePath(algoLabel);
   

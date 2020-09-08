@@ -133,7 +133,7 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
 
   chunk(cellfun(@isempty, {chunk.roiFile})) = [];
   if ~isempty(chunk)
-    outputFiles     = imaging.segmentation.cnmf.globalRegistration(chunk, moviePath, acquisPrefix, repository, cfg, outputFiles);
+    outputFiles     = imaging.segmentation.cnmf.globalRegistration(chunk, savedir, acquisPrefix, repository, cfg, outputFiles);
   end
   
   outputFiles       = unique(outputFiles);
