@@ -36,7 +36,6 @@ classdef Segmentation < dj.Imported
       
       %Get segmentation results directory
       seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key);
-      key.seg_results_directory = seg_results_directory;
                 
       %Check if segmentation directory exists in system
       lab.utils.assert_mounted_location(seg_results_directory)
@@ -99,6 +98,7 @@ classdef Segmentation < dj.Imported
       result.cross_chunks_x_shifts         = data.registration.xShifts;
       result.cross_chunks_y_shifts         = data.registration.yShifts;
       result.cross_chunks_reference_image  = data.registration.reference;
+      result.seg_results_directory         = seg_results_directory;
       self.insert(result)
       
       %% write to imaging.SegmentationChunks (some session chunk-specific info)
