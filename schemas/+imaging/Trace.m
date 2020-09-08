@@ -1,6 +1,6 @@
 %{
 # activity traces for each ROI
--> meso.SegmentationRoi
+-> imaging.SegmentationRoi
 ---
 dff_roi                : longblob  # delta f/f for each cell, 1 x nFrames. In case of chunks in segmentation, frames with no data are filled with NaN
 dff_roi_is_significant : longblob  # same size as dff_roi, true where transitents are significant
