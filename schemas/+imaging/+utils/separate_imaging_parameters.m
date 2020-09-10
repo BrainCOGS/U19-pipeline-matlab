@@ -13,6 +13,11 @@ function [chunk_cfg, cnmf_cfg, gof_cfg] = separate_imaging_parameters(params)
 % gof_cfg:      cnmf, goodness of fit params
 %
 % selectFileChunks params
+
+disp('params.chunks_auto_select_behav')
+disp(params.chunks_auto_select_behav)
+
+
 chunk_cfg.auto_select_behav    = params.chunks_auto_select_behav;
 chunk_cfg.auto_select_bleach   = params.chunks_auto_select_bleach;
 chunk_cfg.filesPerChunk        = params.cnmf_files_per_chunk;
