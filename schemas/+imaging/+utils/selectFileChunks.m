@@ -20,6 +20,11 @@ end
 
 
 
+disp('beginning of times 2')
+fileChunk
+disp('by behavior')
+chunk_cfg.auto_select_behav
+
 %% select imaging chunks based on behavior blocks (at least two consecutive blocks)
 if chunk_cfg.auto_select_behav
 
@@ -97,6 +102,8 @@ if chunk_cfg.auto_select_behav
 end
 
 %% enforce bleaching and max num file criteria if necessary
+
+disp('beginning of bleach')
 
 % bleaching
 if chunk_cfg.auto_select_bleach
