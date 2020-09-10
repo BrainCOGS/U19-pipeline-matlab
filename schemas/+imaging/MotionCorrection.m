@@ -35,7 +35,7 @@ classdef MotionCorrection < dj.Imported
             %Check if directory exists in system
             lab.utils.assert_mounted_location(fov_directory)
             mc_results_directory = imaging.utils.get_mc_save_directory(fov_directory, key);
-            key.mc_results_directory = mc_results_directory;
+            
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
@@ -86,6 +86,7 @@ classdef MotionCorrection < dj.Imported
             end
             
             %% insert key
+            key.mc_results_directory = mc_results_directory;
             self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
             insert(imaging.MotionCorrectionAcrossFiles, across_key)
