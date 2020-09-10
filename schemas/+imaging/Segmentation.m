@@ -44,7 +44,7 @@ classdef Segmentation < dj.Imported
       
       %% analysis params
       %%Get structure for searching in SegParameterSetParameter table      
-      params        = imaging.utils.getParametersFromQuery(previousimaging.SegParameterSetParameter & key, ...
+      params        = imaging.utils.getParametersFromQuery(imaging.SegParameterSetParameter & key, ...
                                                           'seg_parameter_value');
        
       params

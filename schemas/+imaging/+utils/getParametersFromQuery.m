@@ -47,8 +47,6 @@ for i=1:size(paramTable,1)
     else
         params.(paramName) = paramValue;
     end
-    disp(paramName)
-    disp(params.(paramName))
 end
 
 end
