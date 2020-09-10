@@ -15,6 +15,12 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   prototypes      = struct();
   for iChunk = 1:size(fileChunk,1)
     chunkFiles                    = movieFile(fileChunk(iChunk,1):fileChunk(iChunk,2));
+
+    %ALS Get stats files from chunck files
+    [~, movieNames] = cellfun(@fileparts, chunkFiles, 'UniformOutput', false);
+    statsFile = fullfile(mcdir, movieNames);
+    statsFile = strcat(statsFile, '.stats.mat');
+
     prototypes(iChunk).movieFile  = stripPath(chunkFiles);
     chunkLabel                    = sprintf('%s_%d-%d', prefix, fileChunk(iChunk,1), fileChunk(iChunk,2));
     fprintf('====  Performing proto-segmentation of %s\n', chunkLabel);
@@ -22,7 +28,7 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
     %% Read motion corrected statistics and crop the border to avoid correction artifacts
     [frameMCorr, fileMCorr]       = getMotionCorrection(chunkFiles, 'never', true, 'SaveDir', mcdir);
     cropping      = getMovieCropping(frameMCorr);
-    metric        = getActivityMetric(chunkFiles, fileMCorr, cropping.selectMask, cropping.selectSize, [], mcdir);
+    metric        = getActivityMetric(statsFile, fileMCorr, cropping.selectMask, cropping.selectSize);
     
     %% Read and temporally downsample movie
     startTime     = tic;
