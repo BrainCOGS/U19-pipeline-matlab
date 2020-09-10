@@ -53,6 +53,9 @@ classdef Segmentation < dj.Imported
           
       %% select tif file chunks based on behavior and bleaching
         fileChunk                            = imaging.utils.selectFileChunks(key,chunk_cfg); 
+        
+        disp('final fileChunk')
+        fileChunk
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
