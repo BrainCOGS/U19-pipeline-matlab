@@ -1,7 +1,8 @@
 %{
 -> imaging.FieldOfView
--> imaging.McParameterSet       # meta file, frameMCorr-method
+-> imaging.McParameterSet                    # meta file, frameMCorr-method
 ---
+mc_results_directory       : varchar(255)    # directory where motion correction results are stored
 %}
 
 classdef MotionCorrection < dj.Imported
@@ -34,6 +35,7 @@ classdef MotionCorrection < dj.Imported
             %Check if directory exists in system
             lab.utils.assert_mounted_location(fov_directory)
             mc_results_directory = imaging.utils.get_mc_save_directory(fov_directory, key);
+            
             
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
@@ -84,6 +86,7 @@ classdef MotionCorrection < dj.Imported
             end
             
             %% insert key
+            key.mc_results_directory = mc_results_directory;
             self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
             insert(imaging.MotionCorrectionAcrossFiles, across_key)
@@ -100,7 +103,7 @@ fprintf(' :   %s\n', movieName);
 
 % Fluorescence activity raw statistics
 statsFile                   = regexprep(fullfile(mc_results_directory, movieName), '[.][^.]+$', '.stats.mat');
-statsFile
+
 if recomputeStats ||  ~exist(statsFile, 'file')
     % Load raw data with per-file motion correction
     F                         = cv.imreadsub(movieFile, {frameMCorr,false});
