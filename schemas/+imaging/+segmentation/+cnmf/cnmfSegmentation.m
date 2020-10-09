@@ -15,8 +15,11 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
     
   else
     name            = stripPath(movieFile);
+    name
     for iProto = 1:numel(protoROI)
+      disp('for each protoroi if isempty proto roi ....')
       iFile         = find(strcmp(protoROI(iProto).movieFile, name{1}), 1, 'first');
+      iFile
       if isempty(iFile)
         continue;
       end
@@ -37,6 +40,9 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   
   
   %% Check for existing output
+  
+  print('looking for this file')
+  roiFile
   if ~isequal(lazy,false) && exist(roiFile, 'file')
     fprintf('====  Existing results found:  %s\n', roiFile);
     load(summaryFile, 'binnedF');
