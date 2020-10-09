@@ -41,7 +41,7 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   
   %% Check for existing output
   
-  print('looking for this file')
+  disp('looking for this file')
   roiFile
   if ~isequal(lazy,false) && exist(roiFile, 'file')
     fprintf('====  Existing results found:  %s\n', roiFile);
