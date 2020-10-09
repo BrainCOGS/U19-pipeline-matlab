@@ -59,6 +59,7 @@ classdef Segmentation < dj.Imported
         
         disp('final fileChunk')
         fileChunk
+        %fileChunk = [1 2]
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
