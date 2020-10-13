@@ -96,7 +96,7 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   end
   
   
-  disp('Before saving protofile ....', protoFile)
+  disp(['Before saving protofile ....', protoFile])
   %% Save output and figures
   save(protoFile, 'prototypes', '-v7.3');
   savefig(fig, figFile, 'compact');
