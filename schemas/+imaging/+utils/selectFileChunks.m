@@ -124,8 +124,16 @@ end
 if size(fileChunk,1) == 1
   if diff(fileChunk) > chunk_cfg.filesPerChunk
     oldchunk       = fileChunk;
-    fileChunk(1,:) = [oldchunk(1) floor(oldchunk(end)/2)]; 
-    fileChunk(2,:) = [floor(oldchunk(end)/2)+1 oldchunk(end)]; 
+    num_chunks     = ceil(oldchunk(end) / chunk_cfg.filesPerChunk);
+    for j=1:num_chunks
+        fileChunk(j,:) = [(j-1)*chunk_cfg.filesPerChunk+1 (j)*chunk_cfg.filesPerChunk];
+    end
+    if fileChunk(end,end) > oldchunk(end)
+        fileChunk(end,end) = oldchunk(end);
+    end
+    
+    %fileChunk(1,:) = [oldchunk(1) floor(oldchunk(end)/2)]; 
+    %fileChunk(2,:) = [floor(oldchunk(end)/2)+1 oldchunk(end)]; 
   end
   disp('after files per chunk')
   fileChunk

@@ -59,7 +59,6 @@ classdef Segmentation < dj.Imported
         
         disp('final fileChunk')
         fileChunk
-        fileChunk = [1 2]
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
@@ -122,9 +121,9 @@ classdef Segmentation < dj.Imported
         
         % figure out imaging frame range in the chunk (with respect to whole session)
         frame_range_first            = fetch1(imaging.FieldOfViewFile & key & ...
-                                              sprintf('fov_filename="%s"',result.tif_file_list{1}),'file_frame_range');
+                                              sprintf('fov_filename=''%s''',result.tif_file_list{1}),'file_frame_range');
         frame_range_last             = fetch1(imaging.FieldOfViewFile & key & ...
-                                              sprintf('fov_filename="%s"',result.tif_file_list{end}),'file_frame_range');   
+                                              sprintf('fov_filename=''%s''',result.tif_file_list{end}),'file_frame_range');   
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
         
