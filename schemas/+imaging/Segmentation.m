@@ -172,6 +172,11 @@ classdef Segmentation < dj.Imported
         % now look in file chunks and fill activity etc
         for iChunk = 1:numel(chunkdata)
           % find roi in chunks
+          disp('chunkdata, iChunk, data.chunk.globalID iROI')
+          chunkdata
+          iChunk
+          data.chunk.globalID 
+          iROI
           localIdx                          = data.chunk.globalID == iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
