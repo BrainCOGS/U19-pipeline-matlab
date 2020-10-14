@@ -2,7 +2,7 @@ function target = mergeIfDifferent(target, source)
 
   if isstruct(source)
     for field = fieldnames(source)'
-      target.(field{:}) = mergeIfDifferent(target.(field{:}), source.(field{:}));
+      target.(field{:}) = imagin.utils.mergeIfDifferent(target.(field{:}), source.(field{:}));
     end
   elseif isequaln(target, source)
   elseif iscell(target) && (~iscell(source) || numel(source) > 1)
