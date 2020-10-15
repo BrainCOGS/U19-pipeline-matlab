@@ -175,9 +175,10 @@ classdef Segmentation < dj.Imported
           disp('chunkdata, iChunk, data.chunk.globalID iROI')
           chunkdata
           iChunk
-          data.chunk.globalID 
+          size(data.chunk.globalID)
+          class(data.chunk.globalID)
           iROI
-          localIdx                          = data.chunk.globalID == iROI;
+          localIdx                          = data.chunk.globalID{iChunk} == iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
             
