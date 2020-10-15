@@ -151,6 +151,15 @@ classdef Segmentation < dj.Imported
       trace_data    = keydata;
       
       
+      disp('size all chuncks uniqueData and max globalID')
+      outputFiles{1}
+      for jj=1:numel(chunkdata)
+          outputFiles{jj+1}
+          disp(jj)
+          size(chunkdata{jj}.cnmf.uniqueData)
+          size(data.chunk(jj).globalID)
+      end
+      
       % loop through ROIs
       for iROI = 1:nROIs
         roi_data.roi_idx                    = iROI;  
@@ -172,31 +181,17 @@ classdef Segmentation < dj.Imported
         % now look in file chunks and fill activity etc
         for iChunk = 1:numel(chunkdata)
           % find roi in chunks
-          disp('chunkdata, iChunk, data.chunk.globalID iROI')
+          disp('chunkdata, iChunk')
 
           iChunk
-          size(data.chunk)
-          class(data.chunk)
           iROI
           localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
           
-          disp('min, max localIdx')
-          min(localIdx)
-          max(localIdx)
+
           
-          disp('size, uniqueData')
-          size(chunkdata{iChunk}.cnmf.uniqueData)
-          
-          disp('size all chuncks uniqueData and max globalID')
-          for jj=1:numel(chunkdata)
-              disp(jj)
-              size(chunkdata{jj}.cnmf.uniqueData)
-              size(data.chunk(jj).globalID)
-              max(data.chunk(jj).globalID)
-          end
-          
+
           
           class(data.chunk(iChunk).globalID)
             
