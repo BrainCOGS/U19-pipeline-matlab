@@ -219,9 +219,12 @@ classdef Segmentation < dj.Imported
             
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
+          disp('How many local index')
+          sum(localIdx)
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
           uniqueBase                                  = halfSampleMode(uniqueData');
-          disp('Size localIdx, uniqueData, uniqueBase')
+          disp('Size chunkdata{iChunk}.cnmf.uniqueData, localIdx, uniqueData, uniqueBase')
+          size(chunkdata{iChunk}.cnmf.uniqueData)
           size(localIdx)
           size(uniqueData)
           size(uniqueBase)
