@@ -173,14 +173,17 @@ classdef Segmentation < dj.Imported
         for iChunk = 1:numel(chunkdata)
           % find roi in chunks
           disp('chunkdata, iChunk, data.chunk.globalID iROI')
-          chunkdata
+
           iChunk
-          size(data.chunk.globalID)
-          class(data.chunk.globalID)
+          size(data.chunk)
+          class(data.chunk)
           iROI
-          localIdx                          = data.chunk.globalID{iChunk} == iROI;
+          localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
+          
+          size(data.chunk(iChunk).globalID)
+          class(data.chunk(iChunk).globalID)
             
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
