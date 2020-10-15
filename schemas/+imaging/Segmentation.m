@@ -182,7 +182,21 @@ classdef Segmentation < dj.Imported
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
           
-          size(data.chunk(iChunk).globalID)
+          disp('min, max localIdx')
+          min(localIdx)
+          max(localIdx)
+          
+          disp('size, uniqueData')
+          size(chunkdata{iChunk}.cnmf.uniqueData)
+          
+          disp('size all chuncks uniqueData and max globalID')
+          for jj=1:numel(chunkdata)
+              disp(jj)
+              size(chunkdata{jj}.cnmf.uniqueData)
+              max(data.chunk(jj).globalID)
+          end
+          
+          
           class(data.chunk(iChunk).globalID)
             
           % activity traces
