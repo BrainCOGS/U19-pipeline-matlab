@@ -221,6 +221,10 @@ classdef Segmentation < dj.Imported
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
           uniqueBase                                  = halfSampleMode(uniqueData');
+          disp('Size localIdx, uniqueData, uniqueBase')
+          size(localIdx)
+          size(uniqueData)
+          size(uniqueBase)
           surroundData                                = chunkdata{iChunk}.cnmf.surroundData(localIdx,:);
           trace_data.dff_roi(frameIdx)                = uniqueData / uniqueBase - 1;
           trace_data.dff_surround(frameIdx)           = surroundData / uniqueBase - 1;
