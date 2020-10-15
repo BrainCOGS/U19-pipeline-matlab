@@ -193,6 +193,7 @@ classdef Segmentation < dj.Imported
           for jj=1:numel(chunkdata)
               disp(jj)
               size(chunkdata{jj}.cnmf.uniqueData)
+              size(data.chunk(jj).globalID)
               max(data.chunk(jj).globalID)
           end
           
