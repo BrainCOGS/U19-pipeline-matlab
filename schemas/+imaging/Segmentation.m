@@ -81,7 +81,7 @@ classdef Segmentation < dj.Imported
       
       %ALS reorder outputfiles in numerical order e.g chunks 1-4 then 5-8 etc
       expr = '_\d+-\d.';
-      reg_match = regexp(a, expr);
+      reg_match = regexp(outputFiles, expr);
       outputFiles_order = cellfun(@(x,y) x(y+1:y+2), outputFiles, reg_match, 'UniformOutput', false);
       outputFiles_order = strrep(outputFiles_order, '-', '');
       outputFiles_order = cellfun(@str2num, outputFiles_order);
