@@ -86,6 +86,7 @@ classdef Segmentation < dj.Imported
       
       outputFiles_not_corr = outputFiles(~idx_outcorr)
       outputFiles_corr = outputFiles(idx_outcorr)
+      reg_match        = reg_match(idx_outcorr)
       
       outputFiles_order = cellfun(@(x,y) x(y+1:y+2), outputFiles_corr, reg_match, 'UniformOutput', false);
       outputFiles_order
