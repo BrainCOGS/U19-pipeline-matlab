@@ -205,13 +205,18 @@ classdef Segmentation < dj.Imported
           % find roi in chunks
           disp('chunkdata, iChunk')
 
-          iChunk
-          iROI
+          disp(['iROIs ' num2str(iROI) '/' num2str(nROIs)])
+          disp(['Chunks ' num2str(iChunk) '/' num2str(numel(chunkdata))])
           localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
           
 
+          [GC,GR] = groupcounts(data.chunk(iChunk).globalID);
+          [~ , idx_gc] = sort(GC);
+          GR = GR(idx_gc);
+          GC(1:10);
+          GR(1:10)
           
 
           
