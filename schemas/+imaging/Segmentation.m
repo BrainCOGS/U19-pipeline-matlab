@@ -213,10 +213,12 @@ classdef Segmentation < dj.Imported
           
 
           [GC,GR] = groupcounts(data.chunk(iChunk).globalID);
-          [~ , idx_gc] = sort(GC);
+          GC
+          GR
+          [GC , idx_gc] = sort(GC);
           GR = GR(idx_gc);
-          GC(1:10);
-          GR(1:10)
+          GC
+          GR
           
 
           
