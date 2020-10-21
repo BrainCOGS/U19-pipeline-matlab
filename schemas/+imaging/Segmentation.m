@@ -61,7 +61,12 @@ classdef Segmentation < dj.Imported
         fileChunk
             
       %% run segmentation and populate this table
-      if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
+      if isempty(gcp('nocreate'))
+        pool = parpool('IdleTimeout', 120)
+        clust = pool.Cluster
+        loc = clust.JobStorageLocation
+      end
+      
       
       segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
