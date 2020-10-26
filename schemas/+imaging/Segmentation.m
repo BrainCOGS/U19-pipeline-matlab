@@ -62,7 +62,7 @@ classdef Segmentation < dj.Imported
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate'))
-        pool = parpool('IdleTimeout', 120)
+        pool = parpool('cluster1', 16, 'IdleTimeout', 120);
         clust = pool.Cluster
         loc = clust.JobStorageLocation
       end
