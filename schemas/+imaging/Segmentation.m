@@ -217,11 +217,11 @@ classdef Segmentation < dj.Imported
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
           
 
-          [GC,GR] = groupcounts(data.chunk(iChunk).globalID');
-          [GC , idx_gc] = sort(GC, 'desc');
-          GR = GR(idx_gc);
-          GC(1:min(10,length(GC)))
-          GR(1:min(10,length(GR)))
+          %[GC,GR] = groupcounts(data.chunk(iChunk).globalID');
+          %[GC , idx_gc] = sort(GC, 'desc');
+          %GR = GR(idx_gc);
+          %GC(1:min(10,length(GC)))
+          %GR(1:min(10,length(GR)))
           
 
           
