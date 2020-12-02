@@ -113,7 +113,7 @@ if recomputeStats ||  ~exist(statsFile, 'file')
     info                      = cv.imfinfox(movieFile);
     info.movieFile            = stripPath(movieFile);
     outputFile                = statsFile;
-    if ~(exist(filename, 'file') == 2)
+    if ~(exist(outputFile, 'file') == 2)
         parsave(outputFile, info, stats, metric, tailProb);
     end
 else
