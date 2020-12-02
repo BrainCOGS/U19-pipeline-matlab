@@ -132,8 +132,8 @@ if size(fileChunk,1) == 1
     %    fileChunk(end,end) = oldchunk(end);
     %end
     
-    fileChunk(1,:) = [oldchunk(1) floor(oldchunk(end)/2)]; 
-    fileChunk(2,:) = [floor(oldchunk(end)/2)+1 oldchunk(end)]; 
+    fileChunk(1,:) = [oldchunk(1) round(oldchunk(end)/2)]; 
+    fileChunk(2,:) = [round(oldchunk(end)/2)+1 oldchunk(end)]; 
   end
   disp('after files per chunk')
   fileChunk
