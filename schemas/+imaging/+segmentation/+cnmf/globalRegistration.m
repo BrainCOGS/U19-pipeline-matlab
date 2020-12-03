@@ -21,7 +21,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = regFile;
     
     fprintf('====  FOUND %s, skipping global registration\n', regFile);
-    %return
+    return
   end
   
   fprintf('====  FOUND %s, not skipping global registration\n', regFile);
