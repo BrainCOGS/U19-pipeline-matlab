@@ -1,13 +1,13 @@
 %% ---------------------------------------------------------------------------------------------------
 function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  ...
-                    = cnmfSegmentation(movieFile, prefix, fileNum, protoROI, cfg, repository, lazy, outputFiles, scratchDir)
+                    = cnmfSegmentation(movieFile, prefix, fileNum, protoROI, cfg, repository, lazy, outputFiles, scratchDir, mcdir)
 
   prefix            = sprintf('%s_%d-%d', prefix, fileNum(1), fileNum(end));
   fprintf('****  %s\n', prefix);
  
 
   %% Locate proto-segmentation results if so requested
-  [frameMCorr, fileMCorr] = getMotionCorrection(movieFile, 'never', true);
+  [frameMCorr, fileMCorr] = getMotionCorrection(movieFile, 'never', true, 'SaveDir', mcdir);
   timeScale         = cfg.defaultTimeScale;
   cropping          = getMovieCropping(frameMCorr);
   if isempty(protoROI)
