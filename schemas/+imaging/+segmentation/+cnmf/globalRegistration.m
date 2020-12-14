@@ -151,6 +151,12 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
       
       % Keep track of temporal evolution of templates
       iGlobal                   = difference(iDiff,2);
+      alreadyGlobal = find(chunk(iFile).globalID == iGlobal,1);
+      
+      if ~isempty(alreadyGlobal)
+          continue
+      end
+      
       iLocal                    = compIndex(iComp);
       globalXY(:,iGlobal)       = chunk(iFile).globalXY(:,iLocal);
       template(:,iGlobal)       = chunk(iFile).template(:,iLocal);
