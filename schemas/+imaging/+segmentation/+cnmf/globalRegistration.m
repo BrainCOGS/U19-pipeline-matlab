@@ -184,6 +184,15 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     chunk(iFile).globalID(compIndex)        = iGlobal;
   end
   
+  disp('check globalids chunk 2')
+  [GC,GR] = groupcounts(chunk(2).globalID');
+    [GC , idx_gc] = sort(GC, 'desc');
+    GR = GR(idx_gc);
+    GC(1:min(10,length(GC)))
+    GR(1:min(10,length(GR)))
+  
+  
+  
   %% Reorder global IDs by persistence across time
   [~, globalOrder]              = sort(sum(localIndex > 0, 1), 'descend');
   translation                   = 1:numel(globalOrder);
@@ -300,6 +309,14 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = roiFile;
   end
   fprintf(' in %.3g s\n', toc(startTime));
+  
+    disp('check globalids chunk 2.2 ........')
+  [GC,GR] = groupcounts(chunk(2).globalID');
+    [GC , idx_gc] = sort(GC, 'desc');
+    GR = GR(idx_gc);
+    GC(1:min(10,length(GC)))
+    GR(1:min(10,length(GR)))
+  
   
   % Remove large data
   if isfield(chunkCfg.cfg.options, 'neighborhood')
