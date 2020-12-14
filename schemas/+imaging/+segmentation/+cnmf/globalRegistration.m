@@ -160,8 +160,8 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
       disp(['iGlobal' num2str(iGlobal)])
       if chunk(iFile).globalID(iLocal) 
           disp('I have already a globalID xxxxxxxxxxxxxxx')
-          disp(['iLocal' num2str(iLocal)])
-          disp(['iGlobal' num2str(iGlobal)])
+          disp(['iLocal dentro ' num2str(iLocal)])
+          disp(['iGlobal dentro ' num2str(iGlobal)])
       end
       chunk(iFile).globalID(iLocal)         = iGlobal;
       chunk(iFile).globalDistance(iLocal)   = difference(iDiff,4);
@@ -174,6 +174,8 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     globalXY(:,iGlobal)         = chunk(iFile).globalXY(:,compIndex);
     template(:,iGlobal)         = chunk(iFile).template(:,compIndex);
     localIndex(end,iGlobal)     = compIndex;
+    disp(['iLocal fuera --' num2str(compIndex)])
+    disp(['iGlobal  fuera --' num2str(iGlobal)])
     if chunk(iFile).globalID(compIndex) 
           disp('I have already a globalID 22222 xxxxxxxxxxxxxxx')
           disp(['iLocal' num2str(compIndex)])
