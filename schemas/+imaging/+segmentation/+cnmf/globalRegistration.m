@@ -21,7 +21,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = regFile;
     
     fprintf('====  FOUND %s, skipping global registration\n', regFile);
-    return
+    %return
   end
   
   fprintf('====  FOUND %s, not skipping global registration\n', regFile);
@@ -156,6 +156,11 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
       template(:,iGlobal)       = chunk(iFile).template(:,iLocal);
       localIndex(end,iGlobal)   = iLocal;
       isResolved(iComp)         = true;
+      if chunk(iFile).globalID(iLocal) 
+          disp('I have already a globalID xxxxxxxxxxxxxxx')
+          disp(['iLocal' str2num(iLocal)])
+          disp(['iGlobal' str2num(iGlobal)])
+      end
       chunk(iFile).globalID(iLocal)         = iGlobal;
       chunk(iFile).globalDistance(iLocal)   = difference(iDiff,4);
       chunk(iFile).globalShapeCorr(iLocal)  = difference(iDiff,1);
