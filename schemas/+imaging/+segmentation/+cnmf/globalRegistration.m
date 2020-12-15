@@ -138,8 +138,9 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     end
     difference                  = sortrows(difference, 1);
 
-    % Greedily assign the most correlated components first
+    %% Greedily assign the most correlated components first
     isResolved                  = false(size(compIndex));
+    isMatched                   = false(1, size(globalXY,2));
     for iDiff = size(difference,1):-1:1             % Highest correlation first
       iComp                     = difference(iDiff,3);
       if isResolved(iComp)
@@ -149,32 +150,25 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
         break;
       end
       
-      % Keep track of temporal evolution of templates
+      %% Keep track of global components that already have (better) matches
       iGlobal                   = difference(iDiff,2);
-      alreadyGlobal = find(chunk(iFile).globalID == iGlobal,1);
-      
-      if ~isempty(alreadyGlobal)
-          continue
+      if isMatched(iGlobal)
+        continue;
       end
+      isMatched(iGlobal)        = true;
       
+      %% Keep track of temporal evolution of templates
       iLocal                    = compIndex(iComp);
       globalXY(:,iGlobal)       = chunk(iFile).globalXY(:,iLocal);
       template(:,iGlobal)       = chunk(iFile).template(:,iLocal);
       localIndex(end,iGlobal)   = iLocal;
       isResolved(iComp)         = true;
-      disp(['iLocal' num2str(iLocal)])
-      disp(['iGlobal' num2str(iGlobal)])
-      if chunk(iFile).globalID(iLocal) 
-          disp('I have already a globalID xxxxxxxxxxxxxxx')
-          disp(['iLocal dentro ' num2str(iLocal)])
-          disp(['iGlobal dentro ' num2str(iGlobal)])
-      end
       chunk(iFile).globalID(iLocal)         = iGlobal;
       chunk(iFile).globalDistance(iLocal)   = difference(iDiff,4);
       chunk(iFile).globalShapeCorr(iLocal)  = difference(iDiff,1);
     end
     
-    % Register new global components as they appear
+    %% Register new global components as they appear
     compIndex(isResolved)       = [];
     iGlobal                     = size(globalXY,2) + (1:numel(compIndex));
     globalXY(:,iGlobal)         = chunk(iFile).globalXY(:,compIndex);
