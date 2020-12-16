@@ -128,6 +128,11 @@ classdef Scan < dj.Imported
             toc
             dirInfo = split(dirInfo,':');
             
+            % For matlab 2016 change string to cell
+            if isstring(dirInfo)
+                dirInfo = cellstr(dirInfo);
+            end
+            
             %Remove final entry (0x0 char)
             dirInfo = dirInfo(1:end-1);
             dirInfo

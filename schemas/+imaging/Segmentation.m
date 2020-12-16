@@ -57,16 +57,11 @@ classdef Segmentation < dj.Imported
       %% select tif file chunks based on behavior and bleaching
         fileChunk                            = imaging.utils.selectFileChunks(key,chunk_cfg); 
         
-        disp('final fileChunk')
-        fileChunk
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate'))
-        pool = parpool('local', 16, 'IdleTimeout', 120);
-        clust = pool.Cluster
-        loc = clust.JobStorageLocation
+        parpool('local', 16, 'IdleTimeout', 120);
       end
-      
       
       segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
@@ -85,26 +80,7 @@ classdef Segmentation < dj.Imported
       outputFiles = outputFiles(fileidx);
       
       %ALS reorder outputfiles in numerical order e.g chunks 1-4 then 5-8 etc
-      expr = '_\d+-\d.';
-      reg_match = regexp(outputFiles, expr);
-      idx_outcorr = ~cellfun(@isempty,reg_match);
-      
-      outputFiles_not_corr = outputFiles(~idx_outcorr)
-      outputFiles_corr = outputFiles(idx_outcorr)
-      reg_match        = reg_match(idx_outcorr)
-      
-      outputFiles_order = cellfun(@(x,y) x(y+1:y+2), outputFiles_corr, reg_match, 'UniformOutput', false);
-      outputFiles_order
-      outputFiles_order = strrep(outputFiles_order, '-', '');
-      outputFiles_order
-      outputFiles_order = cellfun(@str2num, outputFiles_order);
-      outputFiles_order
-      [~, outputFiles_order] = sort(outputFiles_order);
-      %ALS outputFiles reordererd
-      outputFiles_corr = outputFiles_corr(outputFiles_order)
-      
-      outputFiles = [outputFiles_not_corr outputFiles_corr]
-      
+      outputFiles = imaging.utils.reorder_output_files(outputFiles);
 
 %       %% shut down parallel pool
 %       if ~isempty(gcp('nocreate'))
@@ -176,17 +152,7 @@ classdef Segmentation < dj.Imported
       roi_data      = keydata;
       morpho_data   = keydata;
       trace_data    = keydata;
-      
-      
-      disp('size all chuncks uniqueData and max globalID')
-      outputFiles{1}
-      for jj=1:numel(chunkdata)
-          outputFiles{jj+1}
-          disp(jj)
-          size(chunkdata{jj}.cnmf.uniqueData)
-          size(data.chunk(jj).globalID)
-      end
-      
+            
       % loop through ROIs
       for iROI = 1:nROIs
         roi_data.roi_idx                    = iROI;  
@@ -208,37 +174,14 @@ classdef Segmentation < dj.Imported
         % now look in file chunks and fill activity etc
         for iChunk = 1:numel(chunkdata)
           % find roi in chunks
-          disp('chunkdata, iChunk')
-
-          disp(['iROIs ' num2str(iROI) '/' num2str(nROIs)])
-          disp(['Chunks ' num2str(iChunk) '/' num2str(numel(chunkdata))])
           localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-          
-
-          %[GC,GR] = groupcounts(data.chunk(iChunk).globalID');
-          %[GC , idx_gc] = sort(GC, 'desc');
-          %GR = GR(idx_gc);
-          %GC(1:min(10,length(GC)))
-          %GR(1:min(10,length(GR)))
-          
-
-          
-          class(data.chunk(iChunk).globalID)
-            
+                    
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
-          disp('How many local index')
-          sum(localIdx)
-          size(localIdx)
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);
           uniqueBase                                  = halfSampleMode(uniqueData');
-          disp('Size chunkdata{iChunk}.cnmf.uniqueData, localIdx, uniqueData, uniqueBase')
-          size(chunkdata{iChunk}.cnmf.uniqueData)
-          size(localIdx)
-          size(uniqueData)
-          size(uniqueBase)
           surroundData                                = chunkdata{iChunk}.cnmf.surroundData(localIdx,:);
           trace_data.dff_roi(frameIdx)                = uniqueData / uniqueBase - 1;
           trace_data.dff_surround(frameIdx)           = surroundData / uniqueBase - 1;
