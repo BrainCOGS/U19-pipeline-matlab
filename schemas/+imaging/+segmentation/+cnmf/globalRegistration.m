@@ -174,23 +174,8 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     globalXY(:,iGlobal)         = chunk(iFile).globalXY(:,compIndex);
     template(:,iGlobal)         = chunk(iFile).template(:,compIndex);
     localIndex(end,iGlobal)     = compIndex;
-    disp(['iLocal fuera --' num2str(compIndex)])
-    disp(['iGlobal  fuera --' num2str(iGlobal)])
-    if chunk(iFile).globalID(compIndex) 
-          disp('I have already a globalID 22222 xxxxxxxxxxxxxxx')
-          disp(['iLocal' num2str(compIndex)])
-          disp(['iGlobal' num2str(iGlobal)])
-    end
     chunk(iFile).globalID(compIndex)        = iGlobal;
   end
-  
-  disp('check globalids chunk 2')
-  [GC,GR] = groupcounts(chunk(2).globalID');
-    [GC , idx_gc] = sort(GC, 'desc');
-    GR = GR(idx_gc);
-    GC(1:min(10,length(GC)))
-    GR(1:min(10,length(GR)))
-  
   
   
   %% Reorder global IDs by persistence across time
@@ -309,13 +294,6 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = roiFile;
   end
   fprintf(' in %.3g s\n', toc(startTime));
-  
-    disp('check globalids chunk 2.2 ........')
-  [GC,GR] = groupcounts(chunk(2).globalID');
-    [GC , idx_gc] = sort(GC, 'desc');
-    GR = GR(idx_gc);
-    GC(1:min(10,length(GC)))
-    GR(1:min(10,length(GR)))
   
   
   % Remove large data

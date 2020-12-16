@@ -135,7 +135,6 @@ classdef Scan < dj.Imported
             
             %Remove final entry (0x0 char)
             dirInfo = dirInfo(1:end-1);
-            dirInfo
             
             %Search directories that "end" with subject nickname
             indexSubjDir = cellfun(@(x) strcmpi(x(end-length(subj)+1:end),subj),...
