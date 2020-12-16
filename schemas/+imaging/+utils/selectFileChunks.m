@@ -92,9 +92,6 @@ if chunk_cfg.auto_select_behav
 end
 
 %% enforce bleaching and max num file criteria if necessary
-
-disp('beginning of bleach')
-
 % bleaching
 if chunk_cfg.auto_select_bleach
   lastGoodFile           = fetch1(imaging.ScanInfo & key,'last_good_file');
