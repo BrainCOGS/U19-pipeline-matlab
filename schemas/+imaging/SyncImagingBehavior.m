@@ -20,8 +20,9 @@ classdef SyncImagingBehavior < dj.Computed
     function makeTuples(self, key)
       
       %% behav
-      fov_directory  = formatFilePath(fetch1(behavior.DataDirectory & key, 'combined_file_name'),false,true);
-      behavdata = load(fov_directory, 'log');
+      [~, acqsession_file] = lab.utils.get_path_from_official_dir(...
+                           fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file'));
+      behavdata = load(acqsession_file, 'log');
       block     = behavdata.log.block;
       
       %% add some stuff that for whatever reason isn't on some mesosocope logs
