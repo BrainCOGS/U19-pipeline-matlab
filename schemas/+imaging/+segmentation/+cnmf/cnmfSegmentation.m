@@ -4,6 +4,9 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
 
   prefix            = sprintf('%s_%d-%d', prefix, fileNum(1), fileNum(end));
   fprintf('****  %s\n', prefix);
+  
+  disp('aqui protoROI ........................');
+  disp(protoROI);
  
 
   %% Locate proto-segmentation results if so requested
@@ -17,7 +20,9 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
     name            = stripPath(movieFile);
     name
     for iProto = 1:numel(protoROI)
-      disp('for each protoroi if isempty proto roi ....')
+      disp('for each protoroi if ~isempty proto roi ....')
+      disp('protoROI(iProto).movieFile')
+      disp(protoROI(iProto).movieFile)
       iFile         = find(strcmp(protoROI(iProto).movieFile, name{1}), 1, 'first');
       iFile
       if isempty(iFile)
@@ -30,6 +35,10 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
         end
       end
       prototypes    = protoROI(iProto).spatial;
+      
+      disp('size, prototypes')
+      disp(size(prototypes))
+      
       protoCfg      = protoROI(iProto).params;
       timeScale     = numel(protoROI(iProto).metric.kernel);
       break;

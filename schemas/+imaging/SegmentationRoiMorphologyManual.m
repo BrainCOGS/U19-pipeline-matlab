@@ -8,9 +8,9 @@ morphology:  enum('Doughnut', 'Blob', 'Puncta', 'Filament', 'Other', 'Noise')
 
 classdef SegmentationRoiMorphologyManual < dj.Manual
   methods(Access=protected)
-    function makeTuples(self, key)
-      self.insert(key)
-    end
+    %function makeTuples(self, key)
+    %  self.insert(key)
+    %end
   end
 end
 
