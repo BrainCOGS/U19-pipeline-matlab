@@ -26,7 +26,7 @@ classdef Scan < dj.Imported
             % get acquisition type of session & base dir location (differentiate mesoscope and 2_3 photon)
             location_info        = lab.utils.check_location(session_info.session_location);
             acq_type             = location_info.acquisition_type;
-            base_dir             = location_info.bucket_default_path;
+            base_dir             = location_info.imaging_bucket_default_path;
                         
             %If is mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
