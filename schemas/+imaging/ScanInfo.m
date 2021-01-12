@@ -104,6 +104,11 @@ classdef ScanInfo < dj.Imported
             % check acqTime is valid, and if not, correct it
             recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
             
+            %If original files where compressed
+            if isCompressed
+                disp('it started as compressed files, removing uncompressed')
+                imaging.utils.remove_tif_if_gz(fl, scan_directory);
+            end
             
             %% Insert to ScanInfo
             self.insert_scan_info(key, recInfo)
@@ -119,13 +124,6 @@ classdef ScanInfo < dj.Imported
             else
                 error('Not a valid acquisition for this pipeline, how did you get here ??')
             end
-            
-            %If original files where compressed
-            if isCompressed
-                disp('it started as compressed files, removing uncompressed')
-                imaging.utils.remove_tif_if_gz(fl, scan_directory);
-            end
-            
             
             cd(curr_dir)
             fprintf('\tdone after %1.1f min\n',toc(generalTimer)/60)
@@ -151,7 +149,7 @@ classdef ScanInfo < dj.Imported
                 if ~isempty(fl_gz)
                     is_compressed = 1;
                     % unzip gz videos
-                    gunzip({fl_gz(:).name});
+                    %gunzip({fl_gz(:).name});
                     fl       = dir('*tif'); % tif file list
                 else
                     error('There are no tif or tif.gz files in scan directory')
