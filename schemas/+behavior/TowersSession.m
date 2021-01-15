@@ -72,6 +72,10 @@ classdef TowersSession < dj.Imported
             for block_idx = 1:length(log.block)
                 trialstruct = log.block(block_idx);
                 
+                % Get only "complete" trials (sometimes behavioral file has a lot of empty ones)
+                nTrials = length([trialstruct.trial.choice]);
+                trialstruct.trial = trialstruct.trial(1:nTrials);
+                
                 rewarded_side = double([trialstruct.trial.trialType]);
                 chosen_side = double([trialstruct.trial.choice]);
                 %Repeat maze id for each trial
@@ -79,15 +83,8 @@ classdef TowersSession < dj.Imported
                 
                 %Separate cueCombo to get towersR and towersL
                 cueCombo = {trialstruct.trial.cueCombo};
-                % Get last cueCombo on cell
-                idx_empty_cueCombo = find(cellfun(@isempty, cueCombo),1,'first');
-                if isempty(idx_empty_cueCombo)
-                    idx_endCues = length(cueCombo);
-                else
-                    idx_endCues = idx_empty_cueCombo-1;
-                end
-                num_towers_r = cellfun(@(x) sum(x(Choice.R,:)), cueCombo(1:idx_endCues));
-                num_towers_l = cellfun(@(x) sum(x(Choice.L,:)), cueCombo(1:idx_endCues));
+                num_towers_r = cellfun(@(x) sum(x(Choice.R,:)), cueCombo);
+                num_towers_l = cellfun(@(x) sum(x(Choice.L,:)), cueCombo);
                 
                 
                 %Concatenate variables

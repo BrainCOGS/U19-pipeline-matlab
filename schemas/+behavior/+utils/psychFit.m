@@ -1,10 +1,10 @@
-function fit_results = psychFit(deltaBins, numTowersR, numTowersL, choices)
+function fit_results = psychFit(deltaBins, numR, numL, choices)
 
     %% Compute trials where the animal went right vs. evidence strength
     numRight            = zeros(numel(deltaBins),1);
     numTrials           = zeros(numel(deltaBins),1);
     trialDelta          = zeros(numel(deltaBins),1);
-    nCues_RminusL       = numTowersR - numTowersL;
+    nCues_RminusL       = numR - numL;
     trialBin            = binarySearch(deltaBins, nCues_RminusL, 0, 2);
     for iTrial = 1:numel(choices)
         numTrials(trialBin(iTrial))   = numTrials(trialBin(iTrial)) + 1;

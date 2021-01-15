@@ -171,6 +171,11 @@ end
 function block = fixLogs(block)
 
 for iBlock = 1:numel(block)
+    
+    %Correct number of trials when there are empty trials in block
+    nTrials = length([block(iBlock).trial.choice]);
+    block(iBlock).trial = block(iBlock).trial(1:nTrials);
+    
     nTrials = numel(block(iBlock).trial);
     for iTrial = 1:nTrials
         if isempty(block(iBlock).trial(iTrial).trialType)
