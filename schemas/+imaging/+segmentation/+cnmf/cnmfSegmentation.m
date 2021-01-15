@@ -5,10 +5,6 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   prefix            = sprintf('%s_%d-%d', prefix, fileNum(1), fileNum(end));
   fprintf('****  %s\n', prefix);
   
-  disp('aqui protoROI ........................');
-  disp(protoROI);
- 
-
   %% Locate proto-segmentation results if so requested
   [frameMCorr, fileMCorr] = getMotionCorrection(movieFile, 'never', true, 'SaveDir', mcdir);
   timeScale         = cfg.defaultTimeScale;
@@ -35,10 +31,7 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
         end
       end
       prototypes    = protoROI(iProto).spatial;
-      
-      disp('size, prototypes')
-      disp(size(prototypes))
-      
+            
       protoCfg      = protoROI(iProto).params;
       timeScale     = numel(protoROI(iProto).metric.kernel);
       break;
@@ -49,9 +42,6 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
   
   
   %% Check for existing output
-  
-  disp('looking for this file')
-  roiFile
   if ~isequal(lazy,false) && exist(roiFile, 'file')
     fprintf('====  Existing results found:  %s\n', roiFile);
     load(summaryFile, 'binnedF');

@@ -169,8 +169,7 @@ classdef Segmentation < dj.Imported
             disp(iROI)
             continue
         end
-        
-        
+
         trace_data.time_constants           = data.cnmf.timeConstants{iROI};
         trace_data.init_concentration       = data.cnmf.initConcentration{iROI};
         trace_data.dff_roi                  = nan(1,totalFrames);
