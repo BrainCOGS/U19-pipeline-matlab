@@ -165,8 +165,6 @@ classdef Segmentation < dj.Imported
         
         %Save all chunks that were present at least on first ROI
         if isempty(data.cnmf.timeConstants{iROI,1})
-            disp('ROI not present in 1st chunk')
-            disp(iROI)
             continue
         end
 

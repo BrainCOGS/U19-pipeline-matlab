@@ -14,13 +14,11 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
     
   else
     name            = stripPath(movieFile);
-    name
+    
     for iProto = 1:numel(protoROI)
-      disp('for each protoroi if ~isempty proto roi ....')
-      disp('protoROI(iProto).movieFile')
       disp(protoROI(iProto).movieFile)
       iFile         = find(strcmp(protoROI(iProto).movieFile, name{1}), 1, 'first');
-      iFile
+      
       if isempty(iFile)
         continue;
       end
