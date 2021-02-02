@@ -163,15 +163,15 @@ classdef Segmentation < dj.Imported
         roi_data.roi_is_in_chunks           = [];   
         roi_data.roi_spatial                = [];
         
-        %ROI was present only in one of the chunks
-        if any(cellfun(@isempty, data.cnmf.timeConstants(iROI,:)))
-            disp('ROI not present in all chunks')
+        %Save all chunks that were present at least on first ROI
+        if isempty(data.cnmf.timeConstants{iROI,1})
+            disp('ROI not present in 1st chunk')
             disp(iROI)
             continue
         end
 
-        trace_data.time_constants           = data.cnmf.timeConstants{iROI};
-        trace_data.init_concentration       = data.cnmf.initConcentration{iROI};
+        trace_data.time_constants           = data.cnmf.timeConstants{iROI,1};
+        trace_data.init_concentration       = data.cnmf.initConcentration{iROI,1};
         trace_data.dff_roi                  = nan(1,totalFrames);
         trace_data.dff_surround             = nan(1,totalFrames);
         trace_data.spiking                  = nan(1,totalFrames);
