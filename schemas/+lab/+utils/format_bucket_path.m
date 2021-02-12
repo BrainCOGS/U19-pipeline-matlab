@@ -35,7 +35,7 @@ elseif ispc
     baseDir  = path_record.net_location{:};
     
     %Correct extra bucket dir to adjust to windows style
-    extra_bucket_dir = strep(extra_bucket_dir,'/','\');
+    extra_bucket_dir = strrep(extra_bucket_dir,'/','\');
     
 else
     %For mac and linux the accesible path is the local_path field
