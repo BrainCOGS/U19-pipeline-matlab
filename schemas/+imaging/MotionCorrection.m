@@ -114,7 +114,7 @@ if recomputeStats ||  ~exist(statsFile, 'file')
     info.movieFile            = stripPath(movieFile);
     outputFile                = statsFile;
     if ~(exist(outputFile, 'file') == 2)
-        parsave(outputFile, info, stats, metric, tailProb);
+        parsave(outputFile, info, stats, metric, tailProb, '-v7.3');
     end
 else
     metric                    = load(statsFile, 'metric');
