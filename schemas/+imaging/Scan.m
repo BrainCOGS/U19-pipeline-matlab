@@ -81,11 +81,30 @@ classdef Scan < dj.Imported
             
             %complete local and bucket path for scan directory
             local_path = fullfile(local_path, subj, session_date);
-            scan_directory = [bucket_path '/' subj '/' session_date];
+            if ~ispc
+                scan_directory = fullfile(bucket_path, subj, session_date);
+            else
+                scan_directory = [bucket_path, subj, '/', session_date];
+            end
             
             %Check if directory exists and is not empty
             if isempty(dir(local_path))
-                status = false;
+
+            %complete local and bucket path for scan directory with upper case
+            subj = upper(subj);
+            local_path = fullfile(local_path, subj, session_date);
+            if ~ispc
+                scan_directory = fullfile(bucket_path, subj, session_date);
+            else
+                scan_directory = [bucket_path, subj, '/', session_date];
+            end  
+            
+                if isempty(dir(local_path))
+                    status = false;
+                else
+                    status = true;
+                end
+            
             else
                 status = true;
             end
