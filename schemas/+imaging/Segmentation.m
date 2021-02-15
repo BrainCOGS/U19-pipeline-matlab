@@ -60,7 +60,10 @@ classdef Segmentation < dj.Imported
             
       %% run segmentation and populate this table
       if isempty(gcp('nocreate'))
-        parpool('local', 16, 'IdleTimeout', 120);
+          
+          c = parcluster('local'); % build the 'local' cluster object
+          num_workers = min(c.NumWorkers, 16);
+          parpool('local', num_workers, 'IdleTimeout', 120);
       end
       
       segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
