@@ -50,7 +50,13 @@ classdef MotionCorrection < dj.Imported
             end
             
             % run motion correction
-            if isempty(gcp('nocreate')); poolobj = parpool; end
+            if isempty(gcp('nocreate'))
+                
+                c = parcluster('local'); % build the 'local' cluster object
+                num_workers = min(c.NumWorkers, 16);
+                parpool('local', num_workers, 'IdleTimeout', 120);
+                
+            end
             
             [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', 'SaveDir', mc_results_directory, cfg.mcorr{:});
             

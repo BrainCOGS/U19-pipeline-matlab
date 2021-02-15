@@ -171,7 +171,11 @@ classdef ScanInfo < dj.Imported
         function [imheader, parsedInfo] = get_parsed_info(self, fl, isMesoscope)
             
             if isempty(gcp('nocreate'))
-                parpool;
+                
+                c = parcluster('local'); % build the 'local' cluster object
+                num_workers = min(c.NumWorkers, 16);
+                parpool('local', num_workers, 'IdleTimeout', 120);
+                
             end
             
             parfor iF = 1:numel(fl)
@@ -315,7 +319,13 @@ classdef ScanInfo < dj.Imported
             stridx   = regexp(fl{1},self.tif_number_fmt);
             
             if ~skipParsing
-                if isempty(gcp('nocreate')); poolobj = parpool; end
+                if isempty(gcp('nocreate'))
+                
+                    c = parcluster('local'); % build the 'local' cluster object
+                    num_workers = min(c.NumWorkers, 16);
+                    parpool('local', num_workers, 'IdleTimeout', 120);
+                
+                end
                 
                 fieldLs = {'ImageLength','ImageWidth','BitsPerSample','Compression', ...
                     'SamplesPerPixel','PlanarConfiguration','Photometric'};
