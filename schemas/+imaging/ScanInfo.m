@@ -54,7 +54,9 @@ classdef ScanInfo < dj.Imported
             % runs a modified version of mesoscopeSetPreproc
             generalTimer   = tic;
             curr_dir       = pwd;
+            scan_dir_db    = fetch1(imaging.Scan & key,'scan_directory');
             scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
+            
             
             %Check if directory exists in system
             lab.utils.assert_mounted_location(scan_directory)
@@ -111,15 +113,15 @@ classdef ScanInfo < dj.Imported
             end
             
             %% Insert to ScanInfo
-            self.insert_scan_info(key, recInfo)
+            self.insert_scan_info(key, recInfo, scan_dir_db)
             
             %% FOV ROI Processing for mesoscope
             if any(contains(self.mesoscope_acq, acq_type))
-                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_directory)
+                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_dir_db)
                 
                 % Just insertion of fov and fov fiels for 2 and 3 photon
             elseif any(contains(self.photon_micro_acq, acq_type))
-                self.insert_fov_photonmicro(key, scan_directory)
+                self.insert_fov_photonmicro(key, scan_dir_db)
                 self.insert_fovfile_photonmicro(key, fl, imheader)
             else
                 error('Not a valid acquisition for this pipeline, how did you get here ??')
@@ -273,12 +275,17 @@ classdef ScanInfo < dj.Imported
             
         end
         
-        function insert_scan_info(self, key, recInfo)
+        function insert_scan_info(self, key, recInfo, bucket_dir)
+            
+            %Correct full filename for mac & windows system
+            [~, filename, ext] = fileparts(recInfo.Filename);
+            full_filename = spec_fullfile('/', bucket_dir, [filename ext]);
+            
             
             originalkey                   = key;
             key_data                      = fetch(imaging.Scan & originalkey);
             key                           = key_data;
-            key.file_name_base            = recInfo.Filename;
+            key.file_name_base            = full_filename;
             key.scan_width                = recInfo.Width;
             key.scan_height               = recInfo.Height;
             key.acq_time                  = recInfo.AcqTime;

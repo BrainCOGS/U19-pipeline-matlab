@@ -81,24 +81,16 @@ classdef Scan < dj.Imported
             
             %complete local and bucket path for scan directory
             local_path = fullfile(local_path, subj, session_date);
-            if ~ispc
-                scan_directory = fullfile(bucket_path, subj, session_date);
-            else
-                scan_directory = [bucket_path, subj, '/', session_date];
-            end
+            scan_directory = spec_fullfile('/',bucket_path, subj, session_date);
             
             %Check if directory exists and is not empty
             if isempty(dir(local_path))
 
             %complete local and bucket path for scan directory with upper case
             subj = upper(subj);
-            local_path = fullfile(local_path, subj, session_date);
-            if ~ispc
-                scan_directory = fullfile(bucket_path, subj, session_date);
-            else
-                scan_directory = [bucket_path, subj, '/', session_date];
-            end  
-            
+            local_path = fullfile(local_path, subj, session_date);            
+            scan_directory = spec_fullfile('/',bucket_path, subj, session_date);
+
                 if isempty(dir(local_path))
                     status = false;
                 else
@@ -185,7 +177,8 @@ classdef Scan < dj.Imported
             %Check if "candidate" directory is empty
             if ~isempty(dir(dirSession))
                 %Get scan directory from bucket
-                scan_directory = strrep(dirSession, local_path, bucket_path);
+                scan_directory = lab.utils.get_path_from_official_dir(dirSession);
+                
             else
                 status = false;
             end
