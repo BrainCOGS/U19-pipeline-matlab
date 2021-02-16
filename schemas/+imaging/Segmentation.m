@@ -28,14 +28,22 @@ classdef Segmentation < dj.Imported
       
       %Get motion correction results directory
       mcdata = fetch(imaging.MotionCorrection & key,'mc_results_directory');
-      mc_results_directory = lab.utils.format_bucket_path(mcdata.mc_results_directory);
+      mc_bucket_results_directory = mcdata.mc_results_directory;
+      mc_results_directory        = lab.utils.format_bucket_path(mc_bucket_results_directory);
       
       %Check if fov_directory and mc directory exists in system
       lab.utils.assert_mounted_location(fov_directory)
       lab.utils.assert_mounted_location(mc_results_directory)
       
       %Get segmentation results directory
+      seg_bucket_results_directory = imaging.utils.get_seg_save_directory(mc_bucket_results_directory,key);
       seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key);
+      
+      %Create motion correciton results directory
+      if ~exist(seg_results_directory, 'dir')
+         mkdir(seg_results_directory)
+      end
+      
                 
       %Check if segmentation directory exists in system
       lab.utils.assert_mounted_location(seg_results_directory)
@@ -110,7 +118,7 @@ classdef Segmentation < dj.Imported
       result.cross_chunks_x_shifts         = data.registration.xShifts;
       result.cross_chunks_y_shifts         = data.registration.yShifts;
       result.cross_chunks_reference_image  = data.registration.reference;
-      result.seg_results_directory         = seg_results_directory;
+      result.seg_results_directory         = seg_bucket_results_directory;
       self.insert(result)
       
       %% write to imaging.SegmentationChunks (some session chunk-specific info)

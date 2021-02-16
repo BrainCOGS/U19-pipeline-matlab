@@ -13,9 +13,6 @@ function [seg_directory] = get_seg_save_directory(mc_directory,key)
 seg_dir_string = [key.seg_method '_set_' num2str(key.seg_parameter_set_id)];
 
 %Create directory
-seg_directory = fullfile(mc_directory, seg_dir_string);
-if ~exist(seg_directory, 'dir')
-    mkdir(seg_directory)
-end
+seg_directory = spec_fullfile('/',mc_directory, seg_dir_string);
 
 
