@@ -1,4 +1,4 @@
-function [seg_directory] = get_seg_save_directory(mc_directory,key)
+function [seg_directory] = get_seg_save_directory(mc_directory,key,separator)
 %get_seg_save_directory
 %  Get save directory for segmentation process
 
@@ -13,6 +13,6 @@ function [seg_directory] = get_seg_save_directory(mc_directory,key)
 seg_dir_string = [key.seg_method '_set_' num2str(key.seg_parameter_set_id)];
 
 %Create directory
-seg_directory = spec_fullfile('/',mc_directory, seg_dir_string);
+seg_directory = spec_fullfile(separator,mc_directory, seg_dir_string);
 
 

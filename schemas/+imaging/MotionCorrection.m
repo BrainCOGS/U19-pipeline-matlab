@@ -34,8 +34,8 @@ classdef MotionCorrection < dj.Imported
             
             %Check if directory exists in system
             lab.utils.assert_mounted_location(fov_directory)
-            mc_results_bucket_directory = imaging.utils.get_mc_save_directory(bucket_fov_directory, key);
-            mc_results_directory        = imaging.utils.get_mc_save_directory(fov_directory, key);
+            mc_results_bucket_directory = imaging.utils.get_mc_save_directory(bucket_fov_directory, key,'/');
+            mc_results_directory        = imaging.utils.get_mc_save_directory(fov_directory, key,filesep);
             
             %Create motion correciton results directory
             if ~exist(mc_results_directory, 'dir')

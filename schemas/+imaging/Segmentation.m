@@ -36,12 +36,12 @@ classdef Segmentation < dj.Imported
       lab.utils.assert_mounted_location(mc_results_directory)
       
       %Get segmentation results directory
-      seg_bucket_results_directory = imaging.utils.get_seg_save_directory(mc_bucket_results_directory,key);
-      seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key);
+      seg_bucket_results_directory = imaging.utils.get_seg_save_directory(mc_bucket_results_directory,key,'/');
+      seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key,filesep);
       
       %Create motion correciton results directory
       if ~exist(seg_results_directory, 'dir')
-         mkdir(seg_results_directory)
+          mkdir(seg_results_directory)
       end
       
                 
