@@ -3,22 +3,20 @@ function remove_tif_if_gz(fl, directory)
 %
 % Inputs
 % fl        = list of tif files to check
-% directory = 
+% directory = path  where tif files are located
 %
 
-curr_dir = pwd;
-cd(directory)
-
 for iF = 1:numel(fl)
-    if exist([fl{iF} '.gz'],'file')
-        disp(['removing ' fl{iF}])
-        delete(fl{iF})
+    file_base = fullfile(directory, fl{iF});
+    gz_file = [file_base '.gz'];
+    
+    if exist(gz_file,'file') && exist(file_base,'file') 
+        disp(['removing ' gz_file])
+        delete(gz_file)
     else
-        disp(['compressed file not found, keeping ' fl{iF}])
+        disp(['Could not find compressed pair ' file_base])
     end
 end
-
-cd(curr_dir);
 
 end
 
