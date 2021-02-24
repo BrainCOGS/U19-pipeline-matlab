@@ -151,7 +151,7 @@ classdef ScanInfo < dj.Imported
                 if ~isempty(fl_gz)
                     is_compressed = 1;
                     % unzip gz videos
-                    %gunzip({fl_gz(:).name});
+                    gunzip({fl_gz(:).name});
                     fl       = dir('*tif'); % tif file list
                 else
                     error('There are no tif or tif.gz files in scan directory')

@@ -131,7 +131,7 @@ classdef Scan < dj.Imported
             userDir        =  fullfile(local_path, user_nick);
              
             %Get all child directories from user
-            disp('start genpath')
+            disp(['Get all paths from Directory: ' userDir])
             tic
             dirInfo = genpath(userDir);
             toc
@@ -178,7 +178,6 @@ classdef Scan < dj.Imported
             if ~isempty(dir(dirSession))
                 %Get scan directory from bucket
                 scan_directory = lab.utils.get_path_from_official_dir(dirSession);
-                
             else
                 status = false;
             end

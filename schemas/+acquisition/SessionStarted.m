@@ -116,6 +116,10 @@ classdef SessionStarted < dj.Manual
             key.session_start_time = sprintf('%d-%02d-%02d %02d:%02d:00', log.session.start(1), log.session.start(2), log.session.start(3), log.session.start(4), log.session.start(5));
             
             %Check location and if doesn't exist insert it.
+            if length(log.version) > 1
+                log.version = log.version(1);
+            end
+            
             lab.utils.check_location(log.version.rig.rig);
             key.session_location = log.version.rig.rig;
             key.task = 'Towers';
