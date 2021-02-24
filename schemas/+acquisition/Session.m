@@ -133,6 +133,11 @@ classdef Session < dj.Imported
             session_end_time = sprintf('%d-%02d-%02d %02d:%02d:00', log.session.end(1), log.session.end(2), log.session.end(3), log.session.end(4), log.session.end(5));
             update(acquisition.Session & key, 'session_end_time', session_end_time)
             
+            %Support when behavioral files has 2 "versions"
+            if length(log.version) > 1
+                log.version = log.version(1);
+            end
+            
             % Check if location exist, and if not insert it
             lab.utils.check_location(log.version.rig.rig);
             session_location = log.version.rig.rig;
@@ -183,7 +188,11 @@ classdef Session < dj.Imported
                     if isempty(trial.trialType)
                         break;
                     end
-                    correct_number = correct_number + strcmp(trial.trialType.char, trial.choice.char);
+                    if isa(trial.choice, 'single')
+                        correct_number = correct_number + single(trial.trialType) == single(trial.choice);
+                    else
+                        correct_number = correct_number + strcmp(trial.trialType.char, trial.choice.char);
+                    end
                     num_trials = num_trials + 1;
                 end
             end

@@ -37,11 +37,17 @@ end
 
 %Find where in baseDir is located the globalPath
 ac_global_path = path_record.global_path{:};
-idx_global_path = strfind(baseDir, ac_global_path);
 
-%Erase that part of the path (will be replaced with corresponding path of the actual system 
-baseDir(1:idx_global_path+length(ac_global_path)-1) = [];
+%Erase that part of the path (will be replaced with corresponding path of the actual system)
+if startsWith(baseDir, path_record.local_path{:})
+    baseDir(1:length(path_record.local_path{:})) = [];
+elseif startsWith(baseDir, path_record.net_location{:})
+    baseDir(1:length(path_record.net_location{:})) = [];
+else
+    idx_global_path = strfind(baseDir, ac_global_path);
 
+    baseDir(1:idx_global_path+length(ac_global_path)-1) = [];
+end
 
 bucket_path = fullfile(path_record.bucket_path{:}, baseDir);
 
