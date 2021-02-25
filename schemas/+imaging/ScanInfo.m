@@ -67,20 +67,25 @@ classdef ScanInfo < dj.Imported
             
             cd(scan_directory)
             
+            %Check if it is mesoscope or 2photon
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            is2Photon   = any(contains(self.photon_micro_acq, acq_type));
+            
             fprintf('------------ preparing %s --------------\n',scan_directory)
             
-            originalStacksdir = fullfile(scan_directory, 'originalStacks');
-            
-            if (isempty(dir('*tif*')) && exist(originalStacksdir,'dir'))
-                tif_dir = fullfile(scan_directory, 'originalStacks');
-                cd originalStacks
-                skipParsing = true;
-            else
-                tif_dir = scan_directory;
-                if ~exist(originalStacksdir,'dir')
-                    mkdir('originalStacks');
+            if isMesoscope
+                originalStacksdir = fullfile(scan_directory, 'originalStacks');
+                if (isempty(dir('*tif*')) && exist(originalStacksdir,'dir'))
+                    tif_dir = fullfile(scan_directory, 'originalStacks');
+                    cd originalStacks
+                    skipParsing = true;
+                else
+                    tif_dir = scan_directory;
+                    if ~exist(originalStacksdir,'dir')
+                        mkdir('originalStacks');
+                    end
+                    skipParsing = false;
                 end
-                skipParsing = false;
             end
             
             %% loop through files to read all image headers
@@ -88,8 +93,6 @@ classdef ScanInfo < dj.Imported
             
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
-            %If mesoscope variable set before parfoor lope
-            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
             [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
             
             %Get recInfo field
@@ -108,7 +111,7 @@ classdef ScanInfo < dj.Imported
             
             %If original files where compressed
             if isCompressed
-                disp('it started as compressed files, removing uncompressed')
+                disp('it started as compressed files, removing compressed')
                 imaging.utils.remove_tif_if_gz(fl, scan_directory);
             end
             
@@ -116,11 +119,11 @@ classdef ScanInfo < dj.Imported
             self.insert_scan_info(key, recInfo, scan_dir_db)
             
             %% FOV ROI Processing for mesoscope
-            if any(contains(self.mesoscope_acq, acq_type))
+            if isMesoscope
                 self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_dir_db)
                 
                 % Just insertion of fov and fov fiels for 2 and 3 photon
-            elseif any(contains(self.photon_micro_acq, acq_type))
+            elseif is2Photon
                 self.insert_fov_photonmicro(key, scan_dir_db)
                 self.insert_fovfile_photonmicro(key, fl, imheader)
             else
@@ -138,7 +141,6 @@ classdef ScanInfo < dj.Imported
             is_compressed = 0;
             
             %Save current directory and enter tif directory
-            curr_dir = pwd;
             cd(tif_dir);
             
             %Check for tif files (or tif.gz if there are not tif)

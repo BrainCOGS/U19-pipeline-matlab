@@ -209,6 +209,23 @@ classdef Segmentation < dj.Imported
           if isempty(roi_data.roi_spatial)
             roi_data.roi_spatial      = reshape(full(chunkdata{iChunk}.cnmf.spatial(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
             roi_data.surround_spatial = reshape(full(chunkdata{iChunk}.cnmf.surround(:,localIdx)),chunkdata{iChunk}.cnmf.region.ImageSize);
+            
+            %Perform classification
+            disp('Performing classification')
+            classifier = 'morphology_k36_layer23_20160324.mat';
+            classifier = load(classifier);
+            name       = fieldnames(classifier);
+            classifier = classifier.(name{:});
+
+            metrics             = morphologyMetrics(chunkdata{iChunk});
+            metrics             = metrics(localIdx,:);
+            
+            hasInfo             = metrics.Morphology < RegionMorphology.Noise;
+            morphology_classified = RegionMorphology(classifier.predictFcn(metrics(hasInfo,:)))';
+            
+            idx_class_chunk = localIdx(hasInfo);
+            chunkdata{iChunk}.cnmf.morphology(idx_class_chunk) = morphology_classified;
+            
             morpho_data.morphology    = char(chunkdata{iChunk}.cnmf.morphology(localIdx));
           end
         end
