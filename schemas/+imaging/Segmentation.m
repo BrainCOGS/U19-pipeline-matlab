@@ -176,7 +176,7 @@ classdef Segmentation < dj.Imported
       hasInfo             = metrics.Morphology < RegionMorphology.Noise;
       morphology_classified = RegionMorphology(classifier.predictFcn(metrics(hasInfo,:)))';
       disp(morphology_classified)
-      chunkdata{iChunk}.cnmf.morphology = morphology_classified;
+      chunkdata{iChunk}.cnmf.morphology(hasInfo) = morphology_classified;
       
             
       % loop through ROIs
