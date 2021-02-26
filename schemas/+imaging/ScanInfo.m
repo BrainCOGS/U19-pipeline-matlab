@@ -57,7 +57,6 @@ classdef ScanInfo < dj.Imported
             scan_dir_db    = fetch1(imaging.Scan & key,'scan_directory');
             scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
             
-            
             %Check if directory exists in system
             lab.utils.assert_mounted_location(scan_directory)
             
@@ -86,6 +85,8 @@ classdef ScanInfo < dj.Imported
                     end
                     skipParsing = false;
                 end
+            else
+                tif_dir = scan_directory;
             end
             
             %% loop through files to read all image headers
