@@ -103,7 +103,7 @@ classdef ScanInfo < dj.Imported
             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
             
             %Get last "good" file because of bleaching
-            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
+            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, tif_dir);
             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
             recInfo.last_good_file            = lastGoodFile;
             
@@ -264,14 +264,9 @@ classdef ScanInfo < dj.Imported
         end
         
         %% find out last good frame based on bleaching
-        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, skipParsing, scan_directory)
+        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, scan_directory)
             
-            if skipParsing
-                lastGoodFile        = selectFilesFromMeanF(fullfile(scan_directory, 'originalStacks'));
-            else
-                lastGoodFile        = selectFilesFromMeanF(scan_directory);
-            end
-            
+            lastGoodFile        = selectFilesFromMeanF(scan_directory);            
             cumulativeFrames    = cumsum(framesPerFile);
             %       lastGoodFile        = find(cumulativeFrames >= lastGoodFrame,1,'first');
             %       lastFrameInFile     = lastGoodFrame - cumulativeFrames(max([1 lastGoodFile-1]));
