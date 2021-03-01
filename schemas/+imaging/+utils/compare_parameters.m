@@ -1,14 +1,20 @@
 function [table_diff_params,common_params] = compare_parameters(param_table, method_key)
-%COMPARE_PARAMETERS 
+%COMPARE_PARAMETERS get a table of parameters set differently betwen sets and a structure of common parameters across
+%all sets fro a given method
 
 common_params = struct();
 
 %Fetch all set params from method
 param_struct = fetch(param_table & method_key, '*');
-fields = fieldnames(param_struct);
 
-%idx_method = contains(fields,'method');
-%method_field = fields{idx_method};
+if isempty(param_struct)
+    warning('No parameter sets were found for this method')
+    table_diff_params = '';
+    common_params = '';
+    return
+end
+
+fields = fieldnames(param_struct);
 
 % Get id of field which correspond to (set_id, parameter_name, parameter_value)
 idx_set = contains(fields,'set_id');
@@ -30,17 +36,19 @@ table_diff_params = array2table(cell(length(set_ids), length(unique_params)+1), 
    'VariableNames', [{'set_id'}, unique_params]);
 
 % Set values for pivot table
+num_sets = 0;
 for i=set_ids
-    table_diff_params{i,'set_id'} = {i};
+    num_sets = num_sets+1;
+    table_diff_params{num_sets,'set_id'} = {i};
     
     for j=unique_params
         
         idx_value = [param_struct.(set_id_field)] == i & matches({param_struct.(param_name_field)},j);
         
         if sum(idx_value == 1)
-            table_diff_params{i,j} = values(idx_value);
+            table_diff_params{num_sets,j} = values(idx_value);
         else
-            table_diff_params{i,j} = {NaN};
+            table_diff_params{num_sets,j} = {NaN};
         end
         
     end

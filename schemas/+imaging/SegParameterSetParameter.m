@@ -20,7 +20,7 @@ classdef SegParameterSetParameter < dj.Part
             
             %Predefined cell with param values for set
             tableParam  = cell2table({
-                'cnmf' , 'chunks_auto_select_behav' , false;
+                'cnmf' , 'chunks_auto_select_behav' , true;
                 'cnmf' , 'chunks_auto_select_bleach' , true;
                 'cnmf' , 'chunks_towers_min_n_trials' , 30;
                 'cnmf' , 'chunks_towers_perf_thresh' , 0.6;
