@@ -6,6 +6,6 @@ seg_method:    varchar(16)
 classdef SegmentationMethod < dj.Lookup
     
     properties
-        contents = {'cnmf'; 'suite2p'}
+        contents = {'cnmf'}
     end
 end
