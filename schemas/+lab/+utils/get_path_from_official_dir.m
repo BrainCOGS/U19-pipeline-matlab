@@ -27,7 +27,10 @@ idx_basedir = cellfun(@(s) contains(baseDir, s), path_table.global_path);
 path_record = path_table(idx_basedir & path_table.system == system,:);
 
 if isempty(path_record)
-    error('The base directory is not found in official sites of u19')
+    warning('The base directory is not found in official sites of u19')
+    bucket_path = '';
+    local_path = '';
+    return 
 elseif size(path_record,1) > 1
     % Get the first occurrence of path (e.g /braininit/user/bezostest.mat is braininit not Bezos)
     [~, idx_min] = min(cellfun(@(s) strfind(baseDir, s), path_record.global_path));
@@ -68,4 +71,3 @@ if u19_dj_utils.is_this_spock()
 end
       
 end
-
