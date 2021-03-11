@@ -384,6 +384,7 @@ classdef ScanInfo < dj.Imported
                         thislag  = interROIlag*(iROI-1);
                         
                         for iDepth = 1:Depths
+                            roi_header = current_header;
                             
                             % extract correct frames
                             zIdx       = iDepth:Depths:size(thisstack,3);
@@ -405,23 +406,24 @@ classdef ScanInfo < dj.Imported
                                         thisheader(1).(fieldLs{iField}) = readObj.getTag(fieldLs{iField});
                                 end
                                 if isfield(current_header, fieldLs{iField})
-                                    current_header = rmfield(current_header, fieldLs{iField});
+                                    roi_header = rmfield(roi_header, fieldLs{iField});
                                 end
                             end
                             thisheader(1).ImageDescription        = imheader{iF}(zIdx(1)).ImageDescription;
-                            current_header = rmfield(current_header, 'ImageDescription');
+
+                            roi_header = rmfield(roi_header, 'ImageDescription');
+        
                             
                             % write first frame
                             writeObj.setTag(thisheader);
 
+                            roi_header = rmfield(roi_header, 'StripOffsets');
+                            roi_header = rmfield(roi_header, 'StripByteCounts');
+                            roi_header = rmfield(roi_header, 'NumberOfInks');
+                            roi_header = rmfield(roi_header, 'ImageDepth');
 
-                            current_header = rmfield(current_header, 'StripOffsets');
-                            current_header = rmfield(current_header, 'StripByteCounts');
-                            current_header = rmfield(current_header, 'NumberOfInks');
-                            current_header = rmfield(current_header, 'ImageDepth');
 
-
-                            writeObj.setTag(current_header(1));
+                            writeObj.setTag(roi_header(1));
                             writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                             writeObj.write(substack(:,:,1));
                             
@@ -440,7 +442,7 @@ classdef ScanInfo < dj.Imported
                                 thisheader(1).ImageDescription = imdescription;
                                 writeObj.writeDirectory();
                                 writeObj.setTag(thisheader);
-                                writeObj.setTag(current_header(1));
+                                writeObj.setTag(roi_header(1));
                                 writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                                 write(writeObj,substack(:,:,iZ));
                             end
