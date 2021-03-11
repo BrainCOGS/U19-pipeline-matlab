@@ -56,7 +56,7 @@ classdef ScanInfo < dj.Imported
             curr_dir       = pwd;
             scan_dir_db    = fetch1(imaging.Scan & key,'scan_directory');
             scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
-            
+
             %Check if directory exists in system
             lab.utils.assert_mounted_location(scan_directory)
             
@@ -348,14 +348,23 @@ classdef ScanInfo < dj.Imported
                     end
                 end
                 
-                
-                
+                tagNames = Tiff.getTagNames();
                 parfor iF = 1:numel(fl)
                     fprintf('%s\n',fl{iF})
                     
                     % read image and header
                     %         if iF <= lastGoodFile % do not write frames beyond last good frame based on bleaching
                     readObj    = Tiff(fl{iF},'r');
+
+                    current_header = struct();
+                    for i = 1:length(tagNames)
+                        try
+                            current_header.(tagNames{i}) = readObj.getTag(tagNames{i});
+                        catch
+                            %warning([tagNames{i} 'does not exist on tif'])
+                        end
+                    end
+
                     thisstack  = zeros(imheader{iF}(1).Height,imheader{iF}(1).Width,numel(imheader{iF}),'uint16');
                     for iFrame = 1:numel(imheader{iF})
                         readObj.setDirectory(iFrame);
@@ -395,11 +404,24 @@ classdef ScanInfo < dj.Imported
                                     otherwise
                                         thisheader(1).(fieldLs{iField}) = readObj.getTag(fieldLs{iField});
                                 end
+                                if isfield(current_header, fieldLs{iField})
+                                    current_header = rmfield(current_header, fieldLs{iField});
+                                end
                             end
                             thisheader(1).ImageDescription        = imheader{iF}(zIdx(1)).ImageDescription;
+                            current_header = rmfield(current_header, 'ImageDescription');
                             
                             % write first frame
                             writeObj.setTag(thisheader);
+
+
+                            current_header = rmfield(current_header, 'StripOffsets');
+                            current_header = rmfield(current_header, 'StripByteCounts');
+                            current_header = rmfield(current_header, 'NumberOfInks');
+                            current_header = rmfield(current_header, 'ImageDepth');
+
+
+                            writeObj.setTag(current_header(1));
                             writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                             writeObj.write(substack(:,:,1));
                             
@@ -418,6 +440,7 @@ classdef ScanInfo < dj.Imported
                                 thisheader(1).ImageDescription = imdescription;
                                 writeObj.writeDirectory();
                                 writeObj.setTag(thisheader);
+                                writeObj.setTag(current_header(1));
                                 writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                                 write(writeObj,substack(:,:,iZ));
                             end
