@@ -405,18 +405,19 @@ classdef ScanInfo < dj.Imported
                                     otherwise
                                         thisheader(1).(fieldLs{iField}) = readObj.getTag(fieldLs{iField});
                                 end
-                                if isfield(current_header, fieldLs{iField})
-                                    roi_header = rmfield(roi_header, fieldLs{iField});
-                                end
                             end
                             thisheader(1).ImageDescription        = imheader{iF}(zIdx(1)).ImageDescription;
                             %strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
                             
-                            roi_header = rmfield(roi_header, 'ImageDescription');
                             thisheader(1).Artist                  = current_header.Artist;
                             thisheader(1).Software                = current_header.Software;
                             thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
-
+                            fovum = strfind(thisheader(1).Software,'SI.hRoiManager.imagingFovUm');
+                            if ~isempty(fovum)
+                                idx_new = regexp(thisheader(1).Software(fovum:end), newline, 'once');
+                                thisheader(1).Software(fovum:fovum+idx_new-1) = [];
+                            end
+                            
                             % write first frame
                             writeObj.setTag(thisheader);
                             writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
@@ -432,13 +433,16 @@ classdef ScanInfo < dj.Imported
                                 old           = cell2mat(regexp(cell2mat(regexp(imdescription,'frameTimestamps_sec = [0-9]+.[0-9]+','match')),'\d+.\d+','match'));
                                 new           = num2str(thislag + str2double(old));
                                 imdescription = replace(imdescription,old,new);
-                                strrep(imdescription,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
-
                                 % write image and hedaer
                                 thisheader(1).ImageDescription = imdescription;
                                 thisheader(1).Artist           = current_header.Artist;
                                 thisheader(1).Software         = current_header.Software;
                                 thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+                                fovum = strfind(thisheader(1).Software,'SI.hRoiManager.imagingFovUm');
+                                if ~isempty(fovum)
+                                    idx_new = regexp(thisheader(1).Software(fovum:end), newline, 'once');
+                                    thisheader(1).Software(fovum:fovum+idx_new-1) = [];
+                                end
                                 writeObj.writeDirectory();
                                 writeObj.setTag(thisheader);
                                 writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
