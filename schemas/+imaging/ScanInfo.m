@@ -410,20 +410,15 @@ classdef ScanInfo < dj.Imported
                                 end
                             end
                             thisheader(1).ImageDescription        = imheader{iF}(zIdx(1)).ImageDescription;
-
-                            roi_header = rmfield(roi_header, 'ImageDescription');
-        
+                            %strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
                             
+                            roi_header = rmfield(roi_header, 'ImageDescription');
+                            thisheader(1).Artist                  = current_header.Artist;
+                            thisheader(1).Software                = current_header.Software;
+                            thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+
                             % write first frame
                             writeObj.setTag(thisheader);
-
-                            roi_header = rmfield(roi_header, 'StripOffsets');
-                            roi_header = rmfield(roi_header, 'StripByteCounts');
-                            roi_header = rmfield(roi_header, 'NumberOfInks');
-                            roi_header = rmfield(roi_header, 'ImageDepth');
-
-
-                            writeObj.setTag(roi_header(1));
                             writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                             writeObj.write(substack(:,:,1));
                             
@@ -437,12 +432,15 @@ classdef ScanInfo < dj.Imported
                                 old           = cell2mat(regexp(cell2mat(regexp(imdescription,'frameTimestamps_sec = [0-9]+.[0-9]+','match')),'\d+.\d+','match'));
                                 new           = num2str(thislag + str2double(old));
                                 imdescription = replace(imdescription,old,new);
-                                
+                                strrep(imdescription,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+
                                 % write image and hedaer
                                 thisheader(1).ImageDescription = imdescription;
+                                thisheader(1).Artist           = current_header.Artist;
+                                thisheader(1).Software         = current_header.Software;
+                                thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
                                 writeObj.writeDirectory();
                                 writeObj.setTag(thisheader);
-                                writeObj.setTag(roi_header(1));
                                 writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
                                 write(writeObj,substack(:,:,iZ));
                             end
