@@ -7,7 +7,7 @@
 standardized_time : longblob  # linearly interpolated behavioral epoch ID per imaging frame
 binned_time       : blob      #
 %}
- 
+% start / cue / delay / arm / ITI / extra-ITI (error trials)
  
  
 classdef StandardizedTime < dj.Computed
