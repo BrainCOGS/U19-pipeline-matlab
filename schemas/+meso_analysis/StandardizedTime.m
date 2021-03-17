@@ -1,9 +1,7 @@
 %{
 # time binned activity by trialStruct
--> meso.Segmentation
 -> meso_analysis.BinningParameters
 ---
- 
 standardized_time : longblob  # linearly interpolated behavioral epoch ID per imaging frame
 binned_time       : blob      #
 %}
@@ -17,7 +15,7 @@ classdef StandardizedTime < dj.Computed
             behav =  fetch(behavior.TowersBlockTrial & key, ...
                 'trial_idx','trial_type','choice','position');
  
-            [frames, frame_span] = fetchn(meso.SyncImagingBehavior & key, 'sync_im_frame_global','sync_im_frame_span_by_behav_trial');
+            [frames, frame_span] = fetchn(imaging.SyncImagingBehavior & key, 'sync_im_frame_global','sync_im_frame_span_by_behav_trial');
             frames = frames{:}; frame_span = frame_span{:};
   
             
