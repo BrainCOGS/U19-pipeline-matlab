@@ -35,7 +35,7 @@ elseif size(path_record,1) > 1
     % Get the first occurrence of path (e.g /braininit/user/bezostest.mat is braininit not Bezos)
     [~, idx_min] = min(cellfun(@(s) strfind(baseDir, s), path_record.global_path));
     path_record = path_record(idx_min, :);
-    warning('The base directory makes reference to more than one official location of the u19')
+    %warning('The base directory makes reference to more than one official location of the u19')
 end
 
 %Find where in baseDir is located the globalPath
