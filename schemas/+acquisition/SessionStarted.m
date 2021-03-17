@@ -124,14 +124,6 @@ classdef SessionStarted < dj.Manual
             key.session_location = log.version.rig.rig;
             key.task = 'Towers';
             
-            if isempty(rig_default_path)
-               locationkey.location = key.session_location;
-               rig_default_path = fetch1(lab.Location & locationkey, 'bucket_default_path');
-               rig_default_path = lab.utils.get_path_from_official_dir(rig_default_path);
-            end
-            
-            
-            if ~isempty(rig_default_path)
             % Get local path from bucket path and rig default path
             local_path = strrep(bucket_file_path, rig_default_path, self.LOCALPATHTOKEN);
             local_path = fullfile(local_path);
@@ -144,9 +136,6 @@ classdef SessionStarted < dj.Manual
             
             
             insert(acquisition.SessionStarted, key);
-            else
-                error(['Location: ', key.session_location, ' does not exist'])
-            end
             
             
         end
