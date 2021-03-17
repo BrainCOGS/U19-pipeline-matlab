@@ -1,5 +1,6 @@
 %{
 # time binned activity by trialStruct
+-> imaging.Scan
 -> meso_analysis.BinningParameters
 ---
 standardized_time : longblob  # linearly interpolated behavioral epoch ID per imaging frame
@@ -66,10 +67,11 @@ classdef StandardizedTime < dj.Computed
             
             
             %%
-            key.standardized_time = behaviorByFrame;
-            key.binned_time = binned_time;
+            result = key;
+            result.standardized_time = behaviorByFrame;
+            result.binned_time = binned_time;
             
-            self.insert(key);
+            self.insert(result);
         end
         
     end
