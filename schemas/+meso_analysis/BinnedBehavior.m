@@ -1,6 +1,7 @@
 %{
 # time binned behavior by trial
 -> meso_analysis.Trialstats
+-> meso_analysis.StandardizedTime
 ---
 
 binned_position_x             : blob  # 1 row per trial
@@ -22,7 +23,7 @@ classdef BinnedBehavior < dj.Computed
             
             %bin_size       = fetch(meso_analysis.BinParamSet & key, 'bin_size');
             behav          = fetch(meso_analysis.Trialstats & key,'*');
-            [standardizedTime, epochEdges]    = fetchn(meso_analysis.StandardizedTime & key & 'fov=1','standardized_time','binned_time');
+            [standardizedTime, epochEdges]    = fetchn(meso_analysis.StandardizedTime & key,'standardized_time','binned_time');
             standardizedTime = standardizedTime{:};
             epochEdges = epochEdges{:};
             %
