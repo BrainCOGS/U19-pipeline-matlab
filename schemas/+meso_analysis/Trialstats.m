@@ -1,6 +1,6 @@
 %{
 # behavioral info by trial
--> meso.Scan
+-> imaging.Scan
 trial_idx                    : int       # virmen trial struct number
 ---
  
@@ -407,14 +407,14 @@ lg.info.frameDtVirmen = mode(diff(lg.time{1}));
 %% imaging sync
  
 % field of view key
-imagingSessKey          = fetch(meso.FieldOfView & key & 'fov=2');
+imagingSessKey          = fetch(imaging.FieldOfView & key & 'fov=2');
  
 % frame rate
-framerate               = fetch1(meso.ScanInfo & key, 'frame_rate');
+framerate               = fetch1(imaging.ScanInfo & key, 'frame_rate');
 lg.info.frameDtImaging  = 1/framerate;
  
 % sync info
-syncInfo                = fetch(meso.SyncImagingBehavior & imagingSessKey,                                                       ...
+syncInfo                = fetch(imaging.SyncImagingBehavior & imagingSessKey,                                                       ...
                                'sync_im_frame','sync_im_frame_global','sync_behav_block_by_im_frame',                            ...
                                'sync_behav_trial_by_im_frame','sync_behav_iter_by_im_frame','sync_im_frame_span_by_behav_block', ...
                                'sync_im_frame_span_by_behav_trial','sync_im_frame_span_by_behav_iter'                            ...
@@ -542,9 +542,11 @@ lg.trial_start_meso_frame = span_perTrial(:,1);
 lg.iti_end_meso_frame     = span_perTrial(:,2);
  
 % rebinFactor as calculated in runNeuronSegmentation_mesoscope()
-[timeResolution, frameRate] = fetchn(meso.SegParameterSetParameter & key,'cnmf_time_resolution','cnmf_frame_rate');
-rebinFactor                 = ceil(timeResolution / (1000/frameRate));
- 
+%[timeResolution, frameRate] = fetchn(imaging.SegParameterSetParameter & key,'cnmf_time_resolution','cnmf_frame_rate');
+%rebinFactor                 = ceil(timeResolution / (1000/frameRate));
+%MDia set rebin factor to 1 (no binning)
+rebinFactor                  = 1;
+
 % in case cnmf resolution ~= native imaging resolution
 frame2globalFrame           = num2cell(1 + floor( (globalFrame - 1) / rebinFactor ));
 %% DEAL WITH THIS: Due to temporal downsampling the same CNMF data point can be assigned to two different
