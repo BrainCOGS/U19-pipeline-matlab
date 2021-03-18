@@ -1,6 +1,6 @@
 %{
 # time binned activity by trial
-#-> mesotables.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
+-> meso_analysis.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
 -> meso_analysis.Trialstats
 -> meso_analysis.StandardizedTime 
 
