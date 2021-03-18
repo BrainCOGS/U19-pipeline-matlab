@@ -1,16 +1,12 @@
 %{
 # time binned activity by trial
--> meso.Segmentation
--> meso_analysis.BinningParameters
--> meso_analysis.TrialSelectionParams
-
-global_roi_idx         : int           # roi_idx in SegmentationRoi table
-trial_idx              : int           # trial number as in meso_analysis.Trialstats
+-> mesotables.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
+-> meso_analysis.Trialstats
+-> meso_analysis.StandardizedTime
+#-> meso_analysis.TrialSelectionParams
  
 ---
- 
-binned_dff             : blob@meso  # binned Dff, 1 row per neuron per trialStruct
- 
+binned_dff             : blob          # binned Dff, 1 row per neuron per trialStruct 
 %}
  
  
@@ -25,33 +21,35 @@ classdef BinnedTrace < dj.Computed
       end
       
       %% retrieve dff data
-      data = fetch(meso.Trace & key, 'dff_roi','roi_idx');
-      dff = cell2mat({data.dff_roi}');
+      data = fetch( mesotables.Suite2ptrace & key, 'f_roi_raw','roi_idx');
+      dff = cell2mat({data.f_roi_raw}');
       global_idx = [data.roi_idx]';
       %dff              = cell2mat(dff); % neurons by frames 
       
       %% use manual curation to select only good rois
-      goodMorphoOnly = fetch1(meso_analysis.BinningParameters & key, 'good_morpho_only');
-      if goodMorphoOnly == 1
-        morpho               = fetchn(meso.SegmentationRoiMorphologyManual & key, 'morphology');
-      else
-        morpho               = [];
-      end
-      
-      if isempty(morpho)
-        isgood               = true(1,size(dff,1));
-      else
-        isgood               = strcmp(morpho,'Doughnut') | strcmp(morpho,'Blob');
-      end
-      isallnan               = sum(~isfinite(dff),2) == size(dff,2); % some neurons are nan'd or inf'd out
-      isgood                 = isgood & ~isallnan;
-      
-      dff(~isgood,:)         = [];
-      global_idx(~isgood,:)  = [];
+%       goodMorphoOnly = fetch1(meso_analysis.BinningParameters & key, 'good_morpho_only');
+%       if goodMorphoOnly == 1
+%         morpho               = fetchn(meso.SegmentationRoiMorphologyManual & key, 'morphology');
+%       else
+%         morpho               = [];
+%       end
+%       
+%       if isempty(morpho)
+%         isgood               = true(1,size(dff,1));
+%       else
+%         isgood               = strcmp(morpho,'Doughnut') | strcmp(morpho,'Blob');
+%       end
+%       isallnan               = sum(~isfinite(dff),2) == size(dff,2); % some neurons are nan'd or inf'd out
+%       isgood                 = isgood & ~isallnan;
+%       
+%       dff(~isgood,:)         = [];
+%       global_idx(~isgood,:)  = [];
+
+%% for suite2p we need to define different metrics (eg classifier, skewness) 
       
       %% get behavioral trial info
  
-      syncinfo = fetch(meso.SyncImagingBehavior & key, '*');
+      syncinfo = fetch(imaging.SyncImagingBehavior & key, '*');
  
  
     %% get trial info wrt segmented frames
