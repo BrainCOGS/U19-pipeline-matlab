@@ -1,10 +1,10 @@
 %{
 # time binned activity by trial
--> mesotables.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
+#-> mesotables.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
 -> meso_analysis.Trialstats
--> meso_analysis.StandardizedTime
-#-> meso_analysis.TrialSelectionParams
- 
+-> meso_analysis.StandardizedTime 
+
+
 ---
 binned_dff             : blob          # binned Dff, 1 row per neuron per trialStruct 
 %}
