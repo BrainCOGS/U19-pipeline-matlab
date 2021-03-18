@@ -3,61 +3,61 @@
 setenv('SETUP_SCRIPT', mfilename('fullpath'));
 
 
-codeDir = fullfile(fileparts(mfilename('fullpath')), 'CalciumImagingRepositories');
-
-run (fullfile(codeDir, 'TankMouseVR', 'startup_no_datajoint.m'));
-run (fullfile(codeDir, 'cvx', 'cvx_startup.m'));
- 
-% Calcium Imaging Repositories
-addpath (genpath(fullfile(codeDir, 'sak_ci_utilities')));
- 
-addpath (genpath(fullfile(codeDir, 'sakfunctions')));
-rmpath  (genpath(fullfile(codeDir, 'sakfunctions', '.git')));
- 
-addpath (genpath(fullfile(codeDir, 'CalciumImaging')));
-rmpath  (genpath(fullfile(codeDir, 'CalciumImaging', '.git')));
- 
-addpath (genpath(fullfile(codeDir, 'ca_source_extraction')));
-rmpath  (genpath(fullfile(codeDir, 'ca_source_extraction', '.git')));
-
-addpath (genpath(fullfile(codeDir, 'SAKFunctions')));
-rmpath  (genpath(fullfile(codeDir, 'SAKFunctions', '.git')));
- 
-setenv  ('ECS_DIR', fullfile(codeDir, 'princeton-ecs'));
-addpath (genpath(getenv('ECS_DIR')));
-rmpath  (genpath(fullfile(getenv('ECS_DIR'), '.git')));
- 
-addpath (genpath(fullfile(codeDir, 'TankMouseAnalysis')));
-rmpath  (genpath(fullfile(codeDir, 'TankMouseAnalysis', '.git')));
- 
-addpath (genpath(fullfile(codeDir, 'MatlabProgressBar')));
-rmpath  (genpath(fullfile(codeDir, 'MatlabProgressBar', '.git')));
- 
-addpath (genpath(fullfile(codeDir, 'SLEP')));
-rmpath  (genpath(fullfile(codeDir, 'SLEP', '.git')));
-
-% Mesoscope repositories
-addpath (genpath(fullfile(codeDir, 'mesoscopeImaging')));
-rmpath  (genpath(fullfile(codeDir, 'mesoscopeImaging', '.git')));
-
-addpath (genpath(fullfile(codeDir, 'widefieldImaging')));
-rmpath  (genpath(fullfile(codeDir, 'widefieldImaging', '.git')));
-
-addpath (genpath(fullfile(codeDir, 'LPUtil')));
-rmpath  (genpath(fullfile(codeDir, 'LPUtil', '.git')));
-
-addpath (genpath(fullfile(codeDir, 'behavioralAnalysis')));
-rmpath  (genpath(fullfile(codeDir, 'behavioralAnalysis', '.git')));
-
-
-addpath (genpath(fullfile(codeDir, 'ImagingViewer')));
-
-% Datajoint repositories
-addpath (genpath(fullfile(codeDir, 'U19-pipeline-matlab')));
-rmpath  (genpath(fullfile(codeDir, 'U19-pipeline-matlab', '.git')));
-
-addpath (genpath(fullfile(codeDir, 'datajoint-matlab')));
-rmpath  (genpath(fullfile(codeDir, 'datajoint-matlab', '.git')));
+% codeDir = fullfile(fileparts(mfilename('fullpath')), 'CalciumImagingRepositories');
+% 
+% run (fullfile(codeDir, 'TankMouseVR', 'startup_no_datajoint.m'));
+% run (fullfile(codeDir, 'cvx', 'cvx_startup.m'));
+%  
+% % Calcium Imaging Repositories
+% addpath (genpath(fullfile(codeDir, 'sak_ci_utilities')));
+%  
+% addpath (genpath(fullfile(codeDir, 'sakfunctions')));
+% rmpath  (genpath(fullfile(codeDir, 'sakfunctions', '.git')));
+%  
+% addpath (genpath(fullfile(codeDir, 'CalciumImaging')));
+% rmpath  (genpath(fullfile(codeDir, 'CalciumImaging', '.git')));
+%  
+% addpath (genpath(fullfile(codeDir, 'ca_source_extraction')));
+% rmpath  (genpath(fullfile(codeDir, 'ca_source_extraction', '.git')));
+% 
+% addpath (genpath(fullfile(codeDir, 'SAKFunctions')));
+% rmpath  (genpath(fullfile(codeDir, 'SAKFunctions', '.git')));
+%  
+% setenv  ('ECS_DIR', fullfile(codeDir, 'princeton-ecs'));
+% addpath (genpath(getenv('ECS_DIR')));
+% rmpath  (genpath(fullfile(getenv('ECS_DIR'), '.git')));
+%  
+% addpath (genpath(fullfile(codeDir, 'TankMouseAnalysis')));
+% rmpath  (genpath(fullfile(codeDir, 'TankMouseAnalysis', '.git')));
+%  
+% addpath (genpath(fullfile(codeDir, 'MatlabProgressBar')));
+% rmpath  (genpath(fullfile(codeDir, 'MatlabProgressBar', '.git')));
+%  
+% addpath (genpath(fullfile(codeDir, 'SLEP')));
+% rmpath  (genpath(fullfile(codeDir, 'SLEP', '.git')));
+% 
+% % Mesoscope repositories
+% addpath (genpath(fullfile(codeDir, 'mesoscopeImaging')));
+% rmpath  (genpath(fullfile(codeDir, 'mesoscopeImaging', '.git')));
+% 
+% addpath (genpath(fullfile(codeDir, 'widefieldImaging')));
+% rmpath  (genpath(fullfile(codeDir, 'widefieldImaging', '.git')));
+% 
+% addpath (genpath(fullfile(codeDir, 'LPUtil')));
+% rmpath  (genpath(fullfile(codeDir, 'LPUtil', '.git')));
+% 
+% addpath (genpath(fullfile(codeDir, 'behavioralAnalysis')));
+% rmpath  (genpath(fullfile(codeDir, 'behavioralAnalysis', '.git')));
+% 
+% 
+% addpath (genpath(fullfile(codeDir, 'ImagingViewer')));
+% 
+% % Datajoint repositories
+% addpath (genpath(fullfile(codeDir, 'U19-pipeline-matlab')));
+% rmpath  (genpath(fullfile(codeDir, 'U19-pipeline-matlab', '.git')));
+% 
+% addpath (genpath(fullfile(codeDir, 'datajoint-matlab')));
+% rmpath  (genpath(fullfile(codeDir, 'datajoint-matlab', '.git')));
 
 
 s = settings;
