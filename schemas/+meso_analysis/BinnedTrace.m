@@ -1,10 +1,11 @@
 %{
 # time binned activity by trial
--> meso_analysis.Suite2ptrace #this has to be a provisional table temporarily, before it was: -> meso.Segmentation
--> meso_analysis.Trialstats
--> meso_analysis.StandardizedTime 
+-> imaging.FieldOfView
+-> meso_analysis.StandardizedTime
+-> meso_analysis.TrialSelectionParams 
 
-
+global_roi_idx         : int           # roi_idx in Suite2ptrace
+trial_idx              : int           # trial number as in meso_analysis.Trialstats
 ---
 binned_dff             : blob          # binned Dff, 1 row per neuron per trialStruct 
 %}
@@ -21,10 +22,10 @@ classdef BinnedTrace < dj.Computed
       end
       
       %% retrieve dff data
-      data = fetch( mesotables.Suite2ptrace & key, 'f_roi_raw','roi_idx');
+      data = fetch( meso_analysis.Suite2ptrace & key, 'f_roi_raw','roi_idx', 'is_cell');
       dff = cell2mat({data.f_roi_raw}');
       global_idx = [data.roi_idx]';
-      %dff              = cell2mat(dff); % neurons by frames 
+      is_cell = vertcat(data(:).is_cell);
       
       %% use manual curation to select only good rois
 %       goodMorphoOnly = fetch1(meso_analysis.BinningParameters & key, 'good_morpho_only');
@@ -46,7 +47,8 @@ classdef BinnedTrace < dj.Computed
 %       global_idx(~isgood,:)  = [];
 
 %% for suite2p we need to define different metrics (eg classifier, skewness) 
-      
+        dff                    = dff(is_cell(:,1)==1,:);
+        global_idx             = global_idx(is_cell(:,1)==1);
       %% get behavioral trial info
  
       syncinfo = fetch(imaging.SyncImagingBehavior & key, '*');
@@ -60,7 +62,9 @@ classdef BinnedTrace < dj.Computed
       block_by_im_frame          = syncinfo.sync_behav_block_by_im_frame;
       im_frame_id      = syncinfo.sync_im_frame_global;
       seg_frame_id     = im_frame_id(segmented_frames);
-      trial_span       = cell2mat(syncinfo.sync_im_frame_span_by_behav_trial');
+      trial_span       = syncinfo.sync_im_frame_span_by_behav_trial;
+      trial_span       = vertcat(trial_span{:});
+      
       % trial starts after segmentation starts and ends before segmentation stops
       is_within_segmentation = trial_span(:,1) > seg_frame_id(1) & trial_span(:,2) < seg_frame_id(end);
       
@@ -71,7 +75,7 @@ classdef BinnedTrace < dj.Computed
       trial_by_im_frame(trial_wi_block_by_im_frame>0) = trial_wi_block_by_im_frame(trial_wi_block_by_im_frame>0)+trial2add-1;
  
       %% now that trials are wrt segmented frames, can select for good trials based on session trial idx in .TrialStats
-      trial_stats = fetch(meso_analysis.Trialstats & key, 'trial_idx','is_not_excess_travel','mean_perf_block', ...
+      trial_stats = fetch(meso_analysis.Trialstats & key, 'is_not_excess_travel','mean_perf_block', ...
                                         'mean_bias_block','mean_perf_block','is_towers_task','is_visguided_task','block_id');
       trial_idx = [trial_stats.trial_idx];
       
