@@ -3,7 +3,7 @@ function reprocess_tiff_headers(key_data)
 all_directories = fetch(imaging.Scan & key_data,'scan_directory');
 
 
-for ii=5:length(all_directories)
+for ii=10:length(all_directories)
     
     isMesoscope = 1;
     disp(all_directories(ii).scan_directory);
