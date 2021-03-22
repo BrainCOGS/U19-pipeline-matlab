@@ -37,12 +37,12 @@ nROI                          = recInfo.nROIs;
 % This part parses and write tifs individually for each FOV
 
 %Get stridx again
-stridx   = regexp(fl{1},self.tif_number_fmt);
+stridx   = regexp(fl{1},scanInfo.tif_number_fmt);
 
 if isempty(gcp('nocreate'))
     
     c = parcluster('local'); % build the 'local' cluster object
-    num_workers = min(c.NumWorkers, 16);
+    num_workers = min(c.NumWorkers, 50);
     parpool('local', num_workers, 'IdleTimeout', 120);
     
 end
