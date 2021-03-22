@@ -55,7 +55,7 @@ classdef ScanInfo < dj.Imported
             generalTimer   = tic;
             curr_dir       = pwd;
             scan_dir_db    = fetch1(imaging.Scan & key,'scan_directory');
-            scan_directory = lab.utils.format_bucket_path(scan_dir_db);
+            scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
 
             %Check if directory exists in system
             lab.utils.assert_mounted_location(scan_directory)
@@ -136,11 +136,6 @@ classdef ScanInfo < dj.Imported
             
         end
         
-    end
-    
-    methods
-      
-        
         %% Check if tif or tif.gz files exist
         function [fl, basename, is_compressed] = check_tif_files(self, tif_dir)
             
@@ -183,7 +178,7 @@ classdef ScanInfo < dj.Imported
             if isempty(gcp('nocreate'))
                 
                 c = parcluster('local'); % build the 'local' cluster object
-                num_workers = min(c.NumWorkers, 50);
+                num_workers = min(c.NumWorkers, 16);
                 parpool('local', num_workers, 'IdleTimeout', 120);
                 
             end
@@ -332,7 +327,7 @@ classdef ScanInfo < dj.Imported
                 if isempty(gcp('nocreate'))
                 
                     c = parcluster('local'); % build the 'local' cluster object
-                    num_workers = min(c.NumWorkers, 50);
+                    num_workers = min(c.NumWorkers, 16);
                     parpool('local', num_workers, 'IdleTimeout', 120);
                 
                 end
