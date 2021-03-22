@@ -58,9 +58,10 @@ classdef BinnedTrace < dj.Computed
       segmented_frames = ~all(isnan(dff));
  
       % this is trial within block, we need trial within session
-      trial_wi_block_by_im_frame = syncinfo.sync_behav_trial_by_im_frame;
-      block_by_im_frame          = syncinfo.sync_behav_block_by_im_frame;
-      im_frame_id      = syncinfo.sync_im_frame_global;
+      % MDia added indexing for sessions where scanimage started later
+      trial_wi_block_by_im_frame = syncinfo.sync_behav_trial_by_im_frame(syncinfo.sync_im_frame_global ~=0);
+      block_by_im_frame          = syncinfo.sync_behav_block_by_im_frame(syncinfo.sync_im_frame_global ~=0);
+      im_frame_id      = syncinfo.sync_im_frame_global(syncinfo.sync_im_frame_global ~=0);
       seg_frame_id     = im_frame_id(segmented_frames);
       trial_span       = syncinfo.sync_im_frame_span_by_behav_trial;
       trial_span       = vertcat(trial_span{:});
@@ -104,7 +105,7 @@ classdef BinnedTrace < dj.Computed
                        
       good_trial     = good_towers_trials | good_visguide_trials;
                        
-      good_trial_idx = trial_idx(good_trial & is_within_segmentation');
+      good_trial_idx = trial_idx(good_trial & is_within_segmentation(trial_idx)');
 
                          
       %% Get trial bins (which trial bin # corresponds to each imaging frame)
@@ -118,7 +119,7 @@ classdef BinnedTrace < dj.Computed
       %% Get epoch bins 
 %       epochEdges       = getEpochEdges(key);
       [standardizedTime, epochEdges] = fetchn(meso_analysis.StandardizedTime & key, 'standardized_time', 'binned_time');
-        standardizedTime = standardizedTime{:};
+        standardizedTime = standardizedTime{:}(syncinfo.sync_im_frame_global ~=0);
         epochEdges = epochEdges{:};
       epoch_by_frame     = standardizedTime(segmented_frames & good_trial_frames);
       epoch_bin_by_frame = binarySearch(epochEdges, epoch_by_frame, -1, -1);
