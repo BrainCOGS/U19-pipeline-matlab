@@ -45,7 +45,9 @@ for ii=5:length(all_directories)
     %Get stridx again
     stridx   = regexp(fl{1},scanInfo.tif_number_fmt);
     
-    %if isempty(gcp('nocreate'))
+    if ~isempty(gcp('nocreate'))
+        delete(gcp('nocreate'))
+    end
     
     c = parcluster('local'); % build the 'local' cluster object
     num_workers = min(c.NumWorkers, 50);
