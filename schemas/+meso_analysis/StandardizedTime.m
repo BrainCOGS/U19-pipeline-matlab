@@ -40,6 +40,9 @@ classdef StandardizedTime < dj.Computed
             
             for trialNum = 1:numel(Tr) % ends up being easier to still do this in a for loop because of the format for tr.choice
                 fEpoch          = [ f_trial_start(trialNum), f_cue_entry(trialNum), f_mem_entry(trialNum), f_arm_entry(trialNum), f_trial_end(trialNum) ];
+                % Mdia: Nan's were set to -1 previously. If -1, cummax
+                % won't work
+                fEpoch(fEpoch == -1) = nan;
                 if behav(trialNum).choice ~= behav(trialNum).trial_type
                     fEpoch(end+1) = f_error_iti(trialNum);
                 end
