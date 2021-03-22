@@ -3,11 +3,11 @@ function reprocess_tiff_headers(key_data)
 all_directories = fetch(imaging.Scan & key_data,'scan_directory');
 
 
-for i=1:length(all_directories)
+for ii=5:length(all_directories)
     
     isMesoscope = 1;
-    disp(all_directories(i).scan_directory);
-    scan_dir_db    = all_directories(i).scan_directory;
+    disp(all_directories(ii).scan_directory);
+    scan_dir_db    = all_directories(ii).scan_directory;
     scan_directory = lab.utils.format_bucket_path(scan_dir_db);
     
     %Check if directory exists in system
@@ -19,7 +19,7 @@ for i=1:length(all_directories)
     scanInfo = imaging.ScanInfo;
     
     %% loop through files to read all image headers
-    [fl, basename, isCompressed] = scanInfo.check_tif_files(tif_dir);
+    [fl, basename, ~] = scanInfo.check_tif_files(tif_dir);
     
     fprintf('\tgetting headers...\n')
     [imheader, parsedInfo] = scanInfo.get_parsed_info(fl, isMesoscope);
@@ -49,7 +49,7 @@ for i=1:length(all_directories)
         
         c = parcluster('local'); % build the 'local' cluster object
         num_workers = min(c.NumWorkers, 50);
-        parpool('local', num_workers, 'IdleTimeout', 120);
+        pool = parpool('local', num_workers, 'IdleTimeout', 120);
         
     end
     
@@ -178,6 +178,7 @@ for i=1:length(all_directories)
         end
         
         readObj.close();
+        delete(pool)
         % now move file
         %movefile(fl{iF},sprintf('originalStacks/%s',fl{iF}));
     end
