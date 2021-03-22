@@ -70,9 +70,6 @@ classdef Segmentation < dj.Imported
       if isempty(gcp('nocreate'))
           
           c = parcluster('local'); % build the 'local' cluster object
-
-          num_workers = min(c.NumWorkers, 16);
-
           num_workers = min(c.NumWorkers, 32);
 
           parpool('local', num_workers, 'IdleTimeout', 120);
