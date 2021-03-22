@@ -130,6 +130,10 @@ classdef Trialstats < dj.Computed
         end
       end
       
+      %chop structure if virmen started later
+      VirmenIterOn = ~arrayfun(@(x)isempty(x.meso_frame_per_virmen_iter),results);
+      results = results(VirmenIterOn);
+      
       % write to table in one go
       self.insert(results)
     end
@@ -581,6 +585,8 @@ isValid         = index > 0;
  
 % convert to global frame ID (would be different if multiple acquisitions)
 frame2globalFrame     = cell2mat(frame2globalFrame);
+%Mdia for case when SI started half way through the behavior
+frame2globalFrame     = frame2globalFrame(frame2globalFrame > 0); 
 event_frame(isValid)  = frame2globalFrame(index(isValid));
  
 end
