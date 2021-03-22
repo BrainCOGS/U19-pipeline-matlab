@@ -45,13 +45,13 @@ for ii=5:length(all_directories)
     %Get stridx again
     stridx   = regexp(fl{1},scanInfo.tif_number_fmt);
     
-    if isempty(gcp('nocreate'))
-        
-        c = parcluster('local'); % build the 'local' cluster object
-        num_workers = min(c.NumWorkers, 50);
-        pool = parpool('local', num_workers, 'IdleTimeout', 120);
-        
-    end
+    %if isempty(gcp('nocreate'))
+    
+    c = parcluster('local'); % build the 'local' cluster object
+    num_workers = min(c.NumWorkers, 50);
+    pool = parpool('local', num_workers, 'IdleTimeout', 120);
+    
+    %end
     
     fieldLs = {'ImageLength','ImageWidth','BitsPerSample','Compression', ...
         'SamplesPerPixel','PlanarConfiguration','Photometric'};
@@ -178,10 +178,10 @@ for ii=5:length(all_directories)
         end
         
         readObj.close();
-        delete(pool)
         % now move file
         %movefile(fl{iF},sprintf('originalStacks/%s',fl{iF}));
     end
+    delete(pool)
 end
 
 end
