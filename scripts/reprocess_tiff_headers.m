@@ -57,11 +57,11 @@ interROIlag = recInfo.interROIlag_sec;
 Depths      = recInfo.nDepths;
 
 % make the folders in advance, before the parfor loop
-for iROI = 1:nROI
-    for iDepth = 1:Depths
-        mkdir(sprintf('../ROIn%02d_z%d',iROI,iDepth));
-    end
-end
+% for iROI = 1:nROI
+%     for iDepth = 1:Depths
+%         mkdir(sprintf('../ROI%02d_z%d',iROI,iDepth));
+%     end
+% end
 
 tagNames = Tiff.getTagNames();
 parfor iF = 1:numel(fl)
@@ -101,7 +101,7 @@ parfor iF = 1:numel(fl)
             % extract correct frames
             zIdx       = iDepth:Depths:size(thisstack,3);
             substack   = thisstack(rowct:rowct+ROInr(iROI)-1,1:ROInc(iROI),zIdx); % this square ROI, depths are interleaved
-            thisfn     = sprintf('../ROIn%02d_z%d/%sROI%02d_z%d_%s',iROI,iDepth,basename,iROI,iDepth,fl{iF}(stridx+1:end));
+            thisfn     = sprintf('../ROI%02d_z%d/%sROI%02d_z%d_%s',iROI,iDepth,basename,iROI,iDepth,fl{iF}(stridx+1:end));
             writeObj   = Tiff(thisfn,'w');
             thisheader = struct([]);
             
