@@ -3,7 +3,7 @@ function reprocess_tiff_headers(key_data)
 all_directories = fetch(imaging.Scan & key_data,'scan_directory');
 
 
-for ii=10:length(all_directories)
+for ii=11:length(all_directories)
     
     isMesoscope = 1;
     disp(all_directories(ii).scan_directory);
@@ -50,7 +50,7 @@ for ii=10:length(all_directories)
     end
     
     c = parcluster('local'); % build the 'local' cluster object
-    num_workers = min(c.NumWorkers, 50);
+    num_workers = min(c.NumWorkers, 32);
     pool = parpool('local', num_workers, 'IdleTimeout', 120);
     
     %end
