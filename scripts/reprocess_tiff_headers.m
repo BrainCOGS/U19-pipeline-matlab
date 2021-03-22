@@ -59,7 +59,7 @@ Depths      = recInfo.nDepths;
 % make the folders in advance, before the parfor loop
 for iROI = 1:nROI
     for iDepth = 1:Depths
-        mkdir(sprintf('ROIn%02d_z%d',iROI,iDepth));
+        mkdir(sprintf('../ROIn%02d_z%d',iROI,iDepth));
     end
 end
 
