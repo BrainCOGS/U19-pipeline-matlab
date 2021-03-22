@@ -1,6 +1,6 @@
 function reprocess_tiff_headers(key_data)
 
-
+isMesoscope = 1;
 scan_dir_db    = fetch1(imaging.Scan & key_data,'scan_directory');
 scan_directory = lab.utils.format_bucket_path(scan_dir_db);
 
