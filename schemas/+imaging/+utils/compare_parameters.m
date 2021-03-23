@@ -4,8 +4,8 @@ function [table_diff_params,common_params] = compare_parameters(param_table, met
 
 common_params = struct();
 
-%Fetch all set params from method
-param_struct = fetch(param_table & method_key, '*');
+%Fetch all set params from method (including master table for description)
+param_struct = fetch(param_table * param_table.master & method_key, '*');
 
 if isempty(param_struct)
     warning('No parameter sets were found for this method')
@@ -16,9 +16,12 @@ end
 
 fields = fieldnames(param_struct);
 
-% Get id of field which correspond to (set_id, parameter_name, parameter_value)
+% Get id of field which correspond to (set_id, description parameter_name, parameter_value)
 idx_set = contains(fields,'set_id');
 set_id_field = fields{idx_set};
+
+idx_param_description = contains(fields,'description');
+param_description_field = fields{idx_param_description};
 
 idx_param_name = contains(fields,'parameter_name');
 param_name_field = fields{idx_param_name};
@@ -32,14 +35,18 @@ set_ids = sort(unique([param_struct.(set_id_field)]));
 unique_params = unique({param_struct.(param_name_field)});
 
 % Create pivot table for all sets for all params
-table_diff_params = array2table(cell(length(set_ids), length(unique_params)+1), ...
-   'VariableNames', [{'set_id'}, unique_params]);
+table_diff_params = array2table(cell(length(set_ids), length(unique_params)+2), ...
+   'VariableNames', [{'set_id', param_description_field}, unique_params]);
 
 % Set values for pivot table
 num_sets = 0;
 for i=set_ids
     num_sets = num_sets+1;
     table_diff_params{num_sets,'set_id'} = {i};
+    
+    %Set description field for table
+    idx_desc = find([param_struct.(set_id_field)] == i,1);
+    table_diff_params{num_sets,param_description_field} = {param_struct(idx_desc).(param_description_field)};
     
     for j=unique_params
         
@@ -76,6 +83,7 @@ for j=unique_params
     end
     
 end
+
 
 end
 

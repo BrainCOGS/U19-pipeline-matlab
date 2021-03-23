@@ -11,7 +11,7 @@ classdef SegParameterSetParameter < dj.Part
         master   = imaging.SegParameterSet
     end
     methods
-        function make(self, key)
+        function structParam = get_segSetParameter(self, key)
             
             %Get all names of parameters for given method
             paramKey.seg_method = key.seg_method;
@@ -36,7 +36,7 @@ classdef SegParameterSetParameter < dj.Part
                 'cnmf' , 'cnmf_tau' , 4;
                 'cnmf' , 'cnmf_p' , 2;
                 'cnmf' , 'cnmf_num_iter' , 2;
-                'cnmf' , 'cnmf_files_per_chunk' , 50;
+                'cnmf' , 'cnmf_files_per_chunk' , 16;
                 'cnmf' , 'cnmf_proto_num_chunks' , 1;
                 'cnmf' , 'cnmf_zero_is_minimum' , false;
                 'cnmf' , 'cnmf_default_timescale' , 10;
@@ -65,26 +65,23 @@ classdef SegParameterSetParameter < dj.Part
             tableParam.seg_method = categorical(tableParam.seg_method);
             tableParam.seg_parameter_name = categorical(tableParam.seg_parameter_name);
             
-            % For each of the parameters from the SegParameter table
+            %Filter current key parameters
+            tableParam = tableParam(tableParam.seg_method == key.seg_method, :);
+            
+            %Transform parameters into struct
+            structParam = cell2struct(tableParam.seg_parameter_value, cellstr(tableParam.seg_parameter_name));
+            
+            %Check if all parameter declared for this method are present in param definition
             for i=1:length(parameters)
-                
-                %Search for the corresponding value in the predefined cell
                 key.seg_parameter_name = parameters{i};
-                value_cell = tableParam{tableParam.seg_method == key.seg_method & ...
-                    tableParam.seg_parameter_name == key.seg_parameter_name, 'seg_parameter_value'};
+                value_cell = tableParam{tableParam.seg_parameter_name == key.seg_parameter_name, 'seg_parameter_value'};
                 
-                %Check if there is only one value for that specific parameter
                 if size(value_cell,1) > 1
                     warning('More than one value for this key found: %s %d %s',key.seg_method, key.seg_parameter_set_id, key.seg_parameter_name)
-                    key.seg_parameter_value = value_cell{1,1};
                 elseif size(value_cell,1) == 0
-                    error('No value for this key found: : %s %d %s',key.seg_method, key.seg_parameter_set_id, key.seg_parameter_name)
-                else
-                    key.seg_parameter_value = value_cell{1,1};
+                    warning('No value for this key found: : %s %d %s',key.seg_method, key.seg_parameter_set_id, key.seg_parameter_name)
                 end
                 
-                %Insert parameterset
-                self.insert(key);
             end
             
         end

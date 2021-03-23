@@ -11,13 +11,13 @@ classdef McParameterSetParameter < dj.Part
         master   = imaging.McParameterSet
     end
     methods
-        function make(self, key)
+        function structParam = get_mcSetParameter(self, key)
             
             query = imaging.McParameter & key;
             parameters = query.fetchn('mc_parameter_name');
             
             tableParam  =cell2table({
-                'LinearNormalized' , 'mc_max_shift' , 15;
+                'LinearNormalized' , 'mc_max_shift' , 16;
                 'LinearNormalized' , 'mc_max_iter' , 5;
                 'LinearNormalized' , 'mc_extra_param' , false;
                 'LinearNormalized' , 'mc_stop_below_shift' , 0.3;
@@ -35,23 +35,27 @@ classdef McParameterSetParameter < dj.Part
             tableParam.mc_method = categorical(tableParam.mc_method);
             tableParam.mc_parameter_name = categorical(tableParam.mc_parameter_name);
             
+            %Filter current key parameters
+            tableParam = tableParam(tableParam.mc_method == key.mc_method, :);
+            
+            %Transform parameters into struct
+            structParam = cell2struct(tableParam.mc_parameter_value, cellstr(tableParam.mc_parameter_name));
+            
+            %Check if all parameter declared for this method are present in param definition
             for i=1:length(parameters)
                 key.mc_parameter_name = parameters{i};
-                value_cell = tableParam{tableParam.mc_method == key.mc_method & ...
-                                        tableParam.mc_parameter_name == key.mc_parameter_name, 'mc_parameter_value'};
-            
+                value_cell = tableParam{tableParam.mc_parameter_name == key.mc_parameter_name, 'mc_parameter_value'};
+                
                 if size(value_cell,1) > 1
                     warning('More than one value for this key found: %s %d %s',key.mc_method, key.mc_parameter_set_id, key.mc_parameter_name)
-                    key.mc_parameter_value = value_cell{1,1};
                 elseif size(value_cell,1) == 0
-                    error('No value for this key found: : %s %d %s',key.mc_method, key.mc_parameter_set_id, key.mc_parameter_name)
-                else
-                    key.mc_parameter_value = value_cell{1,1};
+                    warning('No value for this key found: : %s %d %s',key.mc_method, key.mc_parameter_set_id, key.mc_parameter_name)
                 end
-            
-                self.insert(key);
+                
             end
             
         end
     end
+    
+    
 end
