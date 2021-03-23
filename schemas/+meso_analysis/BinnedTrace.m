@@ -22,8 +22,8 @@ classdef BinnedTrace < dj.Computed
       end
       
       %% retrieve dff data
-      data = fetch( meso_analysis.Suite2ptrace & key, 'f_roi_raw','roi_idx', 'is_cell');
-      dff = cell2mat({data.f_roi_raw}');
+      data = fetch( meso_analysis.Suite2ptrace & key, 'dff_roi_uncorrected','roi_idx', 'is_cell');
+      dff = cell2mat({data.dff_roi_uncorrected}');
       global_idx = [data.roi_idx]';
       is_cell = vertcat(data(:).is_cell);
       
@@ -48,6 +48,7 @@ classdef BinnedTrace < dj.Computed
 
 %% for suite2p we need to define different metrics (eg classifier, skewness) 
         dff                    = dff(is_cell(:,1)==1,:);
+        %dff(:,[1:2999, 36701:end]) = nan;
         global_idx             = global_idx(is_cell(:,1)==1);
       %% get behavioral trial info
  
