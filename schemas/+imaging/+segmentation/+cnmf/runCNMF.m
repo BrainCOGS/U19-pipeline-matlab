@@ -105,10 +105,8 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
 
   % Proto-segmentation
   if fromProtoSegments
-     disp('In proto segmentation ....')
     [protoROI, outputFiles]       ...
                         = imaging.segmentation.cnmf.getProtoSegmentation(movieFile, fileChunk, acquisPrefix, lazy, cfg, outputFiles, scratchDir, mcdir);
-     disp('Out proto segmentation ...')
   else
     protoROI            = [];
   end

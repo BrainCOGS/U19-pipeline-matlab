@@ -4,7 +4,6 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   %% Look for existing work if available
   protoFile       = [prefix, '.proto-roi.mat'];
   figFile         = [prefix, '.proto-roi.fig'];
-  protoFile
   if ~isequal(lazy,false) && exist(protoFile, 'file')
     fprintf('====  Found existing proto-segmentation results %s\n', protoFile);
     load(protoFile);
@@ -96,7 +95,6 @@ function [prototypes, outputFiles] = getProtoSegmentation(movieFile, fileChunk, 
   end
   
   
-  disp(['Before saving protofile ....', protoFile])
   %% Save output and figures
   save(protoFile, 'prototypes', '-v7.3');
   savefig(fig, figFile, 'compact');

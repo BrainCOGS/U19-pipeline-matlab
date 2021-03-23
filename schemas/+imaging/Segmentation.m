@@ -39,7 +39,7 @@ classdef Segmentation < dj.Imported
       seg_bucket_results_directory = imaging.utils.get_seg_save_directory(mc_bucket_results_directory,key,'/');
       seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key,filesep);
       
-      %Create motion correciton results directory
+      %Create segmentation results directory
       if ~exist(seg_results_directory, 'dir')
           mkdir(seg_results_directory)
       end
@@ -167,7 +167,7 @@ classdef Segmentation < dj.Imported
       
       %Perform classification
       disp('Performing classification')
-      classifier = 'morphology_k36_layer23_20160324.mat';
+      classifier = 'generic_morphology_classifier.mat';
       classifier = load(classifier);
       name       = fieldnames(classifier);
       classifier = classifier.(name{:});
@@ -208,7 +208,7 @@ classdef Segmentation < dj.Imported
           localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-                    
+  
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);

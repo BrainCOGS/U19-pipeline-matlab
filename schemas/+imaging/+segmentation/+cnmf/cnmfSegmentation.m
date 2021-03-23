@@ -16,7 +16,6 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
     name            = stripPath(movieFile);
     
     for iProto = 1:numel(protoROI)
-      disp(protoROI(iProto).movieFile)
       iFile         = find(strcmp(protoROI(iProto).movieFile, name{1}), 1, 'first');
       
       if isempty(iFile)
@@ -29,7 +28,6 @@ function [cnmf, source, roiFile, summaryFile, timeScale, binnedF, outputFiles]  
         end
       end
       prototypes    = protoROI(iProto).spatial;
-            
       protoCfg      = protoROI(iProto).params;
       timeScale     = numel(protoROI(iProto).metric.kernel);
       break;

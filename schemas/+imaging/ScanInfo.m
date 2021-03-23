@@ -113,7 +113,7 @@ classdef ScanInfo < dj.Imported
             %If original files where compressed
             if isCompressed
                 disp('it started as compressed files, removing compressed')
-                imaging.utils.remove_tif_if_gz(fl, scan_directory);
+                imaging.utils.remove_compressed_videos(fl, scan_directory);
             end
             
             %% Insert to ScanInfo
@@ -269,8 +269,6 @@ classdef ScanInfo < dj.Imported
             
             lastGoodFile        = selectFilesFromMeanF(scan_directory);            
             cumulativeFrames    = cumsum(framesPerFile);
-            %       lastGoodFile        = find(cumulativeFrames >= lastGoodFrame,1,'first');
-            %       lastFrameInFile     = lastGoodFrame - cumulativeFrames(max([1 lastGoodFile-1]));
             
         end
         
@@ -386,7 +384,6 @@ classdef ScanInfo < dj.Imported
                         thislag  = interROIlag*(iROI-1);
                         
                         for iDepth = 1:Depths
-                            roi_header = current_header;
                             
                             % extract correct frames
                             zIdx       = iDepth:Depths:size(thisstack,3);

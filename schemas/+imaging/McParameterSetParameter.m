@@ -17,7 +17,7 @@ classdef McParameterSetParameter < dj.Part
             parameters = query.fetchn('mc_parameter_name');
             
             tableParam  =cell2table({
-                'LinearNormalized' , 'mc_max_shift' , 16;
+                'LinearNormalized' , 'mc_max_shift' , 15;
                 'LinearNormalized' , 'mc_max_iter' , 5;
                 'LinearNormalized' , 'mc_extra_param' , false;
                 'LinearNormalized' , 'mc_stop_below_shift' , 0.3;

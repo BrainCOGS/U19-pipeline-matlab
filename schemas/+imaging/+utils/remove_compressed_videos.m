@@ -1,5 +1,5 @@
-function remove_tif_if_gz(fl, directory)
-% if there are gz files, remove tif files remove_tif_if_gz
+function remove_compressed_videos(fl, directory)
+% if there are gz files, remove them if tif files where extracted on that directory
 %
 % Inputs
 % fl        = list of tif files to check

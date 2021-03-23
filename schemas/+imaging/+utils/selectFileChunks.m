@@ -106,15 +106,7 @@ end
 % case of many consecutive blocks, otherwise break at disjoint blocks
 if size(fileChunk,1) == 1
   if diff(fileChunk) > chunk_cfg.filesPerChunk
-    oldchunk       = fileChunk;
-    %num_chunks     = ceil(oldchunk(end) / chunk_cfg.filesPerChunk);
-    %for j=1:num_chunks
-    %    fileChunk(j,:) = [(j-1)*chunk_cfg.filesPerChunk+1 (j)*chunk_cfg.filesPerChunk];
-    %end
-    %if fileChunk(end,end) > oldchunk(end)
-    %    fileChunk(end,end) = oldchunk(end);
-    %end
-    
+    oldchunk       = fileChunk;    
     fileChunk(1,:) = [oldchunk(1) round(oldchunk(end)/2)]; 
     fileChunk(2,:) = [round(oldchunk(end)/2)+1 oldchunk(end)]; 
   end

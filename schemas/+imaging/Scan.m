@@ -132,9 +132,7 @@ classdef Scan < dj.Imported
              
             %Get all child directories from user
             disp(['Get all paths from Directory: ' userDir])
-            tic
             dirInfo = genpath(userDir);
-            toc
             dirInfo = split(dirInfo,':');
             
             % For matlab 2016 change string to cell
