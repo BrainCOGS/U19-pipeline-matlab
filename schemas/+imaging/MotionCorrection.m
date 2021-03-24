@@ -29,14 +29,20 @@ classdef MotionCorrection < dj.Imported
             end
                         
             %Get scan directory
-            fov_directory  = fetch1(imaging.FieldOfView & key,'fov_directory');
-            fov_directory = lab.utils.format_bucket_path(fov_directory);
+            bucket_fov_directory  = fetch1(imaging.FieldOfView & key,'fov_directory');
+            fov_directory = lab.utils.format_bucket_path(bucket_fov_directory);
             
             %Check if directory exists in system
             lab.utils.assert_mounted_location(fov_directory)
-            mc_results_directory = imaging.utils.get_mc_save_directory(fov_directory, key);
+            mc_results_bucket_directory = imaging.utils.get_mc_save_directory(bucket_fov_directory, key,'/');
+            mc_results_directory        = imaging.utils.get_mc_save_directory(fov_directory, key,filesep);
             
+            %Create motion correciton results directory
+            if ~exist(mc_results_directory, 'dir')
+                mkdir(mc_results_directory)
+            end
             
+
             %% call functions to compute motioncorrectionWithinFile and AcrossFiles and insert into the tables
             fprintf('==[ PROCESSING ]==   %s\n', fov_directory);
             
@@ -50,7 +56,13 @@ classdef MotionCorrection < dj.Imported
             end
             
             % run motion correction
-            if isempty(gcp('nocreate')); poolobj = parpool; end
+            if isempty(gcp('nocreate'))
+                
+                c = parcluster('local'); % build the 'local' cluster object
+                num_workers = min(c.NumWorkers, 32);
+                parpool('local', num_workers, 'IdleTimeout', 120);
+                
+            end
             
             [frameMCorr, fileMCorr]       = getMotionCorrection(movieFiles, false, 'off', 'SaveDir', mc_results_directory, cfg.mcorr{:});
             
@@ -75,10 +87,7 @@ classdef MotionCorrection < dj.Imported
             across_key.cross_files_x_shifts        = fileMCorr.xShifts;
             across_key.cross_files_y_shifts        = fileMCorr.yShifts;
             across_key.cross_files_reference_image = fileMCorr.reference;
-            
-            class(fileMCorr.reference)
-            size(fileMCorr.reference)
-            
+                        
             %% compute and save some stats as .mat files, intermediate step used downstream in the segmentation code
             movieName                     = stripPath(movieFiles);
             parfor iFile = 1:numel(movieFiles)
@@ -86,7 +95,7 @@ classdef MotionCorrection < dj.Imported
             end
             
             %% insert key
-            key.mc_results_directory = mc_results_directory;
+            key.mc_results_directory = mc_results_bucket_directory;
             self.insert(key);
             insert(imaging.MotionCorrectionWithinFile, within_key)
             insert(imaging.MotionCorrectionAcrossFiles, across_key)
@@ -98,8 +107,6 @@ end
 %%
 %---------------------------------------------------------------------------------------------------
 function [statsFile, activity] = computeStatistics(movieName, movieFile, mc_results_directory, frameMCorr, recomputeStats)
-
-fprintf(' :   %s\n', movieName);
 
 % Fluorescence activity raw statistics
 statsFile                   = regexprep(fullfile(mc_results_directory, movieName), '[.][^.]+$', '.stats.mat');
@@ -113,8 +120,8 @@ if recomputeStats ||  ~exist(statsFile, 'file')
     info                      = cv.imfinfox(movieFile);
     info.movieFile            = stripPath(movieFile);
     outputFile                = statsFile;
-    if ~isfile(outputFile)
-        parsave(outputFile, info, stats, metric, tailProb);
+    if ~(exist(outputFile, 'file') == 2)
+        parsave(outputFile, info, stats, metric, tailProb, '-v7.3');
     end
 else
     metric                    = load(statsFile, 'metric');

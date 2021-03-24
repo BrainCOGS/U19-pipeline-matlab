@@ -24,6 +24,8 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     return
   end
   
+  fprintf('====  NOT FOUND %s, not skipping global registration\n', regFile);
+  
   %% Precompute the safe frame size to contain all centered components 
   maxSize                       = [0 0];
   for iFile = 1:numel(chunk)
@@ -136,8 +138,9 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     end
     difference                  = sortrows(difference, 1);
 
-    % Greedily assign the most correlated components first
+    %% Greedily assign the most correlated components first
     isResolved                  = false(size(compIndex));
+    isMatched                   = false(1, size(globalXY,2));
     for iDiff = size(difference,1):-1:1             % Highest correlation first
       iComp                     = difference(iDiff,3);
       if isResolved(iComp)
@@ -147,8 +150,14 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
         break;
       end
       
-      % Keep track of temporal evolution of templates
+      %% Keep track of global components that already have (better) matches
       iGlobal                   = difference(iDiff,2);
+      if isMatched(iGlobal)
+        continue;
+      end
+      isMatched(iGlobal)        = true;
+      
+      %% Keep track of temporal evolution of templates
       iLocal                    = compIndex(iComp);
       globalXY(:,iGlobal)       = chunk(iFile).globalXY(:,iLocal);
       template(:,iGlobal)       = chunk(iFile).template(:,iLocal);
@@ -159,7 +168,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
       chunk(iFile).globalShapeCorr(iLocal)  = difference(iDiff,1);
     end
     
-    % Register new global components as they appear
+    %% Register new global components as they appear
     compIndex(isResolved)       = [];
     iGlobal                     = size(globalXY,2) + (1:numel(compIndex));
     globalXY(:,iGlobal)         = chunk(iFile).globalXY(:,compIndex);
@@ -167,6 +176,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     localIndex(end,iGlobal)     = compIndex;
     chunk(iFile).globalID(compIndex)        = iGlobal;
   end
+  
   
   %% Reorder global IDs by persistence across time
   [~, globalOrder]              = sort(sum(localIndex > 0, 1), 'descend');
@@ -284,6 +294,7 @@ function outputFiles = globalRegistration(chunk, path, prefix, repository, cfg, 
     outputFiles{end+1}          = roiFile;
   end
   fprintf(' in %.3g s\n', toc(startTime));
+  
   
   % Remove large data
   if isfield(chunkCfg.cfg.options, 'neighborhood')

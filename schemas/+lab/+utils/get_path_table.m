@@ -1,4 +1,4 @@
-function [path_table] = get_path_table()
+function path_table = get_path_table()
 % get path table from u19_lab.#path and format it to use it more easily
 %
 % Output

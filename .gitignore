@@ -127,3 +127,5 @@ data/DailyLogs.mat
 # svg file
 *.svg
 
+# tutorial local imaging data
+tutorials/202103/imaging_pipeline/imaging_data/

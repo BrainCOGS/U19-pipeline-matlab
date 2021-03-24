@@ -28,14 +28,22 @@ classdef Segmentation < dj.Imported
       
       %Get motion correction results directory
       mcdata = fetch(imaging.MotionCorrection & key,'mc_results_directory');
-      mc_results_directory = lab.utils.format_bucket_path(mcdata.mc_results_directory);
+      mc_bucket_results_directory = mcdata.mc_results_directory;
+      mc_results_directory        = lab.utils.format_bucket_path(mc_bucket_results_directory);
       
       %Check if fov_directory and mc directory exists in system
       lab.utils.assert_mounted_location(fov_directory)
       lab.utils.assert_mounted_location(mc_results_directory)
       
       %Get segmentation results directory
-      seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key);
+      seg_bucket_results_directory = imaging.utils.get_seg_save_directory(mc_bucket_results_directory,key,'/');
+      seg_results_directory = imaging.utils.get_seg_save_directory(mc_results_directory,key,filesep);
+      
+      %Create segmentation results directory
+      if ~exist(seg_results_directory, 'dir')
+          mkdir(seg_results_directory)
+      end
+      
                 
       %Check if segmentation directory exists in system
       lab.utils.assert_mounted_location(seg_results_directory)
@@ -57,11 +65,15 @@ classdef Segmentation < dj.Imported
       %% select tif file chunks based on behavior and bleaching
         fileChunk                            = imaging.utils.selectFileChunks(key,chunk_cfg); 
         
-        disp('final fileChunk')
-        fileChunk
             
       %% run segmentation and populate this table
-      if isempty(gcp('nocreate')); parpool('IdleTimeout', 120); end
+      if isempty(gcp('nocreate'))
+          
+          c = parcluster('local'); % build the 'local' cluster object
+          num_workers = min(c.NumWorkers, 32);
+
+          parpool('local', num_workers, 'IdleTimeout', 120);
+      end
       
       segmentationMethod = fetch1(imaging.SegmentationMethod & key,'seg_method');
       switch segmentationMethod
@@ -78,6 +90,9 @@ classdef Segmentation < dj.Imported
       % just 'posthoc' files
       fileidx     = logical(cellfun(@(x)(sum(contains(x,'posthoc')>0)),outputFiles));
       outputFiles = outputFiles(fileidx);
+      
+      %ALS reorder outputfiles in numerical order e.g chunks 1-4 then 5-8 etc
+      outputFiles = imaging.utils.reorder_output_files(outputFiles);
 
 %       %% shut down parallel pool
 %       if ~isempty(gcp('nocreate'))
@@ -104,7 +119,7 @@ classdef Segmentation < dj.Imported
       result.cross_chunks_x_shifts         = data.registration.xShifts;
       result.cross_chunks_y_shifts         = data.registration.yShifts;
       result.cross_chunks_reference_image  = data.registration.reference;
-      result.seg_results_directory         = seg_results_directory;
+      result.seg_results_directory         = seg_bucket_results_directory;
       self.insert(result)
       
       %% write to imaging.SegmentationChunks (some session chunk-specific info)
@@ -121,9 +136,9 @@ classdef Segmentation < dj.Imported
         
         % figure out imaging frame range in the chunk (with respect to whole session)
         frame_range_first            = fetch1(imaging.FieldOfViewFile & key & ...
-                                              sprintf('fov_filename="%s"',result.tif_file_list{1}),'file_frame_range');
+                                              sprintf('fov_filename=''%s''',result.tif_file_list{1}),'file_frame_range');
         frame_range_last             = fetch1(imaging.FieldOfViewFile & key & ...
-                                              sprintf('fov_filename="%s"',result.tif_file_list{end}),'file_frame_range');   
+                                              sprintf('fov_filename=''%s''',result.tif_file_list{end}),'file_frame_range');   
         chunkRange(iChunk,:)         = [frame_range_first(1) frame_range_last(end)];
         result.imaging_frame_range   = chunkRange(iChunk,:);
         
@@ -150,7 +165,20 @@ classdef Segmentation < dj.Imported
       morpho_data   = keydata;
       trace_data    = keydata;
       
+      %Perform classification
+      disp('Performing classification')
+      classifier = 'generic_morphology_classifier.mat';
+      classifier = load(classifier);
+      name       = fieldnames(classifier);
+      classifier = classifier.(name{:});
       
+      metrics             = morphologyMetrics(chunkdata{iChunk});
+      
+      hasInfo             = metrics.Morphology < RegionMorphology.Noise;
+      morphology_classified = RegionMorphology(classifier.predictFcn(metrics(hasInfo,:)))';
+      chunkdata{iChunk}.cnmf.morphology(hasInfo) = morphology_classified;
+      
+            
       % loop through ROIs
       for iROI = 1:nROIs
         roi_data.roi_idx                    = iROI;  
@@ -161,8 +189,13 @@ classdef Segmentation < dj.Imported
         roi_data.roi_is_in_chunks           = [];   
         roi_data.roi_spatial                = [];
         
-        trace_data.time_constants           = data.cnmf.timeConstants{iROI};
-        trace_data.init_concentration       = data.cnmf.initConcentration{iROI};
+        %Save all chunks that were present at least on first ROI
+        if isempty(data.cnmf.timeConstants{iROI,1})
+            continue
+        end
+
+        trace_data.time_constants           = data.cnmf.timeConstants{iROI,1};
+        trace_data.init_concentration       = data.cnmf.initConcentration{iROI,1};
         trace_data.dff_roi                  = nan(1,totalFrames);
         trace_data.dff_surround             = nan(1,totalFrames);
         trace_data.spiking                  = nan(1,totalFrames);
@@ -172,10 +205,10 @@ classdef Segmentation < dj.Imported
         % now look in file chunks and fill activity etc
         for iChunk = 1:numel(chunkdata)
           % find roi in chunks
-          localIdx                          = data.chunk.globalID == iROI;
+          localIdx                          = data.chunk(iChunk).globalID== iROI;
           if sum(localIdx) == 0; continue; end
           roi_data.roi_is_in_chunks         = [roi_data.roi_is_in_chunks iChunk];
-            
+  
           % activity traces
           frameIdx                                    = chunkRange(iChunk,1):chunkRange(iChunk,2);
           uniqueData                                  = chunkdata{iChunk}.cnmf.uniqueData(localIdx,:);

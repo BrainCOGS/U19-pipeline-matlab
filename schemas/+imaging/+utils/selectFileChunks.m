@@ -10,20 +10,10 @@ file_ids       = fetchn(imaging.FieldOfViewFile & key,'file_number');
 nfiles         = numel(file_ids);
 fileChunk      = [1 nfiles];
 
-disp('beginning of times')
-fileChunk
-
 if ~chunk_cfg.auto_select_behav && ~chunk_cfg.auto_select_bleach && nfiles < chunk_cfg.filesPerChunk
   %fileChunk = [];
   return
 end
-
-
-
-disp('beginning of times 2')
-fileChunk
-disp('by behavior')
-chunk_cfg.auto_select_behav
 
 %% select imaging chunks based on behavior blocks (at least two consecutive blocks)
 if chunk_cfg.auto_select_behav
@@ -102,33 +92,24 @@ if chunk_cfg.auto_select_behav
 end
 
 %% enforce bleaching and max num file criteria if necessary
-
-disp('beginning of bleach')
-
 % bleaching
 if chunk_cfg.auto_select_bleach
-  disp('before bleach')
-  fileChunk  
   lastGoodFile           = fetch1(imaging.ScanInfo & key,'last_good_file');
   deleteIdx              = fileChunk(:,1) > lastGoodFile;
   fileChunk(deleteIdx,:) = [];
   if isempty(fileChunk); return; end
   fillInIdx              = fileChunk(:,2) > lastGoodFile;
   fileChunk(fillInIdx,2) = lastGoodFile;
-  disp('after bleach')
-  fileChunk
 end
 
 % max files per chunk. Split in half if it exceeds this criterion in the
 % case of many consecutive blocks, otherwise break at disjoint blocks
 if size(fileChunk,1) == 1
   if diff(fileChunk) > chunk_cfg.filesPerChunk
-    oldchunk       = fileChunk;
-    fileChunk(1,:) = [oldchunk(1) floor(oldchunk(end)/2)]; 
-    fileChunk(2,:) = [floor(oldchunk(end)/2)+1 oldchunk(end)]; 
+    oldchunk       = fileChunk;    
+    fileChunk(1,:) = [oldchunk(1) round(oldchunk(end)/2)]; 
+    fileChunk(2,:) = [round(oldchunk(end)/2)+1 oldchunk(end)]; 
   end
-  disp('after files per chunk')
-  fileChunk
 end
 
 end

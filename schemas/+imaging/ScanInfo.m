@@ -54,8 +54,9 @@ classdef ScanInfo < dj.Imported
             % runs a modified version of mesoscopeSetPreproc
             generalTimer   = tic;
             curr_dir       = pwd;
+            scan_dir_db    = fetch1(imaging.Scan & key,'scan_directory');
             scan_directory = lab.utils.format_bucket_path(fetch1(imaging.Scan & key,'scan_directory'));
-            
+
             %Check if directory exists in system
             lab.utils.assert_mounted_location(scan_directory)
             
@@ -65,20 +66,27 @@ classdef ScanInfo < dj.Imported
             
             cd(scan_directory)
             
+            %Check if it is mesoscope or 2photon
+            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
+            is2Photon   = any(contains(self.photon_micro_acq, acq_type));
+            
             fprintf('------------ preparing %s --------------\n',scan_directory)
             
-            originalStacksdir = fullfile(scan_directory, 'originalStacks');
-            
-            if (isempty(dir('*tif*')) && exist(originalStacksdir,'dir'))
-                tif_dir = fullfile(scan_directory, 'originalStacks');
-                cd originalStacks
-                skipParsing = true;
+            if isMesoscope
+                originalStacksdir = fullfile(scan_directory, 'originalStacks');
+                if (isempty(dir('*tif*')) && exist(originalStacksdir,'dir'))
+                    tif_dir = fullfile(scan_directory, 'originalStacks');
+                    cd originalStacks
+                    skipParsing = true;
+                else
+                    tif_dir = scan_directory;
+                    if ~exist(originalStacksdir,'dir')
+                        mkdir('originalStacks');
+                    end
+                    skipParsing = false;
+                end
             else
                 tif_dir = scan_directory;
-                if ~exist(originalStacksdir,'dir')
-                    mkdir('originalStacks');
-                end
-                skipParsing = false;
             end
             
             %% loop through files to read all image headers
@@ -86,8 +94,6 @@ classdef ScanInfo < dj.Imported
             
             % get header with parfor loop
             fprintf('\tgetting headers...\n')
-            %If mesoscope variable set before parfoor lope
-            isMesoscope = any(contains(self.mesoscope_acq, acq_type));
             [imheader, parsedInfo] = self.get_parsed_info(fl, isMesoscope);
             
             %Get recInfo field
@@ -97,35 +103,33 @@ classdef ScanInfo < dj.Imported
             recInfo.nfovs = self.get_nfovs(recInfo, isMesoscope);
             
             %Get last "good" file because of bleaching
-            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, skipParsing, scan_directory);
+            [lastGoodFile, cumulativeFrames] = self.get_last_good_frame(framesPerFile, tif_dir);
             recInfo.nframes_good              = cumulativeFrames(lastGoodFile);
             recInfo.last_good_file            = lastGoodFile;
             
             % check acqTime is valid, and if not, correct it
             recInfo.AcqTime = self.check_acqtime(recInfo.AcqTime, scan_directory);
             
+            %If original files where compressed
+            if isCompressed
+                disp('it started as compressed files, removing compressed')
+                imaging.utils.remove_compressed_videos(fl, scan_directory);
+            end
             
             %% Insert to ScanInfo
-            self.insert_scan_info(key, recInfo)
+            self.insert_scan_info(key, recInfo, scan_dir_db)
             
             %% FOV ROI Processing for mesoscope
-            if any(contains(self.mesoscope_acq, acq_type))
-                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_directory)
+            if isMesoscope
+                self.insert_fov_mesoscope(fl, key, skipParsing, imheader, recInfo, basename, cumulativeFrames, scan_dir_db)
                 
                 % Just insertion of fov and fov fiels for 2 and 3 photon
-            elseif any(contains(self.photon_micro_acq, acq_type))
-                self.insert_fov_photonmicro(key, scan_directory)
+            elseif is2Photon
+                self.insert_fov_photonmicro(key, scan_dir_db)
                 self.insert_fovfile_photonmicro(key, fl, imheader)
             else
                 error('Not a valid acquisition for this pipeline, how did you get here ??')
             end
-            
-            %If original files where compressed
-            if isCompressed
-                disp('it started as compressed files, removing uncompressed')
-                imaging.utils.remove_tif_if_gz(fl, scan_directory);
-            end
-            
             
             cd(curr_dir)
             fprintf('\tdone after %1.1f min\n',toc(generalTimer)/60)
@@ -138,7 +142,6 @@ classdef ScanInfo < dj.Imported
             is_compressed = 0;
             
             %Save current directory and enter tif directory
-            curr_dir = pwd;
             cd(tif_dir);
             
             %Check for tif files (or tif.gz if there are not tif)
@@ -173,7 +176,12 @@ classdef ScanInfo < dj.Imported
         function [imheader, parsedInfo] = get_parsed_info(self, fl, isMesoscope)
             
             if isempty(gcp('nocreate'))
-                parpool;
+                
+                c = parcluster('local'); % build the 'local' cluster object
+                num_workers = min(c.NumWorkers, 32);
+
+                parpool('local', num_workers, 'IdleTimeout', 120);
+                
             end
             
             parfor iF = 1:numel(fl)
@@ -257,26 +265,24 @@ classdef ScanInfo < dj.Imported
         end
         
         %% find out last good frame based on bleaching
-        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, skipParsing, scan_directory)
+        function [lastGoodFile, cumulativeFrames] = get_last_good_frame(self, framesPerFile, scan_directory)
             
-            if skipParsing
-                lastGoodFile        = selectFilesFromMeanF(fullfile(scan_directory, 'originalStacks'));
-            else
-                lastGoodFile        = selectFilesFromMeanF(scan_directory);
-            end
-            
+            lastGoodFile        = selectFilesFromMeanF(scan_directory);            
             cumulativeFrames    = cumsum(framesPerFile);
-            %       lastGoodFile        = find(cumulativeFrames >= lastGoodFrame,1,'first');
-            %       lastFrameInFile     = lastGoodFrame - cumulativeFrames(max([1 lastGoodFile-1]));
             
         end
         
-        function insert_scan_info(self, key, recInfo)
+        function insert_scan_info(self, key, recInfo, bucket_dir)
+            
+            %Correct full filename for mac & windows system
+            [~, filename, ext] = fileparts(recInfo.Filename);
+            full_filename = spec_fullfile('/', bucket_dir, [filename ext]);
+            
             
             originalkey                   = key;
             key_data                      = fetch(imaging.Scan & originalkey);
             key                           = key_data;
-            key.file_name_base            = recInfo.Filename;
+            key.file_name_base            = full_filename;
             key.scan_width                = recInfo.Width;
             key.scan_height               = recInfo.Height;
             key.acq_time                  = recInfo.AcqTime;
@@ -317,7 +323,14 @@ classdef ScanInfo < dj.Imported
             stridx   = regexp(fl{1},self.tif_number_fmt);
             
             if ~skipParsing
-                if isempty(gcp('nocreate')); poolobj = parpool; end
+                if isempty(gcp('nocreate'))
+                
+                    c = parcluster('local'); % build the 'local' cluster object
+                    num_workers = min(c.NumWorkers, 32);
+
+                    parpool('local', num_workers, 'IdleTimeout', 120);
+                
+                end
                 
                 fieldLs = {'ImageLength','ImageWidth','BitsPerSample','Compression', ...
                     'SamplesPerPixel','PlanarConfiguration','Photometric'};
@@ -335,14 +348,23 @@ classdef ScanInfo < dj.Imported
                     end
                 end
                 
-                
-                
+                tagNames = Tiff.getTagNames();
                 parfor iF = 1:numel(fl)
                     fprintf('%s\n',fl{iF})
                     
                     % read image and header
                     %         if iF <= lastGoodFile % do not write frames beyond last good frame based on bleaching
                     readObj    = Tiff(fl{iF},'r');
+
+                    current_header = struct();
+                    for i = 1:length(tagNames)
+                        try
+                            current_header.(tagNames{i}) = readObj.getTag(tagNames{i});
+                        catch
+                            %warning([tagNames{i} 'does not exist on tif'])
+                        end
+                    end
+
                     thisstack  = zeros(imheader{iF}(1).Height,imheader{iF}(1).Width,numel(imheader{iF}),'uint16');
                     for iFrame = 1:numel(imheader{iF})
                         readObj.setDirectory(iFrame);
@@ -384,6 +406,16 @@ classdef ScanInfo < dj.Imported
                                 end
                             end
                             thisheader(1).ImageDescription        = imheader{iF}(zIdx(1)).ImageDescription;
+                            %strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+                            
+                            thisheader(1).Artist                  = current_header.Artist;
+                            thisheader(1).Software                = current_header.Software;
+                            thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+                            fovum = strfind(thisheader(1).Software,'SI.hRoiManager.imagingFovUm');
+                            if ~isempty(fovum)
+                                idx_new = regexp(thisheader(1).Software(fovum:end), newline, 'once');
+                                thisheader(1).Software(fovum:fovum+idx_new-1) = [];
+                            end
                             
                             % write first frame
                             writeObj.setTag(thisheader);
@@ -400,9 +432,16 @@ classdef ScanInfo < dj.Imported
                                 old           = cell2mat(regexp(cell2mat(regexp(imdescription,'frameTimestamps_sec = [0-9]+.[0-9]+','match')),'\d+.\d+','match'));
                                 new           = num2str(thislag + str2double(old));
                                 imdescription = replace(imdescription,old,new);
-                                
                                 % write image and hedaer
                                 thisheader(1).ImageDescription = imdescription;
+                                thisheader(1).Artist           = current_header.Artist;
+                                thisheader(1).Software         = current_header.Software;
+                                thisheader(1).Software = strrep(thisheader(1).Software,'hRoiManager.mroiEnable = 1', 'hRoiManager.mroiEnable = 0');
+                                fovum = strfind(thisheader(1).Software,'SI.hRoiManager.imagingFovUm');
+                                if ~isempty(fovum)
+                                    idx_new = regexp(thisheader(1).Software(fovum:end), newline, 'once');
+                                    thisheader(1).Software(fovum:fovum+idx_new-1) = [];
+                                end
                                 writeObj.writeDirectory();
                                 writeObj.setTag(thisheader);
                                 writeObj.setTag('SampleFormat',Tiff.SampleFormat.UInt);
@@ -463,6 +502,7 @@ classdef ScanInfo < dj.Imported
                     file_entries.file_frame_range   = '';
                     
                     fov_directory                   = fov_key.fov_directory;
+                    fov_directory                   = lab.utils.format_bucket_path(fov_directory);
                     fl                              = dir(sprintf('%s*.tif',fov_directory));
                     file_entries                    = repmat(file_entries,[1 numel(fl)]);
                     for iF = 1:numel(fl)

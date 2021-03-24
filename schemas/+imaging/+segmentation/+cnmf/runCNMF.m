@@ -121,7 +121,7 @@ function [outputFiles,fileChunk] = runCNMF(moviePath, fileChunk, cfg, gofCfg, re
 
     [cnmf, source, roiFile, summaryFile, gofCfg.timeScale, binnedY, outputFiles]  ...
                               = imaging.segmentation.cnmf.cnmfSegmentation( ...
-                              chunkFiles, acquisPrefix, iFile, protoROI, cfg, repository, lazy, outputFiles, scratchDir);
+                              chunkFiles, acquisPrefix, iFile, protoROI, cfg, repository, lazy, outputFiles, scratchDir, mcdir);
     if ~isempty(cnmf)
       chunk(iChunk).reference = source.fileMCorr.reference;
       chunk(iChunk).numFrames = size(cnmf.temporal,2);

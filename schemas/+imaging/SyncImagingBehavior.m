@@ -20,8 +20,9 @@ classdef SyncImagingBehavior < dj.Computed
     function makeTuples(self, key)
       
       %% behav
-      fov_directory  = formatFilePath(fetch1(behavior.DataDirectory & key, 'combined_file_name'),false,true);
-      behavdata = load(fov_directory, 'log');
+      [~, acqsession_file] = lab.utils.get_path_from_official_dir(...
+                           fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file'));
+      behavdata = load(acqsession_file, 'log');
       block     = behavdata.log.block;
       
       %% add some stuff that for whatever reason isn't on some mesosocope logs
@@ -38,7 +39,13 @@ classdef SyncImagingBehavior < dj.Computed
       totalFrames                   = 0;
       
       % path
-      fov_directory                 = fetch1(imaging.FieldOfView & key,'fov_directory');
+      fov_bucket_directory          = fetch1(imaging.FieldOfView & key,'fov_directory');
+
+      fov_directory = lab.utils.format_bucket_path(fov_bucket_directory);
+
+      %Check if directory exists in system
+      lab.utils.assert_mounted_location(fov_directory)
+
       [order,movieFiles]            = fetchn(imaging.FieldOfViewFile & key, 'file_number', 'fov_filename');
       movieFiles                    = cellfun(@(x)(fullfile(fov_directory,x)),movieFiles(order),'uniformoutput',false); % full path
       imagingF                      = struct('movieFile', movieFiles);
