@@ -189,7 +189,7 @@ classdef Session < dj.Imported
                         break;
                     end
                     if isa(trial.choice, 'single')
-                        correct_number = correct_number + single(trial.trialType) == single(trial.choice);
+                        correct_number = correct_number + double(single(trial.trialType) == single(trial.choice));
                     else
                         correct_number = correct_number + strcmp(trial.trialType.char, trial.choice.char);
                     end
