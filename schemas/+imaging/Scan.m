@@ -2,6 +2,7 @@
 -> acquisition.Session
 ---
 scan_directory      : varchar(255)
+->lab.AcquisitionType               # type of acquisition for this scan
 %}
 
 classdef Scan < dj.Imported
@@ -26,6 +27,7 @@ classdef Scan < dj.Imported
             % get acquisition type of session & base dir location (differentiate mesoscope and 2_3 photon)
             location_info        = lab.utils.check_location(session_info.session_location);
             acq_type             = location_info.acquisition_type;
+            key.acquisition_type = acq_type;
             base_dir             = location_info.imaging_bucket_default_path;
                         
             %If is mesoscope
@@ -55,6 +57,8 @@ classdef Scan < dj.Imported
                 fprintf('directory %s not found\n',scan_directory)
                 return
             end
+            
+            key.relative_scan_directory = scan_directory;
             
             %Insert key in Scan table
             self.insert(key)

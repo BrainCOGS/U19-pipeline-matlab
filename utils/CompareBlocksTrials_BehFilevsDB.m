@@ -7,7 +7,7 @@ file2save = fullfile(this_path, 'sessions_diff_trial_vs_trials.mat');
 fields_session = {'subject_fullname', 'session_date'};
 fields_trials = {'position', 'iterations'};
 
-date_key = 'session_date >= "2021-04-20"';
+date_key = 'session_date > "2011-01-01"' ;
 
 session_struct = fetch(proj(acquisition.Session,'session_location->sess_loc') * acquisition.SessionStarted & date_key, ...
     'remote_path_behavior_file', 'ORDER BY session_date desc');
@@ -51,7 +51,6 @@ for j=1:length(session_struct)
         
         %Behavioral file and DB differ ....
         if num_blocks ~= num_blocks_db || ...
-                length(num_trials) ~= num_blocks_by_trial_db || ...
                 ~all(num_trials == num_trials_db)
             
             num_diff_sessions = num_diff_sessions + 1

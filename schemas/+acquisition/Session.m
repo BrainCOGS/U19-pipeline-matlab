@@ -20,43 +20,34 @@ session_comments=''         : varchar(2048)                 # Text to indicate s
 %}
 
 classdef Session < dj.Imported
+    
+    properties
+        keySource =  acquisition.SessionStarted & struct('invalid_session', 0);
+    end
 
     methods(Access=protected)
 
         function makeTuples(self, key)
-
-            %Get behavioral file to load
-            fields = {'task', 'remote_path_behavior_file'};
-            data_dir = fetch(acquisition.SessionStarted & key, fields{:});
-
-            if strcmp(data_dir.task, 'Towers')
-                [~, acqsession_file] = lab.utils.get_path_from_official_dir(data_dir.remote_path_behavior_file);
-
-                %Load behavioral file
+            
+            [status, data] = lab.utils.read_behavior_file(key);
+            
+            if status
                 try
-                    data = load(acqsession_file,'log');
-                    log = data.log;
-                    status = 1;
-                catch
-                    disp(['Could not open behavioral file: ', acqsession_file])
-                    status = 0;
-                end
-                if status
-                    try
-                        %Check if it is a real behavioral file
-                        if isfield(log, 'session')
-                            self.insertSessionFromFile_Towers(key, log);
-                        else
-                            disp(['File does not match expected Towers behavioral file: ', acqsession_file])
-                        end
-                    catch err
-                        disp(err.message)
-                        sprintf('Error in here: %s, %s, %d',err.stack(1).file, err.stack(1).name, err.stack(1).line )
+                    %Check if it is a real behavioral file
+                    if isfield(data,'log') && isfield(data.log, 'session')
+                        log = data.log;
+                        self.insertSessionFromFile_Towers(key, log);
+                    else
+                        disp(['File does not match expected Towers behavioral file: ', acqsession_file])
                     end
+                catch err
+                    disp(err.message)
+                    sprintf('Error in here: %s, %s, %d',err.stack(1).file, err.stack(1).name, err.stack(1).line )
                 end
-
+                
+                
             end
-
+            
         end
     end
 

@@ -554,7 +554,8 @@ classdef ScanInfo < dj.Imported
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
                     fov_key.fov_size_xy             = recInfo.ROI(iROI).sizeXY;
                     fov_key.fov_rotation_degrees    = recInfo.ROI(iROI).rotationDegrees;
-                    fov_key.fov_pixel_resolution_xy = recInfo.ROI(iROI).pixelResolutionXY;
+                    
+                    p.fov_pixel_resolution_xy = recInfo.ROI(iROI).pixelResolutionXY;
                     fov_key.fov_discrete_plane_mode = recInfo.ROI(iROI).discretePlaneMode;%boolean(recInfo.ROI(iROI).discretePlaneMode);
                     
                     if isfield(parsedInfo.ROI(iROI), 'Power_percent')
@@ -583,6 +584,8 @@ classdef ScanInfo < dj.Imported
                         file_entries(iF).file_frame_range  = [cumulativeFrames(iF)+1 cumulativeFrames(iF+1)];
                         
                     end
+
+            
                     insert(imaging.FieldOfViewFile, file_entries)
                 end
             end
@@ -601,6 +604,8 @@ classdef ScanInfo < dj.Imported
             fovkey.fov_pixel_resolution_xy = 0;
             fovkey.fov_discrete_plane_mode = 0;
             fovkey.power_percent = recInfo.Scope.Power_percent;
+            
+            key.relative_fov_directory = fov_directory;
             
             insert(imaging.FieldOfView, fovkey)
             

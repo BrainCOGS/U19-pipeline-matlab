@@ -9,7 +9,8 @@ session_start_time          : datetime                      # start time
 -> task.Task                                                # Which task was performed in session
 local_path_behavior_file    : varchar(255)                  # Path were session file is stored in local computer
 remote_path_behavior_file   : varchar(255)                  # Path were session file will be stored in bucket
-is_finished=0               : tinyint                      # Flag that indicates if this session was finished successfully
+is_finished=0               : tinyint                       # Flag that indicates if this session was finished successfully
+invalid_session=0           : tinyint                       # Flag that indicates if behavioral file couldn't be saved for the session
 %}
 
 classdef SessionStarted < dj.Manual

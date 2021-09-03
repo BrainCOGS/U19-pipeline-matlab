@@ -2,6 +2,7 @@
 -> acquisition.SessionBlock
 -> behavior.TowersSession
 ---
+main_level                  : int                           # main level on current block
 -> task.TaskLevelParameterSet
 n_trials                    : int                           # number of trials in this block
 first_trial                 : int                           # trial_idx of the first trial in this block
@@ -84,11 +85,13 @@ classdef TowersBlock < dj.Imported
             catch
                 tuple.reward_scale = 0;
             end
-            tuple.level = block.mazeID;
+            tuple.main_level = block.mainMazeID;
+            tuple.level      = block.mazeID;
             tuple.set_id = 1;
             tuple.easy_block = exists_helper(block,'easyBlockFlag'); %if it doesn't exist, difficulty was uniform
             correct_counter = 0;
-            for itrial = 1:length(block.trial)
+            nTrials = length([block.trial.choice]);
+            for itrial = 1:nTrials
                 trial = block.trial(itrial);
                 if isnumeric(trial.choice)
                     correct_counter = correct_counter + double(single(trial.trialType) == single(trial.choice));
@@ -96,7 +99,7 @@ classdef TowersBlock < dj.Imported
                     correct_counter = correct_counter + strcmp(trial.trialType.char, trial.choice.char);
                 end
             end
-            perf = correct_counter/length(block.trial);
+            perf = correct_counter/nTrials;
             if isfinite(perf)
                 tuple.block_performance = perf;
             else
@@ -177,11 +180,42 @@ classdef TowersBlock < dj.Imported
 
             %end
         end
+        
+        function update_main_level_blocks(self)
+            %Update main level for previous inserted blocks
+            
+            
+            %Fetch all blocks with main_level = 0
+            block_info = fetch(proj(self, 'task->ts', 'main_level') * acquisition.SessionStarted & 'main_level = 0', ...
+                'task', 'remote_path_behavior_file');
+            
+            
+            for i=1:length(block_info)
+                
+                [i length(block_info)]
+                
+                %Read behavior file
+                [status, data] = lab.utils.read_behavior_file(0, block_info(i));
+                if status
+                    %Get current block
+                    log = data.log;
+                    current_block = log.block(block_info(i).block);
+                    main_level = current_block.mainMazeID;
+                    
+                    %Remove unnecesary fields for key and update
+                    block_key = rmfield(block_info(i), 'task');
+                    block_key = rmfield(block_key, 'remote_path_behavior_file');
+                    update(self & block_key, 'main_level', main_level);
+                end
+            end
+                
+        end
+        
     end
 end
 
 function [s] = exists_helper(trial, fieldname)
-if isfield(trial, fieldname)
+if isfield(trial, fieldname) && ~isempty(trial.(fieldname))
     s = trial.(fieldname);
 else
     s = 0;
@@ -223,4 +257,7 @@ for iBlock = 1:numel(block)
     block(iBlock).medianTrialDur = median([block(iBlock).trial(:).duration]);
 end
 
-end
+
+end  
+        
+
