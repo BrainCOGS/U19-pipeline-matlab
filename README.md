@@ -87,9 +87,6 @@ Follow the steps to go through the tutorial:
 + To access these files you should mount PNI file server volumes on your system.
 + There are three main file servers across PNI where data is stored (braininit, Bezos & u19_dj)
 
-	<details>
-	<summary>Click to expand details</summary>
-
 	### On windows systems
 	- From Windows Explorer, select "Map Network Drive" and enter: <br>
 	[\\\cup.pni.princeton.edu\braininit\\]() (for braininit) <br>
@@ -140,8 +137,6 @@ Follow the steps to go through the tutorial:
 	4. Fetch filepath info:
 	```data_dir = fetch(acquisition.SessionStarted & key, 'remote_path_behavior_file');``` <br>
 	```[~, filepath] = lab.utils.get_path_from_official_dir(data_dir.remote_path_behavior_file);```
-
-</details>
 
 # Backend
 The backend is a SQL server [MariaDB].
