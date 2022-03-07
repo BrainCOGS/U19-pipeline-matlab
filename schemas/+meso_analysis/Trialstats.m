@@ -171,7 +171,10 @@ for iBlock = whichBlocks
                      'position','i_cue_entry','i_arm_entry','cue_pos_right','cue_pos_left',   ...
                      'cue_onset_right','cue_onset_left','cue_offset_right','cue_offset_left'  ...
                      );
-  nTrials    = numel(trialData);
+  % get only trials with imaging frames
+  whichTrials = unique(syncInfo.sync_behav_trial_by_im_frame(syncInfo.sync_behav_block_by_im_frame == iBlock));
+  trialData   = trialData(whichTrials);
+  nTrials    = numel(whichTrials);
   
   if nTrials == 0; continue; end
   
@@ -477,8 +480,8 @@ function lg = extractFrameTimeByTrials_mesoscope(lg,syncInfo,imagingSessKey)
 % Both provides imaging frame equivalents for every virmen frame and bins
 % behavioral events at imaging frame frame
  
-lg.meso_frame_per_virmen_iter = cellfun(@(x)(x(:,1)),syncInfo.sync_im_frame_span_by_behav_iter,'uniformOutput',false);
-ntrials                       = numel(syncInfo.sync_im_frame_span_by_behav_trial);
+lg.meso_frame_per_virmen_iter = cellfun(@(x)(x(:,1)),syncInfo.sync_im_frame_span_by_behav_iter(~cellfun(@isempty, syncInfo.sync_im_frame_span_by_behav_iter)),'uniformOutput',false);
+ntrials                       = numel(syncInfo.sync_im_frame_span_by_behav_trial(~cellfun(@isempty, syncInfo.sync_im_frame_span_by_behav_iter)));
 lg.meso_frame_unique_ids      = cell(1,ntrials);
 lg.behav_time_by_meso_frame   = cell(1,ntrials);
 lg.cues_by_meso_frame_right   = cell(1,ntrials);
@@ -535,8 +538,9 @@ end
 function lg = getKeyFrames(lg,syncInfo,key)
  
 % get first and last frame for each trial
-span_perTrial = syncInfo.sync_im_frame_span_by_behav_trial;
-iter2frame    = syncInfo.sync_im_frame_span_by_behav_iter;
+trialInd      = ~cellfun(@isempty, syncInfo.sync_im_frame_span_by_behav_iter);
+span_perTrial = syncInfo.sync_im_frame_span_by_behav_trial(trialInd);
+iter2frame    = syncInfo.sync_im_frame_span_by_behav_iter(trialInd);
 globalFrame   = syncInfo.sync_im_frame_global;
  
 span_perTrial = cell2mat(span_perTrial'); % reformat to tr x 2
