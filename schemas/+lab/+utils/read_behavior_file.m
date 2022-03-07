@@ -8,6 +8,14 @@ if nargin < 2
     data_dir = fetch(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
 end
 
+if length(data_dir) > 1
+   error('Multiple behavior files from given key'); 
+end
+
+if isempty(data_dir)
+   error('No session found from given key'); 
+end
+
 %Load behavioral file
 try
     [~, filepath] = lab.utils.get_path_from_official_dir(data_dir.remote_path_behavior_file);
