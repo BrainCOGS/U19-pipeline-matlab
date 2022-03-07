@@ -130,7 +130,7 @@ classdef SyncImagingBehavior < dj.Computed
       
       poorSync                      = (deltaTime > cfg.minBehaviorSecs);
       if any(poorSync)
-        warning('processimagingInfo:HACK', 'Extremely long lags encountered between behav frames: %s', num2str(deltaTime(poorSync)));
+        warning('processimagingInfo:HACK', 'long lags encountered between synching timestamps: %s', num2str(deltaTime(poorSync)));
       end
       
       %% Patch all missing chunks using the nearest past frame that has sync info
@@ -228,21 +228,26 @@ classdef SyncImagingBehavior < dj.Computed
       end
       
       
-      %% Patch in behavioral trials only for blocks with corresponding imaging info
-      for iBlock =  imgBlock(hasImg)
-          if isnan(blockIndex(iBlock))
-              continue
-          end
-
-          sync                      = [ sync(1:bracket(blockIndex(iBlock),1) - 1)                                       ...
-                                      ; mergeTrials( sync(bracket(blockIndex(iBlock),1):bracket(blockIndex(iBlock),2))  ...
-                                      , numel(block(iBlock).trialType), iBlock                             ...
-                                      , block(iBlock).medianTrialDur, frameDeltaT                          ...
-                                      )                                                                    ...
-                                      ; sync(bracket(blockIndex(iBlock),2) + 1:end)                                     ...
-                                      ];
-
-      end      
+      %% Patch in behavioral trials without corresponding imaging info
+      % MDia commented it out: poses problem if imaging started half way
+      % through the session.% also I guess the purpose of this patcing is to add
+      % trials that have no synch info whatsoever. I haven't found any session when
+      % synch was missed for a whole trial
+      
+%       for iBlock =  imgBlock(hasImg)
+%           if isnan(blockIndex(iBlock))
+%               continue
+%           end
+% 
+%           sync                      = [ sync(1:bracket(blockIndex(iBlock),1) - 1)                                       ...
+%                                       ; mergeTrials( sync(bracket(blockIndex(iBlock),1):bracket(blockIndex(iBlock),2))  ...
+%                                       , numel(block(iBlock).trialType), iBlock                             ...
+%                                       , block(iBlock).medianTrialDur, frameDeltaT                          ...
+%                                       )                                                                    ...
+%                                       ; sync(bracket(blockIndex(iBlock),2) + 1:end)                                     ...
+%                                       ];
+% 
+%       end      
       
       %% Record transition indices
       index                         = struct();
@@ -332,8 +337,13 @@ classdef SyncImagingBehavior < dj.Computed
            continue
         end
         flat_behavior.trial_span = [flat_behavior.trial_span {behav(iBlock).trial(:).span}];
+      
         for iTrial = 1:numel(behav(iBlock).trial)
+            if isempty(behav(iBlock).trial(iTrial).span)
+              flat_behavior.iter_span{end+1} = [];  
+            else
           flat_behavior.iter_span{end+1} = behav(iBlock).trial(iTrial).iteration+behav(iBlock).trial(iTrial).span(1);
+            end
         end
       end
 
