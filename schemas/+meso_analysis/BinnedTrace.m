@@ -75,7 +75,9 @@ classdef BinnedTrace < dj.Computed
       trial2add = first_trial(block_by_im_frame(block_by_im_frame>0))';
       trial_by_im_frame = nan(size(trial_wi_block_by_im_frame));
       trial_by_im_frame(trial_wi_block_by_im_frame>0) = trial_wi_block_by_im_frame(trial_wi_block_by_im_frame>0)+trial2add-1;
- 
+      if trial_by_im_frame(find(~isnan(trial_by_im_frame),1,'first')) > 1 % shift it, cause Syncinfo starts counting from when recording started
+         trial_by_im_frame = trial_by_im_frame - (trial_by_im_frame(find(~isnan(trial_by_im_frame),1,'first'))-1);
+      end
       %% now that trials are wrt segmented frames, can select for good trials based on session trial idx in .TrialStats
       trial_stats = fetch(meso_analysis.Trialstats & key, 'is_not_excess_travel','mean_perf_block', ...
                                         'mean_bias_block','mean_perf_block','is_towers_task','is_visguided_task','block_id');

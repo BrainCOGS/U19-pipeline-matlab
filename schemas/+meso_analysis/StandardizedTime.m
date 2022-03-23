@@ -16,9 +16,21 @@ classdef StandardizedTime < dj.Computed
             behav =  fetch(behavior.TowersBlockTrial & key, ...
                 'trial_idx','trial_type','choice','position');
  
-            [frames, frame_span] = fetchn(imaging.SyncImagingBehavior & key, 'sync_im_frame_global','sync_im_frame_span_by_behav_trial');
-            frames = frames{:}; frame_span = frame_span{:};
-  
+            %[frames, frame_span, block_span] = fetchn(imaging.SyncImagingBehavior & key & 'fov = 2', 'sync_im_frame_global','sync_im_frame_span_by_behav_trial', 'sync_im_frame_span_by_behav_block');
+            Sync_Im_Beh = fetch(imaging.SyncImagingBehavior & key & 'fov = 2', 'sync_im_frame_global','sync_im_frame_span_by_behav_trial', 'sync_im_frame_span_by_behav_block');
+            frames      = [Sync_Im_Beh.sync_im_frame_global];
+            frame_span  = [Sync_Im_Beh.sync_im_frame_span_by_behav_trial];
+            block_span  = [Sync_Im_Beh.sync_im_frame_span_by_behav_block];
+            %frames = frames{:}; frame_span = frame_span{:};
+            
+           NoSyncBlock  = find(cellfun(@isempty, block_span));
+           if ~isempty(NoSyncBlock)
+           for iBlock = NoSyncBlock
+              behav([behav.block] == iBlock) = [];  
+           end
+           end
+           behav(cellfun(@isempty,frame_span)) = [];
+           frame_span(cellfun(@isempty,frame_span)) = [];
             
             %% Get Frame IDs for Key Events
             eventFrames =  fetch(meso_analysis.Trialstats & key, ...
