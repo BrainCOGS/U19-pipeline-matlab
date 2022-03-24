@@ -514,9 +514,20 @@ for iTrial = 1:ntrials
  
     % number of towers within imaging frame
     if isempty(pos_range); continue; end
-    lg.cues_by_meso_frame_right{iTrial}(iFrame) = sum(lg.cue_pos_right{iTrial} > pos_range(1,2) & lg.cue_pos_right{iTrial} <= pos_range(end,2));
-    lg.cues_by_meso_frame_left{iTrial}(iFrame)  = sum(lg.cue_pos_left{iTrial} > pos_range(1,2) & lg.cue_pos_left{iTrial} <= pos_range(end,2));
     
+    %check you are not past the cue region
+    if any(pos_range(:,2) <= max([single(lg.cue_pos_right{iTrial}), single(lg.cue_pos_left{iTrial})]))
+    %include first virmen iter of next frame for cues positioned between
+    %two meso frames, as long as it is not the very end of the trial 
+    if find(idx ==1, 1,'last') ~= numel(idx)
+    pos_range(end+1, :) = lg.pos{iTrial}(find(idx ==1, 1,'last') +1,:);
+    end
+    lg.cues_by_meso_frame_right{iTrial}(iFrame) = sum(lg.cue_pos_right{iTrial} >= pos_range(1,2) & lg.cue_pos_right{iTrial} < pos_range(end,2));
+    lg.cues_by_meso_frame_left{iTrial}(iFrame)  = sum(lg.cue_pos_left{iTrial} >= pos_range(1,2) & lg.cue_pos_left{iTrial} < pos_range(end,2));
+    else
+    lg.cues_by_meso_frame_right{iTrial}(iFrame) = 0;
+    lg.cues_by_meso_frame_left{iTrial}(iFrame)  = 0;
+    end
   end
 end
  
