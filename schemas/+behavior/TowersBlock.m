@@ -147,6 +147,9 @@ classdef TowersBlock < dj.Imported
                 tuple_trial.velocity = trial.velocity;
                 tuple_trial.sensor_dots = trial.sensorDots;
                 tuple_trial.trial_id = trial.trialID;
+                if isnan(trial.trialID)
+                    tuple_trial.trial_id = -1;
+                end
                 if length(trial.trialProb) == 1
                     tuple_trial.trial_prior_p_left = trial.trialProb;
                 else
@@ -160,9 +163,8 @@ classdef TowersBlock < dj.Imported
 
             end
 
-            self.insert(tuple);
             if exist('struct_trials')
-
+            
                 %"Unnest" cells to match previous way of inserting data
                 fields_blob = {'cue_presence_left', 'cue_presence_right', 'cue_onset_left', ...
                     'cue_onset_right', 'cue_offset_left', 'cue_offset_right', ...
@@ -174,8 +176,18 @@ classdef TowersBlock < dj.Imported
                     end
                 end
                 tic
-                insert(behavior.TowersBlockTrial, struct_trials)
-                toc
+                self.schema.conn.startTransaction()
+                try
+                    self.insert(tuple);
+                    insert(behavior.TowersBlockTrial, struct_trials)
+                    %self.schema.conn.commitTransaction
+                    toc
+                catch err
+                    %Cancel previous transaction but start a new one to prevent DJ to fail
+                    self.schema.conn.cancelTransaction
+                    self.schema.conn.startTransaction()
+                    throw(err); 
+                end
             end
 
             %end
