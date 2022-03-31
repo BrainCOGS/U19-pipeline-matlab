@@ -24,12 +24,17 @@ classdef SessionManipulation < dj.Manual
             
         end
         
-        function ingest_previous_optogenetic_sessions(self)
+        function ingest_previous_optogenetic_sessions(self, query)
             % Ingest previous optogenetics session manipulation records
             % Read through all behavior files and search for optogenetic data fields.
             
             % All sessions not previously inserted
-            prev_sessions = fetch(acquisition.SessionStarted - self);
+            if nargin < 2
+                sess_started = acquisition.SessionStarted;
+            else
+                sess_started = acquisition.SessionStarted & query;
+            end
+            prev_sessions = fetch(sess_started - self);
             
             opto_sessions = 0;
             for i=1:length(prev_sessions)
