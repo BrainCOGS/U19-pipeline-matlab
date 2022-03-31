@@ -126,8 +126,13 @@ classdef TowersBlock < dj.Imported
                 tuple_trial.trial_time = trial.time;
                 tuple_trial.trial_abs_start = trial.start;
                 tuple_trial.collision = trial.collision;
-                tuple_trial.cue_presence_left = {trial.cueCombo(1, :)};
-                tuple_trial.cue_presence_right = {trial.cueCombo(2, :)};
+                if all(cellfun(@isempty, trial.cueCombo))
+                    tuple_trial.cue_presence_left = {[]};
+                    tuple_trial.cue_presence_right = {[]};
+                else
+                    tuple_trial.cue_presence_left = {trial.cueCombo(1, :)};
+                    tuple_trial.cue_presence_right = {trial.cueCombo(2, :)};
+                end
                 tuple_trial.cue_onset_left = trial.cueOnset(1);
                 tuple_trial.cue_onset_right = trial.cueOnset(2);
                 tuple_trial.cue_offset_left = trial.cueOffset(1);
@@ -147,11 +152,16 @@ classdef TowersBlock < dj.Imported
                 tuple_trial.velocity = trial.velocity;
                 tuple_trial.sensor_dots = trial.sensorDots;
                 tuple_trial.trial_id = trial.trialID;
-                if isnan(trial.trialID)
+                if isnan(trial.trialID) || isempty(trial.trialID)
                     tuple_trial.trial_id = -1;
+                else
+                    tuple_trial.trial_id = trial.trialID;
+
                 end
                 if length(trial.trialProb) == 1
                     tuple_trial.trial_prior_p_left = trial.trialProb;
+                elseif isempty(trial.trialProb)
+                    tuple_trial.trial_prior_p_left = -1;
                 else
                     % For not 50:50 trials, take only one of the
                     % probabilities (they add up to 1)
@@ -176,6 +186,7 @@ classdef TowersBlock < dj.Imported
                     end
                 end
                 tic
+
                 self.schema.conn.startTransaction()
                 try
                     self.insert(tuple);
