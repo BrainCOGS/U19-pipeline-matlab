@@ -95,10 +95,12 @@ classdef TowersSession < dj.Imported
                     some_empty_towers = 0;
                     cueCombo = {trialstruct.trial.cueCombo};
                     %Check for trials without any towers
-                    for j=1:length(cueCombo)
-                        if all(cellfun(@isempty, cueCombo{j}))
-                            some_empty_towers = 1;
-                            break
+                    if iscell(cueCombo{1})
+                        for j=1:length(cueCombo)
+                            if all(cellfun(@isempty, cueCombo{j}))
+                                some_empty_towers = 1;
+                                break
+                            end
                         end
                     end
                     
@@ -182,10 +184,12 @@ classdef TowersSession < dj.Imported
                         some_empty_towers = 0;
                         cueCombo = {trialstruct.trial.cueCombo};
                         %Check for trials without any towers
-                        for j=1:length(cueCombo)
-                            if all(cellfun(@isempty, cueCombo{j}))
-                                some_empty_towers = 1;
-                                break
+                        if iscell(cueCombo{1})
+                            for j=1:length(cueCombo)
+                                if all(cellfun(@isempty, cueCombo{j}))
+                                    some_empty_towers = 1;
+                                    break
+                                end
                             end
                         end
                         
