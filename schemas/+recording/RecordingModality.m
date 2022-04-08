@@ -3,7 +3,7 @@
 recording_modality:         varchar(64)           # modalities for recording (ephys, imaging, video_recording, etc.) 
 ---
 modality_description:       varchar(255)          # description for the modality
-root_direcory:              varchar(255)          # root directory where that modality is stored (e.g. ephys = /braininit/Data/eletrophysiology)
+root_directory:             varchar(255)          # root directory where that modality is stored (e.g. ephys = /braininit/Data/eletrophysiology)
 recording_file_extensions:  blob                  # file extensions specific for this modality
 recording_file_pattern:     blob
 process_unit_file_pattern:  blob
