@@ -157,12 +157,12 @@ classdef TowersBlock < dj.Imported
                 tuple_trial.velocity = trial.velocity;
                 tuple_trial.sensor_dots = trial.sensorDots;
                 tuple_trial.trial_id = trial.trialID;
-                if isnan(trial.trialID) || isempty(trial.trialID)
+                if isempty(trial.trialID) || isnan(trial.trialID)
                     tuple_trial.trial_id = -1;
                 else
                     tuple_trial.trial_id = trial.trialID;
-
                 end
+                
                 if length(trial.trialProb) == 1
                     tuple_trial.trial_prior_p_left = trial.trialProb;
                 elseif isempty(trial.trialProb)
