@@ -6,9 +6,6 @@ sync_video_frame_matrix:     longblob               # matrix with corresponding 
 sync_behavior_matrix:        longblob               # matrix with corresponding video frame for each iteration
 %}
 
-%stim instead laser
-%add waveform support
-
 classdef PupillometrySyncBehavior < dj.Imported
     
     methods(Access=protected)

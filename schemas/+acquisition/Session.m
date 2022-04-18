@@ -131,6 +131,13 @@ classdef Session < dj.Imported
             session_key.session_number   = key.session_number;
             insertSessionManipulation(acquisition.SessionManipulation, session_key, log);
 
+            if isfield(log.animal, 'video_acq_struct') && isfield(log.animal, 'videoAcquisition')
+                insertSessionVideo(acquisition.SessionVideo, ...
+                    key,log.animal.videoAcquisition, ...
+                    log.animal.video_acq_struct.local_video_name, ...
+                    log.animal.video_acq_struct.remote_video_name)
+            end
+            
         end
 
         function updateSessionFromFile_Towers(self,key,log)
@@ -185,6 +192,13 @@ classdef Session < dj.Imported
             session_key.session_number   = key.session_number;
             insertSessionManipulation(acquisition.SessionManipulation, session_key, log);
 
+            if isfield(log.animal, 'video_acq_struct') && isfield(log.animal, 'videoAcquisition')
+                insertSessionVideo(acquisition.SessionVideo, ...
+                    key,log.animal.videoAcquisition, ...
+                    log.animal.video_acq_struct.local_video_name, ...
+                    log.animal.video_acq_struct.remote_video_name)
+            end
+            
         end
 
         function [session_performance, num_trials, level, stimulus_bank] = getSessionPerformance(self, block)
