@@ -34,6 +34,10 @@ darkcolors= brighten(colors, -.5);
 
 if dif_plots == 0
     hold on
+    %just for legend purposes
+    for i=1:length(keys)
+        plot([-1 -2],'color',darkcolors(i,:),'LineWidth',3)
+    end
     for i=1:length(keys)
         plot(freq_raw{i},'color',colors(i,:),'LineWidth',0.5)
     end
@@ -50,6 +54,9 @@ elseif dif_plots == 1
     for i=1:length(keys)
         subplot(rows,cols,i)
         hold on
+        %legend purposes
+        plot([-1, -2],'color',darkcolors(i,:),'LineWidth',3)
+        
         plot(freq_raw{i},'color',colors(i,:),'LineWidth',0.5)
         plot(smooth_freq{i},'color',darkcolors(i,:),'LineWidth',3)
         legend(legends{i}, 'Interpreter', 'none');
