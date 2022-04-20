@@ -1,69 +1,67 @@
-function compare_virmen_frequency(key1, key2, dif_plots, gauss_smoth_param)
+function compare_virmen_frequency(keys, dif_plots, gauss_smoth_param, legends)
 
-if nargin < 3
+if nargin < 2
     dif_plots = 0;
 end
-if nargin < 4
+if nargin < 3
     gauss_smoth_param = 120;
 end
-
-[status,data] = lab.utils.read_behavior_file(key1);
-if status
-    times = get_trial_iteration_time_matrix(data.log);
-else
-    error('File not found for key1')
+if nargin < 4
+    legends = struct2string(keys);
 end
 
-[status,data] = lab.utils.read_behavior_file(key2);
-if status
-    times2 = get_trial_iteration_time_matrix(data.log);
-else
-    error('File not found for key1')
+for i=1:length(keys)
+    [status,data] = lab.utils.read_behavior_file(keys(i));
+    if status
+        times = get_trial_iteration_time_matrix(data.log);
+        freq_raw{i} = 1 ./diff(times(:,1));
+        smooth_freq{i} = smoothdata(freq_raw{i},'gaussian',gauss_smoth_param);
+    else
+        error('File not found for key1')
+    end
 end
 
-figure;
-freq_raw1 = 1 ./diff(times(:,1));
-smooth_freq1 = smoothdata(freq_raw1,'gaussian',gauss_smoth_param);
+close all
+f = figure;
+set(f, 'Units', 'normalized', 'Position', [0 0 1 1])
+set(f, 'Units', 'pixels')
 
-freq_raw2 = 1 ./diff(times2(:,1));
-smooth_freq2 = smoothdata(freq_raw2, 'gaussian',gauss_smoth_param);
+pos = get(gcf, 'Position'); %// gives x left, y bottom, width, height
+[rows, cols] = get_rows_cols_figure(length(keys), pos(3:4));
+colors= get(gca, 'ColorOrder');
+darkcolors= brighten(colors, -.5);
 
 
 if dif_plots == 0
-    figure;
     hold on
-    plot(freq_raw1,'b','LineWidth',0.5)
-    plot(freq_raw2,'r','LineWidth',0.5)
-    plot(smooth_freq1,'color',[0 0 0.5],'LineWidth',3)
-    plot(smooth_freq2,'color',[0.5 0 0],'LineWidth',3)
+    for i=1:length(keys)
+        plot(freq_raw{i},'color',colors(i,:),'LineWidth',0.5)
+    end
+    for i=1:length(keys)
+        plot(smooth_freq{i},'color',darkcolors(i,:),'LineWidth',3)
+    end
+    legend(legends,'Interpreter', 'none');
+    set(gca,'FontSize',16)
     xlabel('Iteration #');
     ylabel('Virmen frequency (Hz)');
-    set(gcf,'color','w')
-    set(gca,'FontSize',16)
+    ylim([0 200])
+    
 elseif dif_plots == 1
-    figure;
-    subplot(2,1,1);
-    hold on
-    plot(freq_raw1,'b','LineWidth',0.5,'LineWidth',0.5)
-    plot(smooth_freq1,'color',[0 0 0.5],'LineWidth',3)
-    set(gca,'FontSize',16)
-    xlabel('Iteration #');
-    ylabel('Virmen frequency (Hz)');
-    subplot(2,1,2);
-    hold on;
-    plot(freq_raw2,'r','LineWidth',0.5)
-    plot(smooth_freq2,'color',[0.5 0 0],'LineWidth',3)
-    set(gca,'FontSize',16)
-    xlabel('Iteration #');
-    ylabel('Virmen frequency (Hz)');
-    set(gcf,'color','w')
-else
-    figure;
-    hold on
-    plot(smooth_freq1,'color',[0 0 0.5],'LineWidth',1)
-    plot(smooth_freq2,'color',[0.5 0 0],'LineWidth',1)
-    xlabel('Iteration #');
-    ylabel('Virmen frequency (Hz)');
-    set(gcf,'color','w')
-    set(gca,'FontSize',16)
+    for i=1:length(keys)
+        subplot(rows,cols,i)
+        hold on
+        plot(freq_raw{i},'color',colors(i,:),'LineWidth',0.5)
+        plot(smooth_freq{i},'color',darkcolors(i,:),'LineWidth',3)
+        legend(legends{i}, 'Interpreter', 'none');
+        set(gca,'FontSize',16)
+        xlabel('Iteration #');
+        ylabel('Virmen frequency (Hz)');
+        ylim([0 200])
+    end
+    
+end
+
+set(gcf,'color','w')
+
+
 end
