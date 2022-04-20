@@ -28,10 +28,12 @@ for i=1:length(key)
                 end
                 
                 session_data = [block_key_table, session_data];
+                session_data = table2struct(session_data);
             
                 if isempty(all_data_table)
                     all_data_table = session_data;
                 else
+                    %compare_columns_tables();
                     all_data_table = [all_data_table; session_data];
                 end
             end
