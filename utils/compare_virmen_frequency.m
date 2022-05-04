@@ -17,7 +17,8 @@ for i=1:length(keys)
         freq_raw{i} = 1 ./diff(times(:,1));
         smooth_freq{i} = smoothdata(freq_raw{i},'gaussian',gauss_smoth_param);
     else
-        error('File not found for key1')
+        keys_str = struct2string(keys(i));
+        error(char(["Couldn't open file for: ", keys_str]))
     end
 end
 
@@ -45,7 +46,7 @@ if dif_plots == 0
         plot(smooth_freq{i},'color',darkcolors(i,:),'LineWidth',3)
     end
     legend(legends,'Interpreter', 'none');
-    set(gca,'FontSize',16)
+    set(gca,'FontSize',20)
     xlabel('Iteration #');
     ylabel('Virmen frequency (Hz)');
     ylim([0 200])
@@ -60,7 +61,7 @@ elseif dif_plots == 1
         plot(freq_raw{i},'color',colors(i,:),'LineWidth',0.5)
         plot(smooth_freq{i},'color',darkcolors(i,:),'LineWidth',3)
         legend(legends{i}, 'Interpreter', 'none');
-        set(gca,'FontSize',16)
+        set(gca,'FontSize',20)
         xlabel('Iteration #');
         ylabel('Virmen frequency (Hz)');
         ylim([0 200])

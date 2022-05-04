@@ -4,6 +4,11 @@ function connect_datajoint00()
 setenv('DB_PREFIX', 'u19_')
 current_dir = pwd;
 
+u19_pipeline_dir = fileparts(mfilename('fullpath'));
+
+cd(u19_pipeline_dir)
+
+
 if isfile('dj_local_conf.json')
     dj.config.load()
     dj.conn()
@@ -11,9 +16,8 @@ else
     error('Configuration file not found, run dj_initial_conf')
 end
 
-if endsWith(current_dir,'U19-pipeline-matlab')
-    addpath(genpath(current_dir));
-end
+addpath(genpath(u19_pipeline_dir));
+cd(current_dir);
 
 end
 

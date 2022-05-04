@@ -3,9 +3,9 @@
 process_paramset_idx:         smallint
 ---
 -> RecordingModality
-process_paramset_desc='':     varchar(128)    # string that describes parameter set
+process_paramset_desc='':    varchar(128)    # string that describes parameter set
 process_paramset_hash:       UUID            # uuid hash that encodes parameter dictionary
-process_paramset:               longblob        # dictionary of all applicable parameters
+process_paramset:            longblob        # dictionary of all applicable parameters
 %}
 
 classdef ProcessParamSet < dj.Lookup

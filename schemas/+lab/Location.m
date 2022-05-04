@@ -7,7 +7,8 @@ location:                         varchar(32)
 location_description='':          varchar(255)
 bucket_default_path =null:        varchar(255)            # Default bucket path where behavioral files are stored
 imaging_bucket_default_path=null: varchar(255)            # Default bucket path where imaging files are stored
-
+ip_address=null:                  varchar(15)             #ip address of system
+system_user=null:                 varchar(32)             #user for the system
 %}
 
 classdef Location < dj.Lookup
