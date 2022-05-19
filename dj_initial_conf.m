@@ -51,7 +51,7 @@ end
  
 %Get pupillometry root data dir
 key = struct();
-key.recording_modality = 'pupillometry';
+key.recording_modality = 'video_acquisition';
 root_dir = fetch1(recording.RecordingModality & key,'root_directory');
 [~,dj_config_custom_struct.pupillometry_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
 if ispc
