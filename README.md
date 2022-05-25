@@ -28,10 +28,8 @@ in one coherent framework.
 # Tutorial
 Follow the steps to go through the tutorial:
 1. Get into the directory of the current tutorial `tutorials/202103/`
-2. (Skip if already connected to the DB): run `startup.m`
-      - Put in the username and password when they prompt1. 
-       
-3. Choose your tutorial
+
+2. Choose your tutorial
    * Querying data (**Strongly recommended**) 
      * go through `session01_queries_fetches.mlx`
 
