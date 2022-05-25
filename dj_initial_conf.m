@@ -4,12 +4,14 @@ function dj_initial_conf(save_user)
 if nargin < 1
     save_user = false;
 end
- 
+
 current_dir = pwd;
-if endsWith(current_dir,'U19-pipeline-matlab')
-    addpath(genpath(current_dir));
-end
- 
+
+u19_pipeline_dir = fileparts(mfilename('fullpath'));
+cd(u19_pipeline_dir)
+addpath(genpath(u19_pipeline_dir));
+
+
 setenv('DB_PREFIX', 'u19_')
 host = 'datajoint00.pni.princeton.edu';
  
@@ -34,28 +36,39 @@ dj_config_custom_struct.databasePrefix = getenv('DB_PREFIX');
 %Get imaging root data dir
 key = struct();
 key.recording_modality = 'imaging';
-root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-[~,dj_config_custom_struct.imaging_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-if ispc
-   dj_config_custom_struct.imaging_root_data_dir = strrep(dj_config_custom_struct.imaging_root_data_dir,'\','\\');
+try
+    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
+    [~,dj_config_custom_struct.imaging_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
+    if ispc
+       dj_config_custom_struct.imaging_root_data_dir = strrep(dj_config_custom_struct.imaging_root_data_dir,'\','\\');
+    end
+catch
+    disp('Could not find imaging root directory')
 end
- 
  
 %Get ephys root data dir
 key.recording_modality = 'electrophysiology';
-root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-[~,dj_config_custom_struct.ephys_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-if ispc
-   dj_config_custom_struct.ephys_root_data_dir = strrep(dj_config_custom_struct.ephys_root_data_dir,'\','\\');
+try
+    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
+    [~,dj_config_custom_struct.ephys_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
+    if ispc
+       dj_config_custom_struct.ephys_root_data_dir = strrep(dj_config_custom_struct.ephys_root_data_dir,'\','\\');
+    end
+catch
+    disp('Could not find electrophysiology root directory')
 end
  
 %Get pupillometry root data dir
 key = struct();
 key.recording_modality = 'video_acquisition';
-root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-[~,dj_config_custom_struct.pupillometry_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-if ispc
-   dj_config_custom_struct.pupillometry_root_data_dir = strrep(dj_config_custom_struct.pupillometry_root_data_dir,'\','\\');
+try
+    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
+    [~,dj_config_custom_struct.pupillometry_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
+    if ispc
+       dj_config_custom_struct.pupillometry_root_data_dir = strrep(dj_config_custom_struct.pupillometry_root_data_dir,'\','\\');
+    end
+catch
+    disp('Could not find electrophysiology root directory')
 end
  
 dj.config('custom', dj_config_custom_struct)
@@ -76,3 +89,6 @@ dj.config('stores.extstorage', u19_storage)
  
  
 dj.config.saveLocal()
+
+cd(current_dir);
+
