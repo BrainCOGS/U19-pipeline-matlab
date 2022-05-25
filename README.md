@@ -16,12 +16,12 @@ in one coherent framework.
 	+ Search, select, and install DataJoint      
 
 ## User installation 
-+ First time
++ First time:
 	+ Add this repository to MATLAB Path or cd to this repository folder.
 	+ ```dj_initial_conf(1)```
 	+ Insert user and password for the DB
 
-+ Subsequent times
++ Subsequent times:
 	+ Add this repository to MATLAB Path or cd to this repository folder.
 	+ ```connect_datajoint00```
 
