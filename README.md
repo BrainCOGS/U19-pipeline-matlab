@@ -18,56 +18,15 @@ in one coherent framework.
 	+ Utilize MATLAB built-in GUI i.e. Top Ribbon -> Add-Ons -> Get Add-Ons
 	+ Search, select, and install DataJoint      
 
-## User installation
-+ The following instructions will allow a user to access and fetch data from the database.
+## User installation 
++ First time
+	+ Add this repository to MATLAB Path or cd to this repository folder.
+	+ ```dj_initial_conf(1)```
+	+ Insert user and password for the DB
 
-  <details>
-  <summary>Click to expand details</summary>
-
-	+ Set the schema prefix
-		```
-		setenv('DB_PREFIX', 'u19_')
-		```
-
-	+ Connect to the database server
-		```
-		dj.conn('datajoint00.pni.princeton.edu') (Enter username and password)
-		```
-
-	+ Create temporary files for accessing the schema.
-		```
-		dj.createSchema('imaging', '/scratch', 'u19_imaging_rec_element')
-		addpath('/scratch')
-		```
-
-	+ List the available tables in a schema.
-		```
-		imaging.v
-		```
-
-	+ Query entries from the database
-		```
-		query = imaging.v.ActivityTrace() & 'recording_process_id=23';
-		```
-
-	+ Fetch data from the database
-		```
-		activity_trace = fetch(query, 'activity_trace');
-		```
-
-	</details>
-
-## Developer installation
-+ The following instructions will allow a user to set up the pipeline for running analysis and fetching data.
-
-  <details>
-  <summary>Click to expand details</summary>
-
-	+ Clone this repository.
-	+ Add this repository to your MATLAB Path.
-	+ Create a dj_local_conf.json
-
-  </details>
++ Subsequent times
+	+ Add this repository to MATLAB Path or cd to this repository folder.
+	+ ```connect_datajoint00```
 
 # Tutorial
 Follow the steps to go through the tutorial:
