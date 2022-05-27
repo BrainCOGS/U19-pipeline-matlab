@@ -9,9 +9,6 @@ It specifies a number of tables and their relational structure to organizes all 
 in one coherent framework.
 
 # Installation
-+ The following instructions will detail two types of installation methods.
-  1. User installation to access and fetch data from the database.
-  2. Developer installation to set up the pipeline for running analysis and fetching data.
 
 ## Prerequisite
 + Install DataJoint for MATLAB 
@@ -19,22 +16,20 @@ in one coherent framework.
 	+ Search, select, and install DataJoint      
 
 ## User installation 
-+ First time
++ First time:
 	+ Add this repository to MATLAB Path or cd to this repository folder.
 	+ ```dj_initial_conf(1)```
 	+ Insert user and password for the DB
 
-+ Subsequent times
++ Subsequent times:
 	+ Add this repository to MATLAB Path or cd to this repository folder.
 	+ ```connect_datajoint00```
 
 # Tutorial
 Follow the steps to go through the tutorial:
 1. Get into the directory of the current tutorial `tutorials/202103/`
-2. (Skip if already connected to the DB): run `startup.m`
-      - Put in the username and password when they prompt1. 
-       
-3. Choose your tutorial
+
+2. Choose your tutorial
    * Querying data (**Strongly recommended**) 
      * go through `session01_queries_fetches.mlx`
 
