@@ -16,7 +16,11 @@ setenv('DB_PREFIX', 'u19_')
 host = 'datajoint00.pni.princeton.edu';
  
 user = input('Enter datajoint username> ', 's');
-pass = dj.lib.getpass('Enter datajoint password');
+if usejava('desktop')
+    pass = dj.lib.getpass('Enter datajoint password');
+else
+    pass = input('Enter datajoint password>', 's');
+end
  
 dj.conn(host, user, pass);
 dj.config('databaseHost', host)
