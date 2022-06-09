@@ -644,7 +644,7 @@ classdef AcquiredTiff < dj.Imported
             
             
             filekeys                    = key;
-            filekeys.fov                = 1;
+            filekeys.tiff_split         = 1;
             filekeys.file_number        = [];
             filekeys.tiff_split_filename= '';
             filekeys.file_frame_range   = '';
