@@ -1,7 +1,8 @@
 %{
-cage:  char(16)    # name of a cage
+# 
+cage                        : char(16)                      # 
 ---
-(cage_owner) -> lab.User
+cage_owner                  : varchar(32)                   # username
 %}
 
 classdef Cage < dj.Lookup

@@ -1,5 +1,6 @@
 %{
-virus_source: varchar(32)
+# 
+virus_source                : varchar(32)                   # 
 %}
 
 

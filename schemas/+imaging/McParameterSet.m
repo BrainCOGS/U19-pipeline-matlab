@@ -1,10 +1,10 @@
 %{
 # pointer for a pre-saved set of parameter values
 -> imaging.McMethod
-mc_parameter_set_id:              int              # parameter set id
+mc_parameter_set_id         : int                           # parameter set id
 ---
-mc_parameter_set_description='':  varchar(256)     # string that describes parameter set
-mc_parameter_set_hash:            UUID             # uuid hash that encodes parameter dictionary
+mc_parameter_set_description=null: varchar(256)             # string that describes parameter set
+mc_parameter_set_hash       : UUID                          # uuid hash that encodes parameter dictionary
 %}
 
 classdef McParameterSet < dj.Manual

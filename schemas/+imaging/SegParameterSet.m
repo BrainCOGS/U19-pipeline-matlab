@@ -1,10 +1,10 @@
 %{
 # pointer for a pre-saved set of parameter values
 -> imaging.SegmentationMethod
-seg_parameter_set_id:   int    # parameter set id
+seg_parameter_set_id        : int                           # parameter set id
 ---
-seg_parameter_set_description='':  varchar(256)     # string that describes parameter set
-seg_parameter_set_hash:            UUID             # uuid hash that encodes parameter dictionary
+seg_parameter_set_description=null: varchar(256)            # 
+seg_parameter_set_hash      : UUID                          # uuid hash that encodes parameter dictionary
 %}
 
 classdef SegParameterSet < dj.Manual

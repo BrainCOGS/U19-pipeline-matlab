@@ -1,14 +1,15 @@
 %{
-virus_nickname: varchar(16)
-virus_id: int                           # virus count of the same type
+# 
+virus_nickname              : varchar(16)                   # 
+virus_id                    : int                           # virus count of the same type
 ---
-virus_fullname:         varchar(64)
--> reference.VirusType 
+virus_fullname              : varchar(64)                   # 
+-> reference.VirusType
 -> reference.VirusSource
-catlog_number='':       varchar(64)
-titer: float                            # 10^12 geno copies per mL
-date_came_in=null:      date  
-virus_description='':   varchar(512) 
+catlog_number               : varchar(64)                   # 
+titer                       : float                         # 10^12 geno copies per mL
+date_came_in=null           : date                          # 
+virus_description           : varchar(512)                  # 
 %}
 
 

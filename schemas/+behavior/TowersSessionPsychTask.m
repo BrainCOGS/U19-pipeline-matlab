@@ -1,13 +1,14 @@
 %{
+# 
 -> behavior.TowersSession
-blocks_type: varchar(16)
------
-blocks_delta_data=null      : blob   # num of right - num of left, x ticks for data
-blocks_pright_data=null     : blob   # percentage went right for each delta bin for data
-blocks_delta_error=null     : blob   # num of right - num of left, x ticks for data confidence interval
-blocks_pright_error=null    : blob   # confidence interval for precentage went right of data
-blocks_delta_fit=null       : blob   # num of right - num of left, x ticks for fitting results
-blocks_pright_fit=null      : blob   # fitting results for percent went right
+blocks_type                 : varchar(16)                   # 
+---
+blocks_delta_data=null      : blob                          # num of right - num of left, x ticks for data
+blocks_pright_data=null     : blob                          # percentage went right for each delta bin for data
+blocks_delta_error=null     : blob                          # num of right - num of left, x ticks for data confidence interval
+blocks_pright_error=null    : blob                          # confidence interval for precentage went right of data
+blocks_delta_fit=null       : blob                          # num of right - num of left, x ticks for fitting results
+blocks_pright_fit=null      : blob                          # fitting results for percent went right
 %}
 
 classdef TowersSessionPsychTask < dj.Computed

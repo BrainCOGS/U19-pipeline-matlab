@@ -1,6 +1,6 @@
 %{
-mobile_carrier:         varchar(16)  # allowed mobile carries
------
+# 
+mobile_carrier              : varchar(16)                   # allowed mobile carries
 %}
 
 classdef MobileCarrier < dj.Lookup

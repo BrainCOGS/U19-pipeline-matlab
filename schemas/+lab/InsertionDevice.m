@@ -1,7 +1,8 @@
 %{
-insertion_device_name         : varchar(128)               # device identifier
+# 
+insertion_device_name       : varchar(128)                  # device identifier
 ---
-device_description            : varchar(255)              
+device_description          : varchar(255)                  # 
 %}
 
 classdef InsertionDevice < dj.Lookup

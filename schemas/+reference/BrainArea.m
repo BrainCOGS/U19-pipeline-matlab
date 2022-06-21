@@ -1,7 +1,8 @@
 %{
-brain_area: varchar(16)
+# 
+brain_area                  : varchar(16)                   # 
 ---
-area_full_name = '': varchar(128)
+area_full_name              : varchar(128)                  # 
 %}
 
 

@@ -2,12 +2,11 @@
 # time binned activity by trial
 -> imaging.FieldOfView
 -> meso_analysis.StandardizedTime
--> meso_analysis.TrialSelectionParams 
-
-global_roi_idx         : int           # roi_idx in Suite2ptrace
-trial_idx              : int           # trial number as in meso_analysis.Trialstats
+-> meso_analysis.TrialSelectionParams
+global_roi_idx              : int                           # roi_idx in Suite2ptrace
+trial_idx                   : int                           # trial number as in meso_analysis.Trialstats
 ---
-binned_dff             : blob          # binned Dff, 1 row per neuron per trialStruct 
+binned_dff                  : blob                          # binned Dff, 1 row per neuron per trialStruct
 %}
  
  

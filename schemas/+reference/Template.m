@@ -1,9 +1,9 @@
 %{
 # Template for the information of each column
-template_name        :    varchar(64)         # field name, such as 'Cage ID'
+template_name               : varchar(64)                   # field name, such as 'Cage ID'
 ---
-original_field_names :    longblob            # cell array for original field names
-database_field_names :    longblob            # cell array for database field names
+original_field_names        : longblob                      # cell array for original field names
+database_field_names        : longblob                      # cell array for database field names
 %}
 
 classdef Template < dj.Lookup

@@ -1,18 +1,18 @@
 %{
 # Provisional table for traces obtained from Suite2p
 -> imaging.FieldOfView
-roi_idx                     : int                           
+roi_idx                     : int                           # 
 ---
-f_roi_raw                   : longblob                           
-f_surround_raw              : longblob
-spiking                     : longblob
-is_cell                     : blob
-f0_roi_raw                  : float     # baseline for each cell, calculated on f_roi_raw
-dff_roi_uncorrected         : longblob  # delta f/f, baseline corrected but no neuropil correction, 1 x nFrames (calculated from f_roi_raw and f0_roi_raw)
-skew                        : float     # skewness of neu corrected trace
-std                         : float     # std of neu corrected trace
-compact                     : float     # 1 means disk
-med                         : blob      # pos on FOV
+f_roi_raw                   : longblob                      # 
+f_surround_raw              : longblob                      # 
+spiking                     : longblob                      # 
+is_cell                     : blob                          # 
+f0_roi_raw                  : float                         # baseline for each cell, calculated on f_roi_raw
+dff_roi_uncorrected         : longblob                      # delta f/f, baseline corrected but no neuropil correction, 1 x nFrames (calculated from f_roi_raw and f0_roi_raw)
+skew                        : float                         # skewness of neu corrected trace
+std                         : float                         # std of neu corrected trace
+compact                     : float                         # 1 means disk
+med                         : blob                          # pos on FOV
 %}
 
 classdef Suite2ptrace < dj.Imported

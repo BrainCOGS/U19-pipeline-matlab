@@ -1,8 +1,7 @@
 %{
 # Relationship between session & manipulation performed
 -> acquisition.Session
--> lab.ManipulationType
----
+-> `u19_lab`.`#manipulation_type`
 %}
 
 classdef SessionManipulation < dj.Manual

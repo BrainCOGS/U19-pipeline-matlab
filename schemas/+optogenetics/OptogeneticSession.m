@@ -1,6 +1,6 @@
 %{
 # Information of a optogenetic session
-->acquisition.Session
+-> acquisition.Session
 ---
 -> acquisition.SessionManipulation
 -> optogenetics.OptogeneticProtocol

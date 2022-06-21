@@ -1,8 +1,9 @@
 %{
-protocol: varchar(16)                     # protocol number
+# 
+protocol                    : varchar(16)                   # protocol number
 ---
-reference_weight_pct=null:   float        # percentage of initial allowed
-protocol_description='':     varchar(255) # description
+reference_weight_pct=null   : float                         # percentage of initial allowed
+protocol_description        : varchar(255)                  # description
 %}
 
 

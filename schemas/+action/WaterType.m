@@ -1,5 +1,6 @@
 %{
- watertype_name:     varchar(255)
+# 
+watertype_name              : varchar(255)                  # 
 %}
 
 

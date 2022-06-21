@@ -1,8 +1,8 @@
 %{
 # # Table for pupillometry data (pupil diameter)
-->pupillometry.PupillometrySession
+-> pupillometry.PupillometrySession
 ---
-pupil_diameter:              longblob               # array with pupil diameter for each video frame
+pupil_diameter              : longblob                      # array with pupil diameter for each video frame
 %}
 
 classdef PupillometryData < dj.Imported

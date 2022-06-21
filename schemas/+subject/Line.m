@@ -1,11 +1,12 @@
 %{
-line:                   varchar(128)	# name
+# 
+line                        : varchar(128)                  # name
 ---
--> subject.Species
--> subject.Strain
-line_description='':	varchar(2048)	# description
-target_phenotype='':	varchar(255)	# target phenotype
-is_active=1:			tinyint		    # is active
+binomial                    : varchar(32)                   # binomial
+strain_name                 : varchar(32)                   # strain name
+line_description            : varchar(2048)                 # description
+target_phenotype            : varchar(255)                  # target phenotype
+is_active=1                 : tinyint                       # is active
 %}
 
 classdef Line < dj.Lookup

@@ -1,10 +1,10 @@
 %{
 # Parameters related to laser stimulation
-waveform_id             : INT AUTO_INCREMENT
+waveform_id                 : int AUTO_INCREMENT            # 
 ---
-waveform_description=''      : varchar(256)     # string that describes waveform
-duration=null:               decimal(8,4)       # Duration of "entire" waveform stimulation
-waveform=null:               longblob           # Waveform of stimulation
+waveform_description        : varchar(256)                  # string that describes waveform
+duration=null               : decimal(8,4)                  # Duration of "entire" waveform stimulation
+waveform=null               : longblob                      # Waveform of stimulation
 %}
 
 %stim instead laser

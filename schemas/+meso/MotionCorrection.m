@@ -1,8 +1,7 @@
 %{
 # handles motion correction
 -> meso.FieldOfView
--> meso.McParameterSet       # meta file, frameMCorr-method
----
+-> meso.McParameterSet
 %}
 
 

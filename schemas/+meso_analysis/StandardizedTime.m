@@ -3,8 +3,8 @@
 -> imaging.Scan
 -> meso_analysis.BinningParameters
 ---
-standardized_time : longblob  # linearly interpolated behavioral epoch ID per imaging frame
-binned_time       : blob      #
+standardized_time           : longblob                      # linearly interpolated behavioral epoch ID per imaging frame
+binned_time                 : blob                          # 
 %}
 % start / cue / delay / arm / ITI / extra-ITI (error trials)
  

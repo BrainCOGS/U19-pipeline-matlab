@@ -1,10 +1,10 @@
 %{
-# Relationship between session & videos acquired
+# Relationship between session & manipulation performed
 -> acquisition.Session
--> lab.VideoType
+-> `u19_lab`.`#video_type`
 ---
-local_path_video_file    : varchar(255)                  # absolute path were video file is stored in local computer
-remote_path_video_file   : varchar(255)                  # relative path were video file will be stored in braininit drive
+local_path_video_file       : varchar(255)                  # absolute path were video file is stored in local computer
+remote_path_video_file      : varchar(255)                  # relative path were video file will be stored in braininit drive
 %}
 
 classdef SessionVideo < dj.Manual

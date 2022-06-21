@@ -1,11 +1,11 @@
 %{
-# Parameters related to stimulation control by software during session
-preprocess_paramset_idx:      smallint
+# Parameter set to be used in the preprocessing steps
+preprocess_paramset_idx     : int AUTO_INCREMENT            # 
 ---
--> RecordingModality
-preprocess_paramset_desc='':  varchar(128)    # string that describes parameter set
-preprocess_paramset_hash:     UUID            # uuid hash that encodes parameter dictionary
-preprocess_paramset:          longblob        # dictionary of all applicable parameters
+-> recording.RecordingModality
+preprocess_paramset_desc    : varchar(128)                  # 
+preprocess_paramset_hash    : uuid                          # 
+preprocess_paramset         : longblob                      # dictionary of all applicable parameters
 %}
 
 classdef PreprocessParamSet < dj.Lookup

@@ -1,7 +1,7 @@
 %{
+# 
 -> acquisition.Session
 block                       : tinyint                       # block number
----
 %}
 
 classdef SessionBlock < dj.Imported

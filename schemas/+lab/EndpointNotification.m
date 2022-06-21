@@ -1,6 +1,6 @@
 %{
-email:		        varchar(64)     # email address
------
+# 
+email                       : varchar(64)                   # email address
 %}
 
 classdef EndpointNotification < dj.Lookup

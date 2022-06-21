@@ -1,9 +1,9 @@
 %{
 # Matrix to sync behavior and pupillometry videos
-->pupillometry.PupillometrySession
+-> pupillometry.PupillometrySession
 ---
-sync_video_frame_matrix:     longblob               # matrix with corresponding iteration for each video frame
-sync_behavior_matrix:        longblob               # matrix with corresponding video frame for each iteration
+sync_video_frame_matrix     : longblob                      # matrix with corresponding iteration for each video frame
+sync_behavior_matrix        : longblob                      # matrix with corresponding video frame for each iteration
 %}
 
 classdef PupillometrySyncBehavior < dj.Imported

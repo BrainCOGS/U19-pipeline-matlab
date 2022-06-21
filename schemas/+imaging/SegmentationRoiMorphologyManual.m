@@ -1,9 +1,9 @@
 %{
 # manula curation of morphological classification of the ROIs
 -> imaging.SegmentationRoi
-curation_time=CURRENT_TIMESTAMP: timestamp
+curation_time="current_timestamp()": timestamp              # 
 ---
-morphology:  enum('Doughnut', 'Blob', 'Puncta', 'Filament', 'Other', 'Noise')
+morphology                  : enum('Doughnut','Blob','Puncta','Filament','Other','Noise') # 
 %}
 
 classdef SegmentationRoiMorphologyManual < dj.Manual

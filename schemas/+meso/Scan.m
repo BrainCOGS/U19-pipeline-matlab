@@ -2,10 +2,10 @@
 # existence of an imaging session
 -> acquisition.Session
 ---
-scan_directory       : varchar(255)
-gdd=null             : float
-wavelength=940       : float                        # in nm
-pmt_gain=null        : float
+scan_directory              : varchar(255)                  # 
+gdd=null                    : float                         # 
+wavelength=940              : float                         # in nm
+pmt_gain=null               : float                         # 
 %}
 
 

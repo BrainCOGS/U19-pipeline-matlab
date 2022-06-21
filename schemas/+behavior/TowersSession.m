@@ -1,13 +1,14 @@
 %{
+# 
 -> acquisition.Session
------
-stimulus_set:          tinyint   # an integer that describes a particular set of stimuli in a trial
-ball_squal:            float     # quality measure of ball data
-rewarded_side=null:    blob      # Left or Right X number trials
-chosen_side=null:      blob      # Left or Right X number trials
-maze_id=null:          blob      # level X number trials
-num_towers_r=null:     blob      # Number of towers shown to the right x number of trials
-num_towers_l=null:     blob      # Number of towers shown to the left x tumber of trials
+---
+stimulus_set                : tinyint                       # an integer that describes a particular set of stimuli in a trial
+ball_squal                  : float                         # quality measure of ball data
+rewarded_side=null          : blob                          # Left or Right X number trials
+chosen_side=null            : blob                          # Left or Right X number trials
+maze_id=null                : blob                          # level X number trials
+num_towers_r=null           : blob                          # Number of towers shown to the right x number of trials
+num_towers_l=null           : blob                          # Number of towers shown to the left x tumber of trials
 %}
 
 classdef TowersSession < dj.Imported

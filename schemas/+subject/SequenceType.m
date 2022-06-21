@@ -1,7 +1,8 @@
 %{
-sequence_type:              varchar(63)
------
-seq_type_description='':    varchar(255)
+# 
+sequence_type               : varchar(63)                   # 
+---
+seq_type_description        : varchar(255)                  # 
 %}
 
 classdef SequenceType < dj.Lookup

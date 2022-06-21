@@ -1,9 +1,10 @@
 %{
+# 
 -> acquisition.Session
 ---
-scan_directory               : varchar(255)
-relative_scan_directory      : varchar(255)
-->lab.AcquisitionType               # type of acquisition for this scan
+scan_directory              : varchar(255)                  # 
+relative_scan_directory     : varchar(255)                  # 
+-> `u19_lab`.`#acquisition_type`
 %}
 
 classdef Scan < dj.Imported

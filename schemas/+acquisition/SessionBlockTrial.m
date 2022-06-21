@@ -1,7 +1,7 @@
 %{
+# 
 -> acquisition.SessionBlock
-trial_idx:          int     # trial index, keep the original number in the file
----
+trial_idx                   : int                           # trial index, keep the original number in the file
 %}
 
 %     'CREATE TABLE `u19_behavior`.`_test_towers_block__trial` (

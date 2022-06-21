@@ -1,12 +1,12 @@
 %{
 # Video parameters adjusted for acquisition
-video_parameters_id:                 int(11) AUTO_INCREMENT
------
-video_parameters_description='':     varchar(256)            # String that describes all video parameters to help selection on GUI
-video_acquisition_rate:              float                   # Acquisition rate for video
-video_exposure_time_in_microseconds: int(11)                 # Exposure time of camera
-video_gain:                          int(11)                 # Video gain
-video_extension:                     varchar(6)              # File Extension for video 
+video_parameters_id         : int AUTO_INCREMENT            # 
+---
+video_parameters_description: varchar(256)                  # String that describes all video parameters to help selection on GUI
+video_acquisition_rate      : float                         # Acquisition rate for video
+video_exposure_time_in_microseconds: int                    # Exposure time of camera
+video_gain                  : int                           # Video gain
+video_extension             : varchar(6)                    # File Extension for video
 %}
 
 

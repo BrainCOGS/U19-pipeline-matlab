@@ -1,10 +1,11 @@
 %{
-allele:                     varchar(63)     # informal name
------
-standard_name='':		    varchar(255)	# standard name
--> subject.Source
-original_allele_source:     varchar(255)    # original source of the allele
-allele_description='':      varchar(1023)   # description of the allele
+# 
+allele                      : varchar(63)                   # informal name
+---
+standard_name               : varchar(255)                  # standard name
+source                      : varchar(32)                   # name of source
+original_allele_source      : varchar(255)                  # original source of the allele
+allele_description          : varchar(1023)                 # 
 %}
 
 classdef Allele < dj.Lookup

@@ -1,16 +1,17 @@
 %{
 # General information of a session
--> subject.Subject
-session_date                : date                          # date of experiment
+-> `u19_subject`.`subject`
+session_date="curdate()"    : date                          # date of experiment
 session_number              : int                           # number
 ---
-session_start_time          : datetime                      # start time
-(session_location) -> lab.Location                          # Location where training is happening
--> task.Task                                                # Which task was performed in session
+session_start_time="current_timestamp()": datetime          # start time
+ (session_location) -> `u19_lab`.`#location`
+-> `u19_task`.`#task`
 local_path_behavior_file    : varchar(255)                  # Path were session file is stored in local computer
 remote_path_behavior_file   : varchar(255)                  # Path were session file will be stored in bucket
 is_finished=0               : tinyint                       # Flag that indicates if this session was finished successfully
 invalid_session=0           : tinyint                       # Flag that indicates if behavioral file couldn't be saved for the session
+%}
 %}
  
 classdef SessionStarted < dj.Manual

@@ -1,8 +1,9 @@
 %{
+# 
 -> imaging.FieldOfView
--> imaging.McParameterSet                    # meta file, frameMCorr-method
+-> imaging.McParameterSet
 ---
-mc_results_directory       : varchar(255)    # directory where motion correction results are stored
+mc_results_directory=null   : varchar(255)                  # 
 %}
 
 classdef MotionCorrection < dj.Imported

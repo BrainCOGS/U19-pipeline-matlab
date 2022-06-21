@@ -1,11 +1,12 @@
 %{
--> subject.Subject
-administration_date:	    date		    # date time
+# 
+-> `u19_subject`.`subject`
+administration_date="curdate()": date                       # date time
 ---
-earned=null:    float			# water administered
-supplement=null: float
-received=null: float
--> action.WaterType                         # unknown now
+earned=null                 : float                         # water administered
+supplement=null             : float                         # 
+received=null               : float                         # 
+-> action.WaterType
 %}
 
 classdef WaterAdministration < dj.Manual

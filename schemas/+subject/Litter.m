@@ -1,11 +1,12 @@
 %{
-litter:                         varchar(63)
+# 
+litter                      : varchar(63)                   # 
 ---
--> subject.BreedingPair
--> subject.Line
-litter_descriptive_name='':     varchar(255)	# descriptive name
-litter_description='':          varchar(255)	# description
-litter_birth_date=null:			date		    # birth date
+breeding_pair               : varchar(63)                   # name
+line                        : varchar(128)                  # name
+litter_descriptive_name     : varchar(255)                  # descriptive name
+litter_description          : varchar(255)                  # description
+litter_birth_date=null      : date                          # 
 %}
 
 classdef Litter < dj.Manual

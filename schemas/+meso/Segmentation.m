@@ -3,10 +3,10 @@
 -> meso.FieldOfView
 -> meso.SegParameterSet
 ---
-num_chunks                      : tinyint           # number of different segmentation chunks within the session
-cross_chunks_x_shifts           : blob              # nChunks x niter,
-cross_chunks_y_shifts           : blob              # nChunks x niter,
-cross_chunks_reference_image    : longblob          # reference image for cross-chunk registration
+num_chunks                  : tinyint                       # number of different segmentation chunks within the session
+cross_chunks_x_shifts       : blob                          # nChunks x niter,
+cross_chunks_y_shifts       : blob                          # nChunks x niter,
+cross_chunks_reference_image: longblob                      # reference image for cross-chunk registration
 %}
 
 %%
@@ -444,7 +444,7 @@ parSettings.Pool.AutoCreate = false;
 % segmentation settings
 if fromProtoSegments
     method                = { 'search_method' , 'dilate'                          ... % search locations when updating spatial components
-        , 'se'            , strel('disk',4)                   ... % morphological element for method ‘dilate’
+        , 'se'            , strel('disk',4)                   ... % morphological element for method Â‘dilateÂ’
         };
 else
     method                = { 'search_method' , 'ellipse'                         ... % search locations when updating spatial components

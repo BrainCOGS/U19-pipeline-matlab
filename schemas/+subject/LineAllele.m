@@ -1,6 +1,7 @@
 %{
--> subject.Line
--> subject.Allele
+# 
+line                        : varchar(128)                  # name
+allele                      : varchar(63)                   # informal name
 %}
 
 classdef LineAllele < dj.Lookup

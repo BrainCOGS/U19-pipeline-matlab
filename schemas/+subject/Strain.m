@@ -1,7 +1,8 @@
 %{
-strain_name:		      varchar(32)	# strain name
+# 
+strain_name                 : varchar(32)                   # strain name
 ---
-strain_description='':    varchar(255)	# description
+strain_description          : varchar(255)                  # description
 %}
 
 classdef Strain < dj.Lookup

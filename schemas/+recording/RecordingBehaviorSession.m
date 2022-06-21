@@ -1,7 +1,8 @@
 %{
+# 
 -> recording.Recording
 ---
--> acquisition.Session
+-> `u19_acquisition`.`session`
 %}
  
 classdef RecordingBehaviorSession < dj.Part

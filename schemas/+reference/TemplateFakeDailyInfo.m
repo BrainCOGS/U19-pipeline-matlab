@@ -1,6 +1,6 @@
 %{
 # Daily Info template for the information of each column
--> reference.Template
+template_name               : varchar(64)                   # field name, such as 'Cage ID'
 field                       : varchar(64)                   # field name
 ---
 description                 : varchar(255)                  # description of this field

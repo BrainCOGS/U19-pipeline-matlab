@@ -1,13 +1,13 @@
 %{
 # Camera information for each recording
-camera_id:                   int(11) AUTO_INCREMENT
------
--> [nullable] lab.Location                  # In which Rig this camera is located
--> [nullable] deeplabcut_pipeline.VideoType # In which Rig this camera is located
-active=1:                    tinyint        # This camera is active (1) or has been replaced (0)
-camera_type:                 varchar(64)    # Type of the camera used in video acquisition
-camera_model:                varchar(64)    # Model of the camera used in video acquisition
-camera_description:          varchar(128)   # Description for each camera used on video recordings
+camera_id                   : int AUTO_INCREMENT            # 
+---
+-> `u19_lab`.`#location`
+-> deeplabcut_pipeline.VideoType
+active=1                    : tinyint                       # This camera is active (1) or has been replaced (0)
+camera_type                 : varchar(64)                   # Type of the camera used in video acquisition
+camera_model                : varchar(64)                   # Model of the camera used in video acquisition
+camera_description          : varchar(128)                  # Description for each camera used on video recordings
 %}
 
 

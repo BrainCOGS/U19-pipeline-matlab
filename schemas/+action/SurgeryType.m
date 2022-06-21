@@ -1,7 +1,8 @@
 %{
-surgery_type:   varchar(64)
+# 
+surgery_type                : varchar(64)                   # 
 ---
-surgery_description: varchar(255)
+surgery_description         : varchar(255)                  # 
 %}
 
 

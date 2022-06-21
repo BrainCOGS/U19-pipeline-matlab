@@ -1,11 +1,8 @@
 %{
 # binning parameter for behavior and neural data
-bin_parameter_set_id   : int       # id of the set of parameters
+bin_parameter_set_id        : int                           # id of the set of parameters
 ---
-
-epoch_binning      : blob      # number of bins per epoch 1 x 6 array
-#good_morpho_only   : tinyint   # whether to use just blobs and doughnuts
-
+epoch_binning               : blob                          # number of bins per epoch 1 x 6 array
 %}
 
 classdef BinningParameters < dj.Lookup

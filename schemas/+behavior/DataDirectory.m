@@ -1,9 +1,10 @@
 %{
+# 
 -> acquisition.Session
------
-data_dir:  varchar(255) # data directory for each session
-file_name: varchar(255) # file name
-combined_file_name: varchar(255) # combined filename
+---
+data_dir                    : varchar(255)                  # data directory for each session
+file_name                   : varchar(255)                  # file name
+combined_file_name          : varchar(255)                  # combined filename
 %}
 
 classdef DataDirectory < dj.Computed

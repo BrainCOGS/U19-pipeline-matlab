@@ -1,7 +1,8 @@
-%{ 
--> lab.User 
------ 
-(secondary_contact) -> lab.User(user_id) 
+%{
+# 
+-> lab.User
+---
+ (secondary_contact) -> lab.User
 %}
 
 classdef UserSecondaryContact < dj.Manual 

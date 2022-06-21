@@ -2,7 +2,7 @@
 # manula curation of morphological classification of the ROIs
 -> meso.SegmentationRoi
 ---
-morphology:  enum('Doughnut', 'Blob', 'Puncta', 'Filament', 'Other', 'Noise')
+morphology                  : enum('Doughnut','Blob','Puncta','Filament','Other','Noise') # 
 %}
 
 classdef SegmentationRoiMorphologyManual < dj.Manual

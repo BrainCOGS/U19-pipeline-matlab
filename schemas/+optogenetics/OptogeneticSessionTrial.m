@@ -1,12 +1,12 @@
 %{
 # Information of a optogenetic trial
--> acquisition.SessionBlockTrial
 -> optogenetics.OptogeneticSession
+-> acquisition.SessionBlockTrial
 ---
-stim_on			                  : tinyint	     # 1 if stimulation was turned on 0 otherwise
-t_stim_on			              : TINYBLOB	 # times when laser was turned on
-t_stim_off			              : TINYBLOB	 # times when laser was turned off
-stim_epoch			              : varchar(32)	 # Which epoch of the trial stimulation was on
+stim_on                     : tinyint                       # 1 if stimulation was turned on 0 otherwise
+t_stim_on                   : tinyblob                      # times when laser was turned on
+t_stim_off                  : tinyblob                      # times when laser was turned off
+stim_epoch                  : varchar(32)                   # Which epoch of the trial stimulation was on
 %}
 
 

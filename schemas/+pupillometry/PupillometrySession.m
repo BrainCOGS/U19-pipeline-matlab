@@ -1,7 +1,6 @@
 %{
 # Information of a pupillometry session
-->acquisition.Session
----
+-> acquisition.Session
 %}
 
 classdef PupillometrySession < dj.Imported

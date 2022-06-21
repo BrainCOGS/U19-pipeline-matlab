@@ -1,7 +1,8 @@
 %{
+# 
 -> behavior.TowersBlockTrial
 ---
-video_path:                 varchar(255)         # video directory + filename for each trial
+video_path                  : varchar(511)                  # the absolute directory created for this video
 %}
 
 classdef TowersBlockTrialVideo < dj.Imported

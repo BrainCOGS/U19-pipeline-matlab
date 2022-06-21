@@ -1,9 +1,10 @@
 %{
-sequence:		            varchar(63)     # informal name
------
--> subject.SequenceType
-base_pairs='':              varchar(1023)	# base pairs
-sequence_description='':	varchar(255)	# description
+# 
+sequence                    : varchar(63)                   # informal name
+---
+sequence_type               : varchar(63)                   # 
+base_pairs                  : varchar(1023)                 # base pairs
+sequence_description        : varchar(255)                  # 
 %}
 
 classdef Sequence < dj.Lookup
