@@ -4,8 +4,8 @@
 -> acquisition.Session
 ---
 -> acquisition.SessionManipulation
--> thermal.ThermalProtocol
--> thermal.ThermalSoftwareParameter
+-> [nullable] thermal.ThermalProtocol
+-> [nullable] thermal.ThermalSoftwareParameter
 %}
 
 classdef ThermalSession < dj.Imported
@@ -58,16 +58,22 @@ classdef ThermalSession < dj.Imported
             
             key.manipulation_type = 'thermal';
             
-            %%%%%%%%%%%%%%%%%%%%%%%
-            %%%% fill here read corresponding manipulation data for each session
             %Get thermal manipulation protocol from behavioral file
-            key.thermal_protocol_id = 1
-            
+            if isfield(log.animal, 'stimulationProtocol') && isstruct(log.animal.stimulationProtocol)
+                key.thermal_protocol_id = log.animal.stimulationProtocol.thermal_optogenetic_protocol_id;
+            end
+
             %Get software params from behavioral file (check if they exist on db)
-            key.software_parameter_set_id = 1 
-            %%%%%%%%%%%%%%%%%%%%%%%
-            
-            %Get trial info
+            if isfield(log.animal, 'softwareParams') && isstruct(log.animal.softwareParams)
+                key.software_parameter_set_id = log.animal.softwareParams.software_parameter_set_id;
+            end
+
+            %%%% Code to get extra variables from behavior file
+            %% key.var1 = log......
+            %% key.var2 = log......
+            %%%%
+
+            %Get trial by trial info
             trial_structure = get_manipulation_trial_data(thermal.ThermalSessionTrial,key, log);
             
             conn = dj.conn;

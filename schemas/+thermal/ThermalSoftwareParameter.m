@@ -15,6 +15,12 @@ classdef ThermalSoftwareParameter < dj.Lookup
             %Insert a new record on software parameters table (additional check for repeated params)
             % Inputs
             % key = structure with information of the record (software_parameter_description, software_parameters)
+            % e.g.:
+            %key.software_parameter_description = 'params for manipulation 6/6/2022'
+            %key.software_parameters = struct;
+            %key.software_parameters.param1 = 1;
+            %key.software_parameters.param2 = 'x';
+            %try_insert(thermal.ThermalSoftwareParameter, key)
             
             %Check minimum field
             if ~isfield(key, 'software_parameters')
@@ -39,7 +45,7 @@ classdef ThermalSoftwareParameter < dj.Lookup
             end
             
             insert(self, key);
-
+            last_id = fetch(self, 'ORDER BY software_parameter_set_id desc LIMIT 1');
         end
     end
     

@@ -74,6 +74,13 @@ if create_db
         pause(2);
     end
     
+    %Insert a test "no protocol" record
+    
+    test_protocol.protocol_description = ' -- No protocol -- ';
+    protocol_table = str2func([package_name '.' Package_name 'Protocol']);
+    protocol_table_obj = protocol_table();
+    insert(protocol_table_obj, test_protocol);
+    
 end
 
 

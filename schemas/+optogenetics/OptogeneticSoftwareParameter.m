@@ -19,7 +19,7 @@ classdef OptogeneticSoftwareParameter < dj.Lookup
     
     
      methods
-        function try_insert(self, key)
+        function last_id = try_insert(self, key)
             %Insert a new record on software parameters table (additional check for repeated params)
             % Inputs
             % key = structure with information of the record (software_parameter_description, software_parameters)
@@ -47,6 +47,7 @@ classdef OptogeneticSoftwareParameter < dj.Lookup
             end
             
             insert(self, key);
+            last_id = fetch(self, 'ORDER BY software_parameter_set_id desc LIMIT 1');
 
         end
     end

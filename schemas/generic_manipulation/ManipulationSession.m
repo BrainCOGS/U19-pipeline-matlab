@@ -4,8 +4,8 @@
 -> acquisition.Session
 ---
 -> acquisition.SessionManipulation
--> ^package^.^Package^Protocol
--> ^package^.^Package^SoftwareParameter
+-> [nullable] ^package^.^Package^Protocol
+-> [nullable] ^package^.^Package^SoftwareParameter
 %}
 
 classdef ^Package^Session < dj.Imported
@@ -58,16 +58,22 @@ classdef ^Package^Session < dj.Imported
             
             key.manipulation_type = '^package^';
             
-            %%%%%%%%%%%%%%%%%%%%%%%
-            %%%% fill here read corresponding manipulation data for each session
             %Get ^package^ manipulation protocol from behavioral file
-            key.^package^_protocol_id = 1
-            
+            if isfield(log.animal, 'stimulationProtocol') && isstruct(log.animal.stimulationProtocol)
+                key.^package^_protocol_id = log.animal.stimulationProtocol.^package^_optogenetic_protocol_id;
+            end
+
             %Get software params from behavioral file (check if they exist on db)
-            key.software_parameter_set_id = 1 
-            %%%%%%%%%%%%%%%%%%%%%%%
-            
-            %Get trial info
+            if isfield(log.animal, 'softwareParams') && isstruct(log.animal.softwareParams)
+                key.software_parameter_set_id = log.animal.softwareParams.software_parameter_set_id;
+            end
+
+            %%%% Code to get extra variables from behavior file
+            %% key.var1 = log......
+            %% key.var2 = log......
+            %%%%
+
+            %Get trial by trial info
             trial_structure = get_manipulation_trial_data(^package^.^Package^SessionTrial,key, log);
             
             conn = dj.conn;
