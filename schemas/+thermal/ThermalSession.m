@@ -60,7 +60,7 @@ classdef ThermalSession < dj.Imported
             
             %Get thermal manipulation protocol from behavioral file
             if isfield(log.animal, 'stimulationProtocol') && isstruct(log.animal.stimulationProtocol)
-                key.thermal_protocol_id = log.animal.stimulationProtocol.thermal_optogenetic_protocol_id;
+                key.thermal_protocol_id = log.animal.stimulationProtocol.thermal_protocol_id;
             end
 
             %Get software params from behavioral file (check if they exist on db)

@@ -60,7 +60,7 @@ classdef ^Package^Session < dj.Imported
             
             %Get ^package^ manipulation protocol from behavioral file
             if isfield(log.animal, 'stimulationProtocol') && isstruct(log.animal.stimulationProtocol)
-                key.^package^_protocol_id = log.animal.stimulationProtocol.^package^_optogenetic_protocol_id;
+                key.^package^_protocol_id = log.animal.stimulationProtocol.^package^_protocol_id;
             end
 
             %Get software params from behavioral file (check if they exist on db)
