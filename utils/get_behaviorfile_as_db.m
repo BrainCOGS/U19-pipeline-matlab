@@ -1,6 +1,6 @@
 function data_struct = get_behaviorfile_as_db(key)
 %GET_STATS_FROM_SESSION get Virmen Behavior File stats from DB data
-
+ 
 data_struct = [];
 all_data_table = [];
 for i=1:length(key)
@@ -28,22 +28,20 @@ for i=1:length(key)
                 end
                 
                 session_data = [block_key_table, session_data];
-                session_data = table2struct(session_data);
             
                 if isempty(all_data_table)
                     all_data_table = session_data;
                 else
-                    %compare_columns_tables();
-                    all_data_table = [all_data_table; session_data];
+                    all_data_table = concatenate_tables(all_data_table, session_data);
                 end
             end
             
         end
     end
 end
-
+ 
 if ~isempty(all_data_table)
     data_struct = table2struct(all_data_table);
 end
-
+ 
             

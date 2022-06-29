@@ -23,7 +23,7 @@ classdef ^Package^Session < dj.Imported
             
             
             %Load behavioral file
-            [status, data_dir] = lab.utils.read_behavior_file(data_dir);
+            [status, data] = lab.utils.read_behavior_file(data_dir);
             if status
                 log = data.log;
             else
