@@ -20,8 +20,7 @@ classdef ^Package^SessionTrial < dj.Part
            % log                  = behavioral file data 
            %Outputs
            % trial_structure = structure array with trial information for the specific manipulation
-           trial_structure = [];
-           
+
             total_trials = 0;
             for iBlock = 1:length(log.block)
                               
@@ -33,6 +32,7 @@ classdef ^Package^SessionTrial < dj.Part
                     total_trials = total_trials + 1;
                     
                     trial_data = session_key;
+                    trial_data.trial_idx = itrial;
                     
                     %%%%%%%%%%%%%%%%%%%%%%%
                     %%%% fill here read corresponding manipulation data for each trial

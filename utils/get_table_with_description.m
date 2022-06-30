@@ -29,7 +29,15 @@ end
 [keys,description_field] = fetchn(table, key_field{:},description_field{:});
  
 %If none present in keys, put it first (always none is default)
+% None, 0, or Standard are first
 id_none = find(strcmp(keys, 'none'));
+if isempty(id_none)
+    id_none = find(strcmp(keys, 'standard'));
+end
+if isempty(id_none) &&  ~isempty(keys) && isnumeric(keys(1))
+    id_none = find(keys == 1);
+end 
+ 
 if id_none
     id_others = 1:length(keys);
     id_others(id_none) = [];

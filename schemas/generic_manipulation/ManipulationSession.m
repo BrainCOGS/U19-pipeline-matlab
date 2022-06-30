@@ -19,11 +19,11 @@ classdef ^Package^Session < dj.Imported
         function makeTuples(self, key)
             
             %Get behavioral file to load
-            data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            data_dir = fetch(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
             
             
             %Load behavioral file
-            [status, data] = lab.utils.read_behavior_file(data_dir);
+            [status, data] = lab.utils.read_behavior_file(key, data_dir);
             if status
                 log = data.log;
             else

@@ -15,12 +15,15 @@ classdef TestSubtaskSession < dj.Imported
     methods(Access=protected)
         
         function makeTuples(self, key)
+
+            %remove subtask field from key
+            key = rmfield(key, 'subtask');
             
             %Get behavioral file to load
-            data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            data_dir = fetch(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
             
             %Load behavioral file
-            [status, data] = lab.utils.read_behavior_file(data_dir);
+            [status, data] = lab.utils.read_behavior_file(key, data_dir);
             if status
                 log = data.log;
             else
@@ -64,6 +67,8 @@ classdef TestSubtaskSession < dj.Imported
                 key.stimulus_set = -1;
             end
             
+            self.insert(key);
+        
         end
         
     end
