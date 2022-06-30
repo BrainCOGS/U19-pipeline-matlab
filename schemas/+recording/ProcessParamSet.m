@@ -1,11 +1,11 @@
 %{
-# Parameters related to stimulation control by software during session
-process_paramset_idx:         smallint
+# Parameter set to be used in the processing steps
+process_paramset_idx        : int AUTO_INCREMENT            # 
 ---
--> RecordingModality
-process_paramset_desc='':    varchar(128)    # string that describes parameter set
-process_paramset_hash:       UUID            # uuid hash that encodes parameter dictionary
-process_paramset:            longblob        # dictionary of all applicable parameters
+-> recording.RecordingModality
+process_paramset_desc       : varchar(128)                  # 
+process_paramset_hash       : uuid                          # 
+process_paramset            : longblob                      # dictionary of all applicable parameters
 %}
 
 classdef ProcessParamSet < dj.Lookup
