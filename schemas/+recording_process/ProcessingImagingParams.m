@@ -6,8 +6,10 @@
 %}
 
 
-classdef ProcessingImagingParams < dj.Manual
-
+classdef ProcessingImagingParams < dj.Part
+    properties(SetAccess=protected)
+        master = recording_process.Processing
+    end
 
 end
 

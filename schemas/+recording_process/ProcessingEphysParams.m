@@ -7,7 +7,10 @@
 %}
 
 
-classdef ProcessingEphysParams < dj.Manual
+classdef ProcessingEphysParams < dj.Part
+    properties(SetAccess=protected)
+        master = recording_process.Processing
+    end
 
 
 end
