@@ -192,18 +192,20 @@ classdef TowersBlock < dj.Imported
                 end
                 tic
 
-                self.schema.conn.startTransaction()
-                try
-                    self.insert(tuple);
-                    insert(behavior.TowersBlockTrial, struct_trials)
+                self.insert(tuple);
+                insert(behavior.TowersBlockTrial, struct_trials)
+                %self.schema.conn.startTransaction()
+                %try
+                %    self.insert(tuple);
+                %    insert(behavior.TowersBlockTrial, struct_trials)
                     %self.schema.conn.commitTransaction
-                    toc
-                catch err
+                %    toc
+                %catch err
                     %Cancel previous transaction but start a new one to prevent DJ to fail
-                    self.schema.conn.cancelTransaction
-                    self.schema.conn.startTransaction()
-                    throw(err); 
-                end
+                %    self.schema.conn.cancelTransaction
+                %    self.schema.conn.startTransaction()
+                %    throw(err); 
+                %end
             end
 
             %end
