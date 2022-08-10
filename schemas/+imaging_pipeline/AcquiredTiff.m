@@ -18,20 +18,20 @@ usr_filename                : varchar(255)                  # usr file path
 fast_z_lag                  : float                         # fast z lag
 fast_z_flyback_time         : float                         # time it takes to fly back to fov
 line_period                 : float                         # scan time per line
-scan_frame_period           : float                         #
-scan_volume_rate            : float                         #
-flyback_time_per_frame      : float                         #
-flyto_time_per_scan_field   : float                         #
+scan_frame_period           : float                         # 
+scan_volume_rate            : float                         # 
+flyback_time_per_frame      : float                         # 
+flyto_time_per_scan_field   : float                         # 
 fov_corner_points           : blob                          # coordinates of the corners of the full 5mm FOV, in microns
 nfovs                       : int                           # number of field of view
 nframes                     : int                           # number of frames in the scan
 nframes_good                : int                           # number of frames in the scan before acceptable sample bleaching threshold is crossed
 last_good_file              : int                           # number of the file containing the last good frame because of bleaching
-motion_correction_enabled=0 : tinyint                       #
-motion_correction_mode="N/A": varchar(64)                   #
-stacks_enabled=0            : tinyint                       #
-stack_actuator="N/A"        : varchar(64)                   #
-stack_definition="N/A"      : varchar(64)                   #
+motion_correction_enabled=0 : tinyint                       # 
+motion_correction_mode="N/A": varchar(64)                   # 
+stacks_enabled=0            : tinyint                       # 
+stack_actuator="N/A"        : varchar(64)                   # 
+stack_definition="N/A"      : varchar(64)                   # 
 %}
 
 
@@ -588,6 +588,9 @@ classdef AcquiredTiff < dj.Imported
                     else
                         fov_key.power_percent = recInfo.Scope.Power_percent;
                     end
+                    
+                    disp(fov_key)
+                    disp(fov_key.fov_center_xy)
                     
                     ct = ct+1;
                     insert(imaging_pipeline.TiffSplit,fov_key)
