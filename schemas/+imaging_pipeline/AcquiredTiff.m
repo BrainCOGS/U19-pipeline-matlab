@@ -577,11 +577,24 @@ classdef AcquiredTiff < dj.Imported
                     end
                     
                     fov_key.fov_center_xy           = recInfo.ROI(iROI).centerXY;
+                    if isempty(fov_key.fov_center_xy)
+                        fov_key.fov_center_xy  = -1;
+                    end
+                    
                     fov_key.fov_size_xy             = recInfo.ROI(iROI).sizeXY;
-                    fov_key.fov_rotation_degrees    = recInfo.ROI(iROI).rotationDegrees;
+                    if isempty(fov_key.fov_size_xy)
+                        fov_key.fov_rotation_degrees    = recInfo.ROI(iROI).rotationDegrees;
+                    end
                     
                     fov_key.fov_pixel_resolution_xy = recInfo.ROI(iROI).pixelResolutionXY;
+                    if isempty(fov_key.fov_center_xy)
+                        fov_key.fov_pixel_resolution_xy = -1;
+                    end
+                    
                     fov_key.fov_discrete_plane_mode = recInfo.ROI(iROI).discretePlaneMode;%boolean(recInfo.ROI(iROI).discretePlaneMode);
+                    if isempty(fov_key.fov_discrete_plane_mode)
+                        fov_key.fov_discrete_plane_mode = -1;
+                    end
                     
                     if isfield(recInfo.ROI(iROI), 'Power_percent')
                         fov_key.power_percent = recInfo.ROI(iROI).Power_percent;
