@@ -39,7 +39,7 @@ classdef DailyMotorPositionData < dj.Manual
                 key.top_image = top_image;
             end
             
-            DailyMotorPositionData.insert(key);
+            insert(action.DailyMotorPositionData,key);
             
         end
         
