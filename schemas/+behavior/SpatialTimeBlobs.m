@@ -1,25 +1,24 @@
 %{
 -> acquisition.Session
+-> behavior.TowersSession
 ---
-trial_time:                 blob@spatialblobs_extstorage   # time series of this trial, start from zero for each trial
-collision:                  blob@spatialblobs_extstorage   # boolean vector indicating whether the subject hit the maze on each time point
-position:                   blob@spatialblobs_extstorage   # 3d recording of the position of the mouse, length equals to interations
-velocity:                   blob@spatialblobs_extstorage   # 3d recording of the velocity of the mouse, length equals to interations
-sensor_dots:                blob@spatialblobs_extstorage   # raw recordings of the ball
+iteration_matrix:           blob@behaviortimespatialblobs   # block-trial-iteration reference matrix
+trial_time:                 blob@behaviortimespatialblobs   # time series of this trial, start from zero for each trial
+cumulative_session_time:    blob@behaviortimespatialblobs   # time series of this trial, start from last trial time
+collision:                  blob@behaviortimespatialblobs   # boolean vector indicating whether the subject hit the maze on each time point
+position:                   blob@behaviortimespatialblobs   # 3d recording of the position of the mouse, length equals to interations
+velocity:                   blob@behaviortimespatialblobs   # 3d recording of the velocity of the mouse, length equals to interations
+sensor_dots:                blob@behaviortimespatialblobs   # raw recordings of the ball
 %}
 
 classdef SpatialTimeBlobs < dj.Imported
     properties
-        %keySource = acquisition.Session & acquisition.SessionStarted
-        %keySource = proj(acquisition.Session, 'level->na_level') * ...
-        %         proj(acquisition.SessionStarted, 'session_location->na_location', 'remote_path_behavior_file')
     end
     methods(Access=protected)
         function makeTuples(self, key)
-
+            
             data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
-
-
+            
             %Load behavioral file
             try
                 [~, data_dir] = lab.utils.get_path_from_official_dir(data_dir);
@@ -35,7 +34,7 @@ classdef SpatialTimeBlobs < dj.Imported
                     %Check if it is a real behavioral file
                     if isfield(log, 'session')
                         %Insert Blocks and trails from BehFile
-                        self.insertTowersBlockFromFile(key,log)
+                        self.insertSpatialTimeBlob(key,log)
                     else
                         disp(['File does not match expected Towers behavioral file: ', data_dir])
                     end
@@ -44,215 +43,155 @@ classdef SpatialTimeBlobs < dj.Imported
                     sprintf('Error in here: %s, %s, %d',err.stack(1).file, err.stack(1).name, err.stack(1).line )
                 end
             end
-
+            
         end
-
+        
     end
-
+    
     % Public methods
     methods
-        function insertTowersBlockFromFile(self, key,log)
-            % Insert blocks and blocktrials record from behavioralfile
-            % Called at the end of training or when populating towersBlock
-            % Input
-            % self = behavior.TowersBlock instance
-            % key  = behavior.TowersSession key (subject_fullname, date, session_no)
-            % log  = behavioral file as stored in Virmen
-
-            %for iBlock = 1:length(log.block)
-            iBlock = key.block;
-            tuple = key;
-            block = log.block(iBlock);
-            block = fixLogs(block); % fix bug for mesoscope recordings where choice is not recorded (but view angle is)
-
-            %tuple.block = iBlock;
-            tuple.task = 'Towers';
-            tuple.n_trials = length(block.trial);
-            tuple.first_trial = block.firstTrial;
-            tuple.block_duration = block.duration;
-            tuple.block_start_time = sprintf('%d-%02d-%02d %02d:%02d:00', ...
-                block.start(1), block.start(2), block.start(3), ...
-                block.start(4), block.start(5));
-            tuple.reward_mil = block.rewardMiL;
-            try
-                tuple.reward_scale = block.trial(1).rewardScale;
-            catch
-                tuple.reward_scale = 0;
-            end
-            tuple.main_level = block.mainMazeID;
-            tuple.level      = block.mazeID;
-            tuple.set_id = 1;
-            tuple.easy_block = exists_helper(block,'easyBlockFlag'); %if it doesn't exist, difficulty was uniform
-            correct_counter = 0;
-            nTrials = length([block.trial.choice]);
-            for itrial = 1:nTrials
-                trial = block.trial(itrial);
-                if isnumeric(trial.choice)
-                    correct_counter = correct_counter + double(single(trial.trialType) == single(trial.choice));
-                else
-                    correct_counter = correct_counter + strcmp(trial.trialType.char, trial.choice.char);
-                end
-            end
-            perf = correct_counter/nTrials;
-            if isfinite(perf)
-                tuple.block_performance = perf;
-            else
-                tuple.block_performance = 0;
-            end
-
-            nTrials = length([block.trial.choice]);
-            for itrial = 1:nTrials
-                trial = block.trial(itrial);
-                tuple_trial = key;
-                tuple_trial.trial_idx = itrial;
-
-                if isnumeric(trial.trialType)
-                    tuple_trial.trial_type = Choice(trial.trialType).char;
-                else
-                    tuple_trial.trial_type = trial.trialType.char;
-                end
-                if isnumeric(trial.choice)
-                    tuple_trial.choice = Choice(trial.choice).char;
-                else
-                    tuple_trial.choice = trial.choice.char;
-                end
-
-                tuple_trial.trial_time = trial.time;
-                tuple_trial.trial_abs_start = trial.start;
-                tuple_trial.collision = trial.collision;
-                if iscell(trial.cueCombo)
-                    if all(cellfun(@isempty, trial.cueCombo))
-                        tuple_trial.cue_presence_left = {[]};
-                        tuple_trial.cue_presence_right = {[]};
-                    else
-                        tuple_trial.cue_presence_left = trial.cueCombo(1);
-                        tuple_trial.cue_presence_right = trial.cueCombo(2);
-                    end
-                else
-                    tuple_trial.cue_presence_left = {trial.cueCombo(1, :)};
-                    tuple_trial.cue_presence_right = {trial.cueCombo(2, :)};
-                end
-                tuple_trial.cue_onset_left = trial.cueOnset(1);
-                tuple_trial.cue_onset_right = trial.cueOnset(2);
-                tuple_trial.cue_offset_left = trial.cueOffset(1);
-                tuple_trial.cue_offset_right = trial.cueOffset(2);
-                tuple_trial.cue_pos_left = trial.cuePos(1);
-                tuple_trial.cue_pos_right = trial.cuePos(2);
-
-                tuple_trial.trial_duration = trial.duration;
-                tuple_trial.excess_travel = trial.excessTravel;
-                tuple_trial.i_arm_entry = exists_helper(trial,'iArmEntry');
-                tuple_trial.i_blank = exists_helper(trial,'iBlank');
-                tuple_trial.i_turn_entry = exists_helper(trial,'iTurnEntry');
-                tuple_trial.i_cue_entry = exists_helper(trial,'iCueEntry');
-                tuple_trial.i_mem_entry = exists_helper(trial,'iMemEntry');
-                tuple_trial.iterations = trial.iterations;
-                tuple_trial.position = trial.position;
-                tuple_trial.velocity = trial.velocity;
-                tuple_trial.sensor_dots = trial.sensorDots;
-                tuple_trial.trial_id = trial.trialID;
-                if isempty(trial.trialID) || isnan(trial.trialID)
-                    tuple_trial.trial_id = -1;
-                else
-                    tuple_trial.trial_id = trial.trialID;
-                end
-                
-                if length(trial.trialProb) == 1
-                    tuple_trial.trial_prior_p_left = trial.trialProb;
-                elseif isempty(trial.trialProb)
-                    tuple_trial.trial_prior_p_left = -1;
-                else
-                    % For not 50:50 trials, take only one of the
-                    % probabilities (they add up to 1)
-                    tuple_trial.trial_prior_p_left = trial.trialProb(1);
-                end
-
-                tuple_trial.vi_start = trial.viStart;
-                struct_trials(itrial) = tuple_trial;
-
-            end
-
-            if exist('struct_trials')
+        function insertSpatialTimeBlob(self, key,log)
+            % Insert spatialtime blobs from behavior file
             
-                %"Unnest" cells to match previous way of inserting data
-                fields_blob = {'cue_presence_left', 'cue_presence_right', 'cue_onset_left', ...
-                    'cue_onset_right', 'cue_offset_left', 'cue_offset_right', ...
-                    'cue_pos_left', 'cue_pos_right'};
-                for f=1:length(fields_blob)
-                    field = fields_blob{f};
-                    for s = 1:length(struct_trials)
-                        struct_trials(s).(field) = struct_trials(s).(field){:};
-                    end
-                end
-                tic
-
-                self.schema.conn.startTransaction()
-                try
-                    self.insert(tuple);
-                    insert(behavior.TowersBlockTrial, struct_trials)
-                    %self.schema.conn.commitTransaction
-                    toc
-                catch err
-                    %Cancel previous transaction but start a new one to prevent DJ to fail
-                    self.schema.conn.cancelTransaction
-                    self.schema.conn.startTransaction()
-                    throw(err); 
-                end
-            end
-
-            %end
+            spatial_time_struct = behavior.SpatialTimeBlobs.get_spatial_time_vars_session(log);
+            
+            key.iteration_matrix        = spatial_time_struct.iteration_matrix;
+            key.trial_time              = spatial_time_struct.trial_time;
+            key.cumulative_session_time = spatial_time_struct.cumulative_session_time;
+            key.position                = spatial_time_struct.position;
+            key.velocity                = spatial_time_struct.velocity;
+            key.collision               = spatial_time_struct.collision;
+            key.sensor_dots             = spatial_time_struct.sensor_dots;
+            
+            self.insert(key);
+            
         end
+                
+    end
+    
+    methods (Static)
         
-        function update_main_level_blocks(self)
-            %Update main level for previous inserted blocks
+         function spatial_time_struct = get_spatial_time_vars_session(log)
+            % Get a structure with all spatial & time variables and block-trial-iteration correspondence
+            %Returns struct with next fields:
+            % block
+            % trial
+            % iteration
+            % trial_time
+            % session_time
+            % sensor_dots
+            % position
+            % velocity
+            % collision
             
+            % Matrices that will be appended for each trial
+            iteration_matrix      = [];
+            trial_time_final      = [];
+            session_time_final    = [];
+            position_session      = [];
+            velocity_session      = [];
+            collision_session     = [];
+            sensor_dots_session   = [];
             
-            %Fetch all blocks with main_level = 0
-            block_info = fetch(proj(self, 'task->ts', 'main_level') * acquisition.SessionStarted & 'main_level = 0', ...
-                'task', 'remote_path_behavior_file');
-            
-            
-            for i=1:length(block_info)
-                
-                [i length(block_info)]
-                
-                %Read behavior file
-                [status, data] = lab.utils.read_behavior_file(0, block_info(i));
-                if status
-                    %Get current block
-                    log = data.log;
-                    current_block = log.block(block_info(i).block);
-                    main_level = current_block.mainMazeID;
-                    
-                    %Remove unnecesary fields for key and update
-                    block_key = rmfield(block_info(i), 'task');
-                    block_key = rmfield(block_key, 'remote_path_behavior_file');
-                    update(self & block_key, 'main_level', main_level);
-                end
+            %Check if timeElapsedFirstTrial is stored on behavior file
+            timeElapsedFirstTrial = 0;
+            offset_time = 0;
+            if isfield(log,'timeElapsedFirstTrial') && ~isempty(log.timeElapsedFirstTrial)
+                timeElapsedFirstTrial = log.timeElapsedFirstTrial;
             end
+            
+            % For each block
+            for i = 1:length(log.block)
                 
+                %Get all trial data and number of trials
+                trials = log.block(i).trial;
+                nTrials = length([trials.choice]);
+                
+                for j = 1:nTrials
+                    
+                    current_trial = trials(j);
+                    
+                    % For 2nd block onwards
+                    if i > 1
+                        %Check if it's a restart case scenario
+                        if j==1
+                            if current_trial.start < end_block_relative_time
+                                offset_time = seconds(datetime(log.block(i).start) - datetime(log.block(1).start));
+                            else
+                                offset_time = 0;
+                            end
+                        end
+                    end
+                    
+                    
+                    %Get time for each iteration of current trial
+                    time_session =  current_trial.start+current_trial.time+ timeElapsedFirstTrial + offset_time;
+                    time_trial   =  current_trial.time;
+                    
+                    %Block-trial-iteration number for the current trial
+                    iteration_num = [1:length(time_trial)]';
+                    block_num = ones(size(iteration_num))*i;
+                    trial_num = ones(size(iteration_num))*j;
+                    
+                    % Spatial vars
+                    sensor_dots      =  current_trial.sensorDots;
+                    
+                    % Get missing iterations from position, velocity, etc.
+                    missing_pos_iter = length(time_trial) - length(current_trial.position);
+                    position         = [current_trial.position; nan(missing_pos_iter,3)];
+                    velocity         = [current_trial.velocity; nan(missing_pos_iter,3)];
+                    collision        = [current_trial.collision; nan(missing_pos_iter,1)];
+                    
+                    % Store last time of the trial to check for future restart scenarios
+                    if j==nTrials
+                        end_block_relative_time = time_session(end);
+                    end
+                    
+                    %Append data matrices
+                    this_iteration_matrix = [block_num trial_num iteration_num];
+                    iteration_matrix = [iteration_matrix; this_iteration_matrix];
+                    
+                    trial_time_final      = [trial_time_final; time_trial];
+                    session_time_final    = [session_time_final; time_session];
+                    position_session      = [position_session; position];
+                    velocity_session      = [velocity_session; velocity];
+                    collision_session     = [collision_session; collision];
+                    sensor_dots_session   = [sensor_dots_session; sensor_dots];
+                    
+                    
+                end
+                
+            end
+            
+            % Get all matrices in a struct
+            spatial_time_struct.iteration_matrix        = iteration_matrix;
+            spatial_time_struct.trial_time              = trial_time_final;
+            spatial_time_struct.cumulative_session_time = session_time_final;
+            spatial_time_struct.position                = position_session;
+            spatial_time_struct.velocity                = velocity_session;
+            spatial_time_struct.collision               = collision_session;
+            spatial_time_struct.sensor_dots             = sensor_dots_session;
+            
+            
         end
         
     end
+    
+    
 end
 
-function [s] = exists_helper(trial, fieldname)
-if isfield(trial, fieldname) && ~isempty(trial.(fieldname))
-    s = trial.(fieldname);
-else
-    s = 0;
-end
-end
 
-%% fix logs where trial type and choice are not recorded due to bug
+
+
+%% fix logs where trial type and choice are not recorded due to bug (Sue Ann's old sessions)
 function block = fixLogs(block)
 
 for iBlock = 1:numel(block)
-
+    
     %Correct number of trials when there are empty trials in block
     nTrials = length([block(iBlock).trial.choice]);
     block(iBlock).trial = block(iBlock).trial(1:nTrials);
-
+    
     nTrials = numel(block(iBlock).trial);
     for iTrial = 1:nTrials
         if isempty(block(iBlock).trial(iTrial).trialType)
@@ -280,6 +219,6 @@ for iBlock = 1:numel(block)
 end
 
 
-end  
-        
+end
+
 
