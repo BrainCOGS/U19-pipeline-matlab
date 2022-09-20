@@ -2,7 +2,7 @@ function dj_initial_conf(save_user)
 %Run this to configure needed variables for DataJoint (host, user, password, root directories and external storage)
  
 if nargin < 1
-    save_user = false;
+    save_user = true;
 end
 
 current_dir = pwd;
@@ -22,7 +22,12 @@ else
     pass = input('Enter datajoint password>', 's');
 end
  
-dj.conn(host, user, pass);
+try
+    dj.conn(host, user, pass);
+catch
+    error('Incorrect user and/or password')
+end
+
 dj.config('databaseHost', host)
  
 if save_user
@@ -30,68 +35,59 @@ if save_user
     dj.config('databasePassword', pass)
 end
  
- 
 dj.config.saveLocal()
  
 dj_config_custom_struct = struct();
 dj_config_custom_struct.databasePrefix = getenv('DB_PREFIX');
  
- 
-%Get imaging root data dir
-key = struct();
-key.recording_modality = 'imaging';
-try
-    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-    [~,dj_config_custom_struct.imaging_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-    if ispc
-       dj_config_custom_struct.imaging_root_data_dir = strrep(dj_config_custom_struct.imaging_root_data_dir,'\','\\');
+% Get all dj custom variables stored in DB
+dj_vars = struct2table(fetch(lab.DjCustomVariables,'*'), 'AsArray',true);
+dj_vars.custom_variable = categorical(dj_vars.custom_variable);
+unique_dj_vars = unique(dj_vars.custom_variable);
+
+% Store each dj var in a dj_custom structure
+for i =1:length(unique_dj_vars)
+    this_dj_var = unique_dj_vars(i);
+    this_dj_var_camel = dj.internal.toCamelCase(char(this_dj_var));
+    filtered_table = dj_vars(dj_vars.custom_variable == this_dj_var, :);
+    
+    % Unpack directory variables (can have more than 1 value)
+    if contains(char(this_dj_var), 'dir')
+        [~, this_dj_value] = cellfun(@(x) lab.utils.get_path_from_official_dir(x), ...
+        filtered_table{:,'value'},'UniformOutput', false);
+        this_dj_value = convertCharsToStrings(this_dj_value);
+    else
+        this_dj_value = filtered_table{:,'value'};
     end
-catch
-    disp('Could not find imaging root directory')
-end
- 
-%Get ephys root data dir
-key.recording_modality = 'electrophysiology';
-try
-    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-    [~,dj_config_custom_struct.ephys_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-    if ispc
-       dj_config_custom_struct.ephys_root_data_dir = strrep(dj_config_custom_struct.ephys_root_data_dir,'\','\\');
+    
+    % Format correctly variables with 1 value and vars with 2 or more
+    rows = height(filtered_table);
+    if rows == 1
+        dj_config_custom_struct.(this_dj_var_camel) = this_dj_value{:};
+    else
+        dj_config_custom_struct.(this_dj_var_camel) = this_dj_value;
     end
-catch
-    disp('Could not find electrophysiology root directory')
 end
- 
-%Get pupillometry root data dir
-key = struct();
-key.recording_modality = 'video_acquisition';
-try
-    root_dir = fetch1(recording.RecordingModality & key,'root_directory');
-    [~,dj_config_custom_struct.pupillometry_root_data_dir] = lab.utils.get_path_from_official_dir(root_dir);
-    if ispc
-       dj_config_custom_struct.pupillometry_root_data_dir = strrep(dj_config_custom_struct.pupillometry_root_data_dir,'\','\\');
-    end
-catch
-    disp('Could not find electrophysiology root directory')
-end
- 
+
 dj.config('custom', dj_config_custom_struct)
- 
- 
-%Get ext_storage_path
-ext_storage_path = 'u19_dj/external_dj_blobs';
-[~,ext_storage_path] = lab.utils.get_path_from_official_dir(ext_storage_path);
-if ispc
-   ext_storage_path = strrep(ext_storage_path,'\','\\');
+
+%Get store info
+store_vars = struct2table(fetch(lab.DjStores,'*'), 'AsArray',true);
+
+% For each store get name, protocol and location, and save to config
+for i =1:height(store_vars)
+    store_name = store_vars{i, 'store_name'}{:};
+    [~,store_path] = lab.utils.get_path_from_official_dir(store_vars{i, 'location'}{:});
+    if ispc
+        store_path = strrep(storage_path,'\','\\');
+    end
+    store_protocol = store_vars{i, 'protocol'}{:};
+    u19_storage = struct('protocol', store_protocol, 'location', store_path);
+    dj.config(['stores.' store_name], u19_storage)
+    
 end
- 
- 
-%Configure dj dictionary
-u19_storage = struct('protocol', 'file',...
-    'location', ext_storage_path);
-dj.config('stores.extstorage', u19_storage)
- 
- 
+    
+
 dj.config.saveLocal()
 
 cd(current_dir);
