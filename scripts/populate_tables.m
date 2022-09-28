@@ -1,7 +1,7 @@
 
 
-script_filepath = mfilename('fullpath');
-repository_dir = fileparts(fileparts(script_filepath));
+script_filepath = mfilename('fullpath')
+repository_dir = fileparts(fileparts(script_filepath))
 addpath(genpath(repository_dir));
 
 % Populate behavior tables
