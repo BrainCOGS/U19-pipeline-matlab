@@ -4,6 +4,8 @@ script_filepath = mfilename('fullpath')
 repository_dir = fileparts(fileparts(script_filepath))
 addpath(genpath(repository_dir));
 
+connect_datajoint00
+
 % Populate behavior tables
 [keys_session, errors_session] = populate(acquisition.Session);
 [keys_session_block, errors_session_block] = populate(acquisition.SessionBlock);
