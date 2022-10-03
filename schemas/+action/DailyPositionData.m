@@ -13,7 +13,7 @@ top_image=null:     blob@dailyposition    # top     photo taken for reference
 % AX2 AP Anteroposterior
 % AX3 DV Dorsoventral
 
-classdef DailyMotorPositionData < dj.Manual
+classdef DailyPositionData < dj.Manual
     
     properties (Constant = true)
         
@@ -32,14 +32,14 @@ classdef DailyMotorPositionData < dj.Manual
             key.ap_position      = motor_position.ap_position;
             key.dv_position      = motor_position.dv_position;
             
-            if nargin >= 3
+            if nargin >= 3 && ~isempty(lateral_image)
                 key.lateral_image = lateral_image;
             end
-            if nargin >= 4
+            if nargin >= 4 && ~isempty(top_image)
                 key.top_image = top_image;
             end
             
-            insert(action.DailyMotorPositionData,key);
+            insert(action.MotorPositionData,key);
             
         end
         

@@ -19,7 +19,7 @@ user = input('Enter datajoint username> ', 's');
 if usejava('desktop')
     pass = dj.lib.getpass('Enter datajoint password');
 else
-    pass = input('Enter datajoint password>', 's');
+    pass = input('Enter datajoint password> ', 's');
 end
  
 try
@@ -34,6 +34,9 @@ if save_user
     dj.config('databaseUser', user)
     dj.config('databasePassword', pass)
 end
+
+% Clean custom because cell arrays have to be tranformed to string arrays
+dj.config('custom', [])
  
 dj.config.saveLocal()
  
