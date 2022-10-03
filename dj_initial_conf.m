@@ -82,7 +82,7 @@ for i =1:height(store_vars)
     store_name = store_vars{i, 'store_name'}{:};
     [~,store_path] = lab.utils.get_path_from_official_dir(store_vars{i, 'location'}{:});
     if ispc
-        store_path = strrep(storage_path,'\','\\');
+        store_path = strrep(store_path,'\','\\');
     end
     store_protocol = store_vars{i, 'protocol'}{:};
     u19_storage = struct('protocol', store_protocol, 'location', store_path);
