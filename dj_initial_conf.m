@@ -59,6 +59,9 @@ for i =1:length(unique_dj_vars)
         [~, this_dj_value] = cellfun(@(x) lab.utils.get_path_from_official_dir(x), ...
         filtered_table{:,'value'},'UniformOutput', false);
         this_dj_value = convertCharsToStrings(this_dj_value);
+        if ispc
+            this_dj_value = strrep(this_dj_value,'\','\\');
+        end
     else
         this_dj_value = filtered_table{:,'value'};
     end
