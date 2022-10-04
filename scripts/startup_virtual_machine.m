@@ -1,6 +1,6 @@
 
-u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')))
-dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs')
+u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')));
+dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs');
 
 addpath (genpath(fullfile(u19_pipeline_dir)));
 rmpath  (genpath(fullfile(u19_pipeline_dir, '.git')));
@@ -20,7 +20,15 @@ rmpath  (genpath(fullfile(dj_lib_dir, 'datajoint-matlab', 'mym')));
 
 curr_dir = pwd;
 cd(u19_pipeline_dir)
-dj.config.load();
+if isfile('dj_local_conf.json')
+    dj.config.load();
+    conf = dj.config;
+    setenv('DB_PREFIX', conf.custom.databasePrefix);
+    cd(curr_dir);
+    dj.conn();
+else
+    cd(curr_dir)
+    error('Configuration file not found, run dj_initial_conf')
+end
 
-cd(curr_dir)
-dj.conn();
+
