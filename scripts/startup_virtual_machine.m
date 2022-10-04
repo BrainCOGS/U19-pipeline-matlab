@@ -1,6 +1,6 @@
 
-u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')));
-dj_lib_dir = fullfile(u19_pipeline_dir, 'datajoint_matlab_libs');
+u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')))
+dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs')
 
 addpath (genpath(fullfile(u19_pipeline_dir)));
 rmpath  (genpath(fullfile(u19_pipeline_dir, '.git')));
