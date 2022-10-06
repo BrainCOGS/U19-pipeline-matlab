@@ -36,34 +36,33 @@ vars_to_translate = {'trial_time' 'cumulative_session_time', 'collision' 'positi
 idx_previous_session = -1;
 %For each trial found
 for idx_trial = 1:height(trial_data)
-    tic
+
     % Get key and filter blob_session_table corresponding data
     this_trial_key = trial_data(idx_trial, {'super_key', 'block', 'trial_idx'});
     idx_session = blob_session_data.super_key == this_trial_key.super_key;
     
+    % If we have session_blob_data for the session of the trial:
     if sum(idx_session) == 1
     
+        % Only read data if it is a different session than before
         if idx_session ~= idx_previous_session
             this_iteration_matrix = blob_session_data{idx_session, 'iteration_matrix'}{:};
             this_blob_session_data = blob_session_data(idx_session, :);
             blob_vars = this_blob_session_data{:, vars_to_translate};
         end
         
+        %Get iteration idxs for the specific trial in the session
         idx_var_blobs = (this_iteration_matrix(:,1) == this_trial_key.block) & ...
             (this_iteration_matrix(:,2) == this_trial_key.trial_idx);
         
-        % Append trial data table with corresponding blob_session_table variables
-        for idx_var = 1:length(vars_to_translate)
-            
-            this_var = this_blob_session_data{:, vars_to_translate{idx_var}}{:};
-            this_var = this_var(idx_var_blobs, :);
-            
-            trial_data{idx_trial, (vars_to_translate{idx_var})} = {this_var};
-        end
+        
+        % Filter blob data for the specific trial and append it to trial table
+        this_trial_blobs = cellfun(@(x) x(idx_var_blobs,:),blob_vars,'Un',0);
+        trial_data{idx_trial, vars_to_translate} = this_trial_blobs;
+        
         
     idx_previous_session = idx_session;
     end
-    toc
     
 end
  
