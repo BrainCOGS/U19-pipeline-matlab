@@ -99,6 +99,7 @@ classdef SpatialTimeBlobs < dj.Imported
             if isfield(log,'timeElapsedFirstTrial') && ~isempty(log.timeElapsedFirstTrial)
                 timeElapsedFirstTrial = log.timeElapsedFirstTrial;
             end
+            end_block_relative_time = 0;
             
             % For each block
             for i = 1:length(log.block)
@@ -106,6 +107,7 @@ classdef SpatialTimeBlobs < dj.Imported
                 %Get all trial data and number of trials
                 trials = log.block(i).trial;
                 nTrials = length([trials.choice]);
+
                 
                 for j = 1:nTrials
                     
