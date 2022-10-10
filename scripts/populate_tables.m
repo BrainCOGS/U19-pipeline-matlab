@@ -1,7 +1,7 @@
 
 
-script_filepath = mfilename('fullpath')
-repository_dir = fileparts(fileparts(script_filepath))
+script_filepath = mfilename('fullpath');
+repository_dir = fileparts(fileparts(script_filepath));
 addpath(genpath(repository_dir));
 
 connect_datajoint00
@@ -11,6 +11,7 @@ connect_datajoint00
 [keys_session_block, errors_session_block] = populate(acquisition.SessionBlock);
 [keys_towers_session, errors_towers_session] = populate(behavior.TowersSession);
 [keys_block, errors_block] = populate(behavior.TowersBlock);
+[keys_spatialtimeblobs, errors_spatialtimeblobs] = populate(behavior.SpatialTimeBlobs);
 
 
 % Populate optogenetics tables
