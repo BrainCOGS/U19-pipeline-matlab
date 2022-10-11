@@ -22,8 +22,13 @@ remaining_trial_fields = setdiff(trial_table.nonKeyFields, non_required_trial_bl
 
 % Fetch trial by trial data and blob_session_table data
 trial_data        = struct2table(fetch(trial_table & key, remaining_trial_fields{:}),'AsArray', true);
-blob_session_data = struct2table(fetch(blob_session_table & key, '*'), 'AsArray', true);
 primary_key = blob_session_table.primaryKey;
+
+%Get corresponding blob session key and fetch
+blob_session_key = trial_data(:, primary_key);
+blob_session_key = table2struct(unique(blob_session_key));
+blob_session_data = struct2table(fetch(blob_session_table & blob_session_key, '*'), 'AsArray', true);
+
 
 % Construct a "superkey" from composite keys
 trial_data.super_key = get_superkey_from_table_data(trial_data, primary_key);
@@ -34,11 +39,15 @@ vars_to_translate = {'trial_time' 'cumulative_session_time', 'collision' 'positi
 
 previous_session_num = -1;
 trial_blobs = cell(height(trial_data),length(vars_to_translate));
+msg = '';
 %For each trial found
 for idx_trial = 1:height(trial_data)
 
     if mod(idx_trial,1000) == 0
-        fprintf('Trials %d/%d \n', idx_trial, height(trial_data))
+        fprintf(char(repmat(8,1,length(msg))));
+        msg = sprintf('Trials %d/%d', idx_trial, height(trial_data));
+        fprintf('Trials %d/%d', idx_trial, height(trial_data))
+        
     end
     % Get key and filter blob_session_table corresponding data
     this_trial_key = trial_data(idx_trial, {'super_key', 'block', 'trial_idx'});
@@ -69,6 +78,7 @@ for idx_trial = 1:height(trial_data)
     end
     
 end
+fprintf('\n');
  
 % Append blob data to trial table
 trial_data{:, vars_to_translate} = trial_blobs;
