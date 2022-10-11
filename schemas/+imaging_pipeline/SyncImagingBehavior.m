@@ -65,7 +65,7 @@ classdef SyncImagingBehavior < dj.Computed
         
         % Synchronization info
         [imagingF(iFile).acquisition, imagingF(iFile).epoch, imagingF(iFile).frameTime, imagingF(iFile).syncTime, data]   ...
-                                    = cv.getSyncInfo(movieFiles{iFile}, 'uint16', []);
+                                    = getSyncInfo(movieFiles{iFile}, 'uint16', []);
         fileAcquis                  = regexp(movieFiles{iFile}, '_([0-9]+)_[0-9]+[.][^.]+$', 'tokens', 'once');
         if ~isempty(fileAcquis)
           fileAcquis                = str2double(fileAcquis{:});
