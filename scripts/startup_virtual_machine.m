@@ -5,7 +5,14 @@ dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs');
 addpath (genpath(fullfile(u19_pipeline_dir)));
 rmpath  (genpath(fullfile(u19_pipeline_dir, '.git')));
 
-addpath (genpath(fullfile(dj_lib_dir, 'mym', 'distribution', 'mexa64')));
+
+if ispc
+    addpath (genpath(fullfile(dj_lib_dir, 'mym', 'distribution', 'mexw64')));
+elseif ismac
+    addpath (genpath(fullfile(dj_lib_dir, 'mym', 'distribution', 'mexmaci64')));
+else
+    addpath (genpath(fullfile(dj_lib_dir, 'mym', 'distribution', 'mexa64')));
+end
 
 addpath (genpath(fullfile(dj_lib_dir, 'datajoint-matlab')));
 rmpath  (genpath(fullfile(dj_lib_dir, 'datajoint-matlab', '.git')));
