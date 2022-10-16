@@ -1,7 +1,21 @@
 
+%Startup script for cluster machines 
+
+curr_dir = pwd;
 u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')));
 dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs');
 
+%Try to pull latest changes on repo
+cd(u19_pipeline_dir);
+try
+    [status,info] = system('git pull');
+catch err
+    displayException(err);
+    warning('Pulling latest changes was not possible')
+end
+
+
+%Add to path all neded libraries
 addpath (genpath(fullfile(u19_pipeline_dir)));
 rmpath  (genpath(fullfile(u19_pipeline_dir, '.git')));
 
@@ -25,8 +39,8 @@ rmpath  (genpath(fullfile(dj_lib_dir, 'compareVersions', '.git')));
 
 rmpath  (genpath(fullfile(dj_lib_dir, 'datajoint-matlab', 'mym')));
 
-curr_dir = pwd;
-cd(u19_pipeline_dir)
+
+% Try to connect to DB
 if isfile('dj_local_conf.json')
     dj.config.load();
     conf = dj.config;
