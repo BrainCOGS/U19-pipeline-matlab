@@ -4,7 +4,8 @@
 -> behavior_subtask.TestSubtaskSession
 -> acquisition.SessionBlock
 ---
-block_duration: float                         # in secs, duration of the block
+**** Add here new block level fields for TestSubtask *****
+
 %}
 
 classdef TestSubtaskBlock < dj.Imported
