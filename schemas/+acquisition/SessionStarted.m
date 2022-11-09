@@ -9,6 +9,7 @@ session_start_time          : datetime                      # start time
 -> task.Task                                                # Which task was performed in session
 local_path_behavior_file    : varchar(255)                  # Path were session file is stored in local computer
 remote_path_behavior_file   : varchar(255)                  # Path were session file will be stored in bucket
+new_remote_path_behavior_file : varchar(255)                # Unified Path were session file will be stored in cup
 is_finished=0               : tinyint                       # Flag that indicates if this session was finished successfully
 invalid_session=0           : tinyint                       # Flag that indicates if behavioral file couldn't be saved for the session
 %}
@@ -135,6 +136,7 @@ classdef SessionStarted < dj.Manual
  
             %primary key values
             key.remote_path_behavior_file = bucket_file_path;
+            key.new_remote_path_behavior_file = bucket_file_path;
  
  
             key.session_start_time = sprintf('%d-%02d-%02d %02d:%02d:00', log.session.start(1), log.session.start(2), log.session.start(3), log.session.start(4), log.session.start(5));
