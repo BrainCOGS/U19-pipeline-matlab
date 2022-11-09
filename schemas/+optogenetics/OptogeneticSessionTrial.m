@@ -54,8 +54,12 @@ classdef OptogeneticSessionTrial < dj.Part
                         else
                             opto_trial_key.t_stim_on  = 0;
                         end
-                        if curr_trial.iLaserOff > 0 
-                            opto_trial_key.t_stim_off = time_trial(curr_trial.iLaserOff);
+                        if curr_trial.iLaserOff > 0
+                            if curr_trial.iLaserOff > length(time_trial)
+                               opto_trial_key.t_stim_off = time_trial(end);
+                            else
+                               opto_trial_key.t_stim_off = time_trial(curr_trial.iLaserOff);
+                            end
                         else
                             opto_trial_key.t_stim_off = 0;
                         end
