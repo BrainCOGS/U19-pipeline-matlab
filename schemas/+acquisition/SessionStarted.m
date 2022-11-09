@@ -61,6 +61,7 @@ classdef SessionStarted < dj.Manual
                 key.task                      = task;
                 key.local_path_behavior_file  = localPath;
                 key.remote_path_behavior_file = remote_location;
+                key.new_remote_path_behavior_file = remote_location;
                 key.is_finished               = 0;
  
                 insert(acquisition.SessionStarted, key);
