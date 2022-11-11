@@ -62,7 +62,11 @@ classdef SessionStarted < dj.Manual
                 key.task                      = task;
                 key.local_path_behavior_file  = localPath;
                 key.remote_path_behavior_file = remote_location;
-                key.new_remote_path_behavior_file = remote_location;
+                
+                key.new_remote_path_behavior_file = ...
+                    lab.utils.create_new_behavior_filename(localPath, ...
+                    key.subject_fullname, key.session_date, key.session_number);
+                
                 key.is_finished               = 0;
  
                 insert(acquisition.SessionStarted, key);
@@ -120,14 +124,12 @@ classdef SessionStarted < dj.Manual
  
         function insertSessionStartedFromFile_Towers(self,key,log, bucket_file_path, rig_default_path)
             % Insert sessionStarted record from towers task behavioralfile
-            % Called at the end of training or when populating session
             % Input
             % self             = acquisition.SessionStarted instance
             % key              = structure with required fields: (subject_fullname, date, session_no)
             % log              = behavioral file as stored in Virmen
             % bucket_file_path = file path in bucket
-            % rig_default_path =
-            % is_finished      =
+            % rig_default_path = rig default bucket path location
  
             %INSERT_ACQ_SESSION STARTED insert u19_acquisition.sessionstarted info when file is provided
             %
@@ -135,10 +137,7 @@ classdef SessionStarted < dj.Manual
             % acqsession_file  = entire file path for towers task behavior file
  
             %primary key values
-            key.remote_path_behavior_file = bucket_file_path;
-            key.new_remote_path_behavior_file = bucket_file_path;
- 
- 
+            key.remote_path_behavior_file = bucket_file_path; 
             key.session_start_time = sprintf('%d-%02d-%02d %02d:%02d:00', log.session.start(1), log.session.start(2), log.session.start(3), log.session.start(4), log.session.start(5));
  
             %Check location and if doesn't exist insert it.
@@ -160,10 +159,13 @@ classdef SessionStarted < dj.Manual
             local_path = strrep(local_path, '/', '\');
  
             key.local_path_behavior_file  = local_path;
+            
+            key.new_remote_path_behavior_file = ...
+                    lab.utils.create_new_behavior_filename(local_path, ...
+                    key.subject_fullname, key.session_date, key.session_number);
  
             %By default, we think this task was successfully finished
             key.is_finished = 1;
- 
  
             insert(acquisition.SessionStarted, key);
             else
