@@ -13,7 +13,7 @@ sess_Date_key = ['session_date >= ''' from_date ''''];
 
 %Only needed fields
 fields = {'subject_fullname', 'session_date', 'session_number',  'session_start_time', ...
-          'combined_file_name->remote_path_behavior_file', 'session_location', 'bucket_default_path'};
+          'combined_file_name->new_remote_path_behavior_file', 'session_location', 'bucket_default_path'};
       
 %Get data directory, acq session, and lab location minus session started records      
 session_struct = fetch(behavior.DataDirectory * acquisition.Session ...
@@ -28,7 +28,7 @@ if ~isempty(session_struct)
                         
         %Replace /brainit/rigx ... with c:/data in local path
         session_struct(i).local_path_behavior_file = ...
-            strrep(session_struct(i).remote_path_behavior_file, ...
+            strrep(session_struct(i).new_remote_path_behavior_file, ...
                    session_struct(i).bucket_default_path, default_local_path);
                
         

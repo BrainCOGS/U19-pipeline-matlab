@@ -15,7 +15,7 @@ for j=1:length(session_diff_struct)
     
     %Load behavioral file
     try
-        [~, data_dir] = lab.utils.get_path_from_official_dir(session_diff_struct(j).remote_path_behavior_file);
+        [~, data_dir] = lab.utils.get_path_from_official_dir(session_diff_struct(j).new_remote_path_behavior_file);
         data = load(data_dir,'log');
         log = data.log;
         status = 1;

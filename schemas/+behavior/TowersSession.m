@@ -21,7 +21,7 @@ classdef TowersSession < dj.Imported
         function makeTuples(self, key)
             
             %Get behavioral file to load
-            data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            data_dir = fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file');
             
             
             %Load behavioral file

@@ -21,7 +21,7 @@ classdef SyncImagingBehavior < dj.Computed
       
       %% behav
       [~, acqsession_file] = lab.utils.get_path_from_official_dir(...
-                           fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file'));
+                           fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file'));
       behavdata = load(acqsession_file, 'log');
       block     = behavdata.log.block;
       

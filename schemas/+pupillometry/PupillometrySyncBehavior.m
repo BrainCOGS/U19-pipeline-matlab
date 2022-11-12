@@ -13,7 +13,7 @@ classdef PupillometrySyncBehavior < dj.Imported
         function makeTuples(self, key)
             
             %Get behavior filepath
-            behavior_filepath = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            behavior_filepath = fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file');
             [~, behavior_filepath] = lab.utils.get_path_from_official_dir(behavior_filepath);
             
             %Get video filepath

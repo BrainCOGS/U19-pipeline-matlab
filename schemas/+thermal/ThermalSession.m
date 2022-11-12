@@ -19,7 +19,7 @@ classdef ThermalSession < dj.Imported
         function makeTuples(self, key)
             
             %Get behavioral file to load
-            data_dir = fetch1(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
+            data_dir = fetch1(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');
             
             
             %Load behavioral file

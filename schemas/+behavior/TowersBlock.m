@@ -18,12 +18,12 @@ classdef TowersBlock < dj.Imported
     properties
         %keySource = acquisition.Session & acquisition.SessionStarted
         %keySource = proj(acquisition.Session, 'level->na_level') * ...
-        %         proj(acquisition.SessionStarted, 'session_location->na_location', 'remote_path_behavior_file')
+        %         proj(acquisition.SessionStarted, 'session_location->na_location', 'new_remote_path_behavior_file')
     end
     methods(Access=protected)
         function makeTuples(self, key)
 
-            data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            data_dir = fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file');
 
 
             %Load behavioral file
@@ -215,7 +215,7 @@ classdef TowersBlock < dj.Imported
             
             %Fetch all blocks with main_level = 0
             block_info = fetch(proj(self, 'task->ts', 'main_level') * acquisition.SessionStarted & 'main_level = 0', ...
-                'task', 'remote_path_behavior_file');
+                'task', 'new_remote_path_behavior_file');
             
             
             for i=1:length(block_info)
@@ -232,7 +232,7 @@ classdef TowersBlock < dj.Imported
                     
                     %Remove unnecesary fields for key and update
                     block_key = rmfield(block_info(i), 'task');
-                    block_key = rmfield(block_key, 'remote_path_behavior_file');
+                    block_key = rmfield(block_key, 'new_remote_path_behavior_file');
                     update(self & block_key, 'main_level', main_level);
                 end
             end

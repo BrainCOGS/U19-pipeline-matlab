@@ -10,7 +10,7 @@ fields_trials = {'position', 'iterations'};
 date_key = 'session_date > "2011-01-01"' ;
 
 session_struct = fetch(proj(acquisition.Session,'session_location->sess_loc') * acquisition.SessionStarted & date_key, ...
-    'remote_path_behavior_file', 'ORDER BY session_date desc');
+    'new_remote_path_behavior_file', 'ORDER BY session_date desc');
 num_diff_trials = 0;
 
 num_diff_sessions = 0;
@@ -20,7 +20,7 @@ for j=1:length(session_struct)
     
     %Load behavioral file
     try
-        [~, data_dir] = lab.utils.get_path_from_official_dir(session_struct(j).remote_path_behavior_file);
+        [~, data_dir] = lab.utils.get_path_from_official_dir(session_struct(j).new_remote_path_behavior_file);
         data = load(data_dir,'log');
         log = data.log;
         status = 1;

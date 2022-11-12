@@ -11,7 +11,7 @@ for j=1:length(session_diff_struct)
     
     [j length(session_diff_struct)]
     
-    filename = session_diff_struct(j).remote_path_behavior_file;
+    filename = session_diff_struct(j).new_remote_path_behavior_file;
     
     if ismac
         acqsession_file = ['/Volumes' filename];
@@ -52,7 +52,7 @@ for j=1:length(session_diff_struct)
                 key.session_date = session_diff_struct(j).session_date;
                 key.session_number = session_diff_struct(j).session_number;
                 
-                update(acquisition.SessionStarted & key, 'remote_path_behavior_file', filename);
+                update(acquisition.SessionStarted & key, 'new_remote_path_behavior_file', filename);
             end
             
         end

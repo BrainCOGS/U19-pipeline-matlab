@@ -29,7 +29,7 @@ classdef SyncImagingBehavior < dj.Computed
       session_key = rmfield(session_key, 'recording_id');
       
       [~, acqsession_file] = lab.utils.get_path_from_official_dir(...
-                           fetch1(acquisition.SessionStarted & session_key, 'remote_path_behavior_file'));
+                           fetch1(acquisition.SessionStarted & session_key, 'new_remote_path_behavior_file'));
       behavdata = load(acqsession_file, 'log');
       block     = behavdata.log.block;
       

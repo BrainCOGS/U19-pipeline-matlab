@@ -12,7 +12,7 @@ classdef ^Package^Block < dj.Imported
         function makeTuples(self, key)
             
             %Get behavioral file to load
-            data_dir = fetch(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
+            data_dir = fetch(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');
             
             %Load behavioral file
             [status, data] = lab.utils.read_behavior_file(key, data_dir);

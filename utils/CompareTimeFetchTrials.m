@@ -36,7 +36,7 @@ fields_trials = {'trial_type', ...
 };
 
 session_struct = fetch(proj(acquisition.Session,'session_location->sess_loc') * acquisition.SessionStarted, ...
-    'remote_path_behavior_file', 'ORDER BY session_date');
+    'new_remote_path_behavior_file', 'ORDER BY session_date');
  
 num_sessions = 500;
 num_runs_fields = [5 4 3 0];

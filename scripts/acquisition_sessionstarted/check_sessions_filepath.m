@@ -5,7 +5,7 @@ file2save = fullfile(this_path, 'sessions_wrong_filepath.mat');
 
 subj_key = 'subject_fullname not like "testuser%" ';
 
-session_struct = fetch(acquisition.SessionStarted & subj_key, 'remote_path_behavior_file', 'ORDER BY session_date');
+session_struct = fetch(acquisition.SessionStarted & subj_key, 'new_remote_path_behavior_file', 'ORDER BY session_date');
 
 
 num_diff_sessions = 0
@@ -13,7 +13,7 @@ for j=1:length(session_struct)
     
     [j length(session_struct)]
     
-    filename = session_struct(j).remote_path_behavior_file;
+    filename = session_struct(j).new_remote_path_behavior_file;
     filename = strrep(filename, '/mnt/bucket', '');
     
     if ~contains(filename, '/jukebox/')
@@ -24,7 +24,7 @@ for j=1:length(session_struct)
             acqsession_file = ['/mnt/bucket' filename];
         end
         
-        %[~, acqsession_file] = lab.utils.get_path_from_official_dir(session_struct(j).remote_path_behavior_file);
+        %[~, acqsession_file] = lab.utils.get_path_from_official_dir(session_struct(j).new_remote_path_behavior_file);
         
         %Load behavioral file & update water eanred
         

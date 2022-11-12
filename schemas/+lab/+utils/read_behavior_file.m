@@ -5,7 +5,7 @@ data = [];
 status = 0;
 
 if nargin < 2
-    data_dir = fetch(acquisition.SessionStarted & key, 'task', 'remote_path_behavior_file');
+    data_dir = fetch(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');
 end
 
 if length(data_dir) > 1
@@ -18,7 +18,7 @@ end
 
 %Load behavioral file
 try
-    [~, filepath] = lab.utils.get_path_from_official_dir(data_dir.remote_path_behavior_file);
+    [~, filepath] = lab.utils.get_path_from_official_dir(data_dir.new_remote_path_behavior_file);
     if data_dir.task == "Towers"
         data = load(filepath,'log');
         status = 1;

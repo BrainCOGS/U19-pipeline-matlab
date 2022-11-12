@@ -17,7 +17,7 @@ classdef SpatialTimeBlobs < dj.Imported
     methods(Access=protected)
         function makeTuples(self, key)
             
-            data_dir = fetch1(acquisition.SessionStarted & key, 'remote_path_behavior_file');
+            data_dir = fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file');
             
             %Load behavioral file
             try
