@@ -26,8 +26,10 @@ session_date = [session_date(1:4) session_date(6:7) session_date(9:10)];
 
 %get behaviorRootDataDir and use it for filepath
 dj_custom_variables = lab.utils.get_dj_custom_variables();
-behavior_filepath = fullfile(dj_custom_variables.BehaviorRootDataDir, user_id, subject_fullname, ...
+
+behavior_filepath = spec_fullfile('/', dj_custom_variables.BehaviorRootDataDir, user_id, subject_fullname, ...
     [session_date '_g' num2str(session_number)], [filename, ext]);
+
 
 
 end
