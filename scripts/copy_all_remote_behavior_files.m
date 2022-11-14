@@ -31,6 +31,13 @@ for i=1:length(session_info)
             session_str = strrep(session_info(i).session_date,'-','');
             fig_files = regexpi(fileNames, ['\w*' session_str '_[0-9].fig'], 'match');
             idx_fig_files = cellfun(@(x) ~isempty(x), fig_files);
+            
+            % Also look for fig files that are from multiple sessions on the same day
+            session_str2 = [session_str '_' num2str(session_info(i).session_number)];
+            fig_files2 = regexpi(fileNames, ['\w*' session_str2 '_[0-9].fig'], 'match');
+            idx_fig_files2 = cellfun(@(x) ~isempty(x), fig_files2);
+            idx_fig_files = idx_fig_files | idx_fig_files2;
+
             fig_files = fileNames(idx_fig_files);
             %For each same date fig file, copy it to new location
             for j=1:length(fig_files)
