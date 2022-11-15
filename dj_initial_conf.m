@@ -24,8 +24,9 @@ end
  
 try
     dj.conn(host, user, pass);
-catch
-    error('Incorrect user and/or password')
+catch exception
+    warning('Could not connect to DB. Check error');
+    throw(exception)
 end
 
 dj.config('databaseHost', host)
