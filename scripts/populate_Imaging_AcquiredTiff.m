@@ -1,7 +1,7 @@
 function populate_Imaging_AcquiredTiff(key)
 
 %Populate Scaninfo (from recording handler pipeline)
-startup_u19_pipeline_matlab_spock
+startup_virtual_machine
 
 if nargin < 1
     populate(imaging_pipeline.AcquiredTiff);
