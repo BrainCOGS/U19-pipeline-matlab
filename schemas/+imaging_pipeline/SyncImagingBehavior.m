@@ -14,6 +14,10 @@ sync_im_frame_span_by_behav_iter   :    longblob   # cell array with first and l
 
 
 classdef SyncImagingBehavior < dj.Computed
+    
+   properties
+        keySource =  imaging_pipeline.TiffSplit & recording.RecordingBehaviorSession;
+    end
   
   methods(Access=protected)
     

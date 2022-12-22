@@ -60,14 +60,9 @@ classdef AcquiredTiff < dj.Imported
             generalTimer   = tic;
             curr_dir       = pwd;
             scan_dirs_db    = fetch(imaging_pipeline.ImagingPipelineSession * ...
-                recording.Recording * recording.RecordingBehaviorSession & key, ...
-                'recording_directory', 'subject_fullname', 'session_date', 'session_number');
-            
-            session_key = struct;
-            session_key.subject_fullname = scan_dirs_db.subject_fullname;
-            session_key.session_date = scan_dirs_db.session_date;
-            session_key.session_number = scan_dirs_db.session_number;
-            
+                recording.Recording * lab.Location & key, ...
+                'recording_directory', 'location', 'acquisition_type');
+                                    
             %Get root imaging directory
             conf = dj.config;
             imaging_root = conf.custom.imaging_root_data_dir;
@@ -76,14 +71,11 @@ classdef AcquiredTiff < dj.Imported
             %scan_directory = lab.utils.format_bucket_path(scan_dirs_db.scan_directory);
             
             %Check if directory exists in system
-            lab.utils.assert_mounted_location(scan_directory)
-            
-            % get acquisition type of session (differentiate mesoscope and 2_3 photon
-            acq_type             = fetch1(proj(acquisition.Session, 'session_location->location') * ...
-                lab.Location & session_key, 'acquisition_type');
-            
+            lab.utils.assert_mounted_location(scan_directory) 
             cd(scan_directory)
             
+            % get acquisition type of session (differentiate mesoscope and 2_3 photon
+            acq_type = scan_dirs_db.acquisition_type;
             %Check if it is mesoscope or 2photon
             isMesoscope = any(contains(self.mesoscope_acq, acq_type));
             is2Photon   = any(contains(self.photon_micro_acq, acq_type));
