@@ -65,7 +65,7 @@ classdef AcquiredTiff < dj.Imported
                                     
             %Get root imaging directory
             conf = dj.config;
-            imaging_root = conf.custom.imaging_root_data_dir;
+            imaging_root = conf.custom.ImagingRootDataDir{1};
             
             scan_directory = fullfile(imaging_root, scan_dirs_db.recording_directory);
             %scan_directory = lab.utils.format_bucket_path(scan_dirs_db.scan_directory);
