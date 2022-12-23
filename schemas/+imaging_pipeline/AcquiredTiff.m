@@ -44,6 +44,7 @@ classdef AcquiredTiff < dj.Imported
         mesoscope_acq          = {'mesoscope'};
         
         date_fmt               = 'yyyy mm dd HH:MM:SS.FFF';
+        date_fmt2              = 'yyyy-mm-dd HH:MM:SS.FFF';
         tif_number_fmt         = '_[0-9]{5}.tif';
         tif_gz_number_fmt      = '_[0-9]{5}.tif.gz';
         
@@ -261,7 +262,7 @@ classdef AcquiredTiff < dj.Imported
             try
                 %convert to date and reconvert to string ..
                 AcqTime = datetime_scanImage2sql(AcqTime);
-                checkacqTime = datestr(datenum(AcqTime,self.date_fmt),self.date_fmt);
+                checkacqTime = datestr(datenum(AcqTime,self.date_fmt),self.date_fmt2);
                 %Remove miliseconds
                 AcqTime = AcqTime(1:19);
                 checkacqTime = checkacqTime(1:19);
