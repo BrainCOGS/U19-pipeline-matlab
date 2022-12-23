@@ -26,7 +26,7 @@ classdef ^Package^Block < dj.Imported
                     %Check if it is a real behavioral file
                     if isfield(log, 'session')
                         %Insert Blocks and trails from BehFile (new and old versions)
-                        self.insertSubtaskBlockFromFile(key, log);
+                        self.insert^Package^BlockFromFile(key, log);
                     else
                         disp(['File does not match expected Towers behavioral file: ', data_dir])
                     end
@@ -42,7 +42,7 @@ classdef ^Package^Block < dj.Imported
     
     % Public methods
     methods
-        function insertSubtaskBlockFromFile(self, key,log)
+        function insert^Package^BlockFromFile(self, key,log)
             % Insert ^package^ subtask block record from behavioralfile
             % Input
             % key  = ^package^.^Package^Session key
@@ -57,7 +57,7 @@ classdef ^Package^Block < dj.Imported
             %%%% fill here read corresponding ^Package^ data for each block
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            trial_data = get_subtask_trial_data(behavior_subtask.^Package^BlockTrial,key, block_data);
+            trial_data = get_^package^_trial_data(behavior_subtask.^Package^BlockTrial,key, block_data);
             
             if ~isempty(trial_data)
                 self.schema.conn.startTransaction()

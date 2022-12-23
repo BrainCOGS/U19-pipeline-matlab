@@ -303,7 +303,15 @@ classdef AcquiredTiff < dj.Imported
             key.file_name_base            = full_filename;
             key.scan_width                = recInfo.Width;
             key.scan_height               = recInfo.Height;
-            key.acq_time                  = recInfo.AcqTime;
+            % Fix for badly formed AcqTime
+            try 
+                recInfo.AcqTime
+                D = datenum(recInfo.AcqTime,'yyyy-mm-dd HH:MM:SS')
+                key.acq_time                  = recInfo.AcqTime;
+            catch
+                key.acq_time                  = '1000-01-01 00:00';
+            end
+            %key.acq_time                  = recInfo.AcqTime;
             key.n_depths                  = recInfo.nDepths;
             key.scan_depths               = recInfo.Zs;
             key.frame_rate                = recInfo.frameRate;

@@ -13,7 +13,7 @@ classdef  ^Package^BlockTrial < dj.Part
     
     methods
         
-        function trial_structure = get_subtask_trial_data(self, block_key, block_data)
+        function trial_structure = get_^package^_trial_data(self, block_key, block_data)
             % Create a trial structure from behavioral file block data ready to be inserted on the table
             %Inputs
             % block_key      = primary key information from ^Package^Block table

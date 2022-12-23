@@ -33,7 +33,7 @@ classdef ^Package^Session < dj.Imported
                     %Check if it is a real behavioral file
                     if isfield(log, 'session')
                         %Insert Blocks and trails from BehFile (new and old versions)
-                        self.insertSubtaskSessionFromFile(key, log);
+                        self.insert^Package^SessionFromFile(key, log);
                     else
                         disp(['File does not match expected Towers behavioral file: ', data_dir])
                     end
@@ -49,7 +49,7 @@ classdef ^Package^Session < dj.Imported
     
     methods
         
-        function insertSubtaskSessionFromFile(self, key,  log)
+        function insert^Package^SessionFromFile(self, key,  log)
             % Insert ^package^ subtask session record from behavioralfile
             % Called at the end of training or when populating TowersSession
             % Input
