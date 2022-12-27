@@ -1,23 +1,19 @@
 
 %{
-# Session level data for a test_subtask subtask session
--> acquisition.Session
+# Session level data for a twolickspouts subtask session
+-> acquisition.SessionSubtask
 ---
-stimulus_set: tinyint                       # an integer that describes a particular set of stimuli in a trial
 %}
 
-classdef TestSubtaskSession < dj.Imported
+classdef TwolickspoutsSession < dj.Imported
     
     properties
-        keySource = acquisition.Session * acquisition.SessionSubtask & struct('subtask', 'test_subtask');
+        keySource = acquisition.Session * acquisition.SessionSubtask & struct('subtask', 'Twolickspouts');
     end
     
     methods(Access=protected)
         
         function makeTuples(self, key)
-
-            %remove subtask field from key
-            key = rmfield(key, 'subtask');
             
             %Get behavioral file to load
             data_dir = fetch(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');
@@ -34,7 +30,7 @@ classdef TestSubtaskSession < dj.Imported
                     %Check if it is a real behavioral file
                     if isfield(log, 'session')
                         %Insert Blocks and trails from BehFile (new and old versions)
-                        self.insertSubtaskSessionFromFile(key, log);
+                        self.insertTwolickspoutsSessionFromFile(key, log);
                     else
                         disp(['File does not match expected Towers behavioral file: ', data_dir])
                     end
@@ -50,8 +46,8 @@ classdef TestSubtaskSession < dj.Imported
     
     methods
         
-        function insertSubtaskSessionFromFile(self, key,  log)
-            % Insert test_subtask subtask session record from behavioralfile
+        function insertTwolickspoutsSessionFromFile(self, key,  log)
+            % Insert twolickspouts subtask session record from behavioralfile
             % Called at the end of training or when populating TowersSession
             % Input
             % key  = acquisition.Session key (subject_fullname, date, session_no)
@@ -59,16 +55,12 @@ classdef TestSubtaskSession < dj.Imported
             
             
             %%%%%%%%%%%%%%%%%%%%
-            %%%% fill here read corresponding TestSubtask data for each Session
+            %%%% fill here read corresponding Twolickspouts data for each Session
             %%%%%%%%%%%%%%%%%%%%
-            if isstruct(log.animal) && isfield(log.animal, 'stimulusSet') && ~isnan(log.animal.stimulusSet)
-                key.stimulus_set = log.animal.stimulusSet;
-            else
-                key.stimulus_set = -1;
-            end
-            
+
+
             self.insert(key);
-        
+
         end
         
     end

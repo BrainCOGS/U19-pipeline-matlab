@@ -130,6 +130,7 @@ classdef Session < dj.Imported
             session_key.session_date     = key.session_date;
             session_key.session_number   = key.session_number;
             insertSessionManipulation(acquisition.SessionManipulation, session_key, log);
+            insertSessionSubtask(acquisition.SessionSubtask, session_key, log);
  
             if isfield(log.animal, 'video_acq_struct') && isfield(log.animal, 'videoAcquisition')
                 insertSessionVideo(acquisition.SessionVideo, ...
@@ -191,6 +192,7 @@ classdef Session < dj.Imported
             session_key.session_date     = key.session_date;
             session_key.session_number   = key.session_number;
             insertSessionManipulation(acquisition.SessionManipulation, session_key, log);
+            insertSessionSubtask(acquisition.SessionSubtask, session_key, log);
  
             if isfield(log.animal, 'video_acq_struct') && isfield(log.animal, 'videoAcquisition')
                 insertSessionVideo(acquisition.SessionVideo, ...

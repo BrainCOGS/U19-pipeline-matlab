@@ -5,8 +5,8 @@ package_name = lower(new_subtask);
 Package_name = dj.internal.toCamelCase(package_name);
 
 %Insert new subrask in DB
-record.subtask        = package_name;
-record.subtask_description = ['description for ' package_name ' subtask'];
+record.subtask        = Package_name;
+record.subtask_description = ['Extra fields for ' Package_name ' subtask'];
 insert(task.Subtask, record, 'IGNORE');
 
 % Get schemas and "subtask" base code directories

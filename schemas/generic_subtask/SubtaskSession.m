@@ -1,22 +1,19 @@
 %{
 %{
 # Session level data for a ^package^ subtask session
--> acquisition.Session
+-> acquisition.SessionSubtask
 ---
 %}
 
 classdef ^Package^Session < dj.Imported
     
     properties
-        keySource = acquisition.Session * acquisition.SessionSubtask & struct('subtask', '^package^');
+        keySource = acquisition.Session * acquisition.SessionSubtask & struct('subtask', '^Package^');
     end
     
     methods(Access=protected)
         
         function makeTuples(self, key)
-
-            %remove subtask field from key
-            key = rmfield(key, 'subtask');
             
             %Get behavioral file to load
             data_dir = fetch(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');

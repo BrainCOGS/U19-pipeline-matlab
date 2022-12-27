@@ -1,14 +1,14 @@
 
 %{
-# Block level data for a test_subtask subtask session
--> behavior_subtask.TestSubtaskSession
+# Block level data for a twolickspouts subtask session
+-> behavior_subtask.TwolickspoutsSession
 -> acquisition.SessionBlock
 ---
-**** Add here new block level fields for TestSubtask *****
-
+sublevel                  : int                           # sublevel for the block
+trial_params              : blob                          # maze features of current block
 %}
 
-classdef TestSubtaskBlock < dj.Imported
+classdef TwolickspoutsBlock < dj.Imported
     
     methods(Access=protected)
         function makeTuples(self, key)
@@ -28,7 +28,7 @@ classdef TestSubtaskBlock < dj.Imported
                     %Check if it is a real behavioral file
                     if isfield(log, 'session')
                         %Insert Blocks and trails from BehFile (new and old versions)
-                        self.insertSubtaskBlockFromFile(key, log);
+                        self.insertTwolickspoutsBlockFromFile(key, log);
                     else
                         disp(['File does not match expected Towers behavioral file: ', data_dir])
                     end
@@ -44,10 +44,10 @@ classdef TestSubtaskBlock < dj.Imported
     
     % Public methods
     methods
-        function insertSubtaskBlockFromFile(self, key,log)
-            % Insert test_subtask subtask block record from behavioralfile
+        function insertTwolickspoutsBlockFromFile(self, key,log)
+            % Insert twolickspouts subtask block record from behavioralfile
             % Input
-            % key  = test_subtask.TestSubtaskSession key
+            % key  = twolickspouts.TwolickspoutsSession key
             % log  = behavioral file as stored in Virmen
             
             tuple = key;
@@ -56,18 +56,18 @@ classdef TestSubtaskBlock < dj.Imported
             block_data = log.block(iBlock);
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %%%% fill here read corresponding TestSubtask data for each block
-            tuple.block_duration = block_data.duration;
+            %%%% fill here read corresponding Twolickspouts data for each block
+            tuple.sublevel = block_data.sublevel;
+            tuple.trial_params = block_data.trialParams;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            trial_data = get_subtask_trial_data(behavior_subtask.TestSubtaskBlockTrial,key, block_data);
-            
+            trial_data = get_twolickspouts_trial_data(behavior_subtask.TwolickspoutsBlockTrial,key, block_data);
             
             if ~isempty(trial_data)
                 self.schema.conn.startTransaction()
                 try
                     self.insert(tuple);
-                    insert(behavior_subtask.TestSubtaskBlockTrial, trial_data)
+                    insert(behavior_subtask.TwolickspoutsBlockTrial, trial_data);
                     %self.schema.conn.commitTransaction
                     toc
                 catch err

@@ -269,6 +269,9 @@ classdef ScanInfo < dj.Imported
                 %convert to date and reconvert to string ..
                 AcqTime = datetime_scanImage2sql(AcqTime);
                 checkacqTime = datestr(datenum(AcqTime,self.date_fmt),self.date_fmt);
+                %Remove miliseconds
+                AcqTime = AcqTime(1:19);
+                checkacqTime = checkacqTime(1:19);
                 %check date strings, should be the same
                 if ~strcmp(AcqTime, checkacqTime)
                     isSameDate = false;
