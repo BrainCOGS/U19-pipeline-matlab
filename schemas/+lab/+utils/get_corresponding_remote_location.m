@@ -1,4 +1,8 @@
 function remote_location = get_corresponding_remote_location(local_path_token, local_path, default_rig_path_location)
+%DEPRECATED -> used when rigs had a directory for themselves.
+%
+%
+%
 %GET_CORRESPONDING_REMOTE_LOCATION 
 % get remote location corresponding directory from a local path
 % Inputs

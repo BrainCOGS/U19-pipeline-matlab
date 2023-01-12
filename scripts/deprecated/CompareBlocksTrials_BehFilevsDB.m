@@ -1,5 +1,4 @@
 
-
 clearvars
 this_path = fileparts(mfilename('fullpath'));
 file2save = fullfile(this_path, 'sessions_diff_trial_vs_trials.mat');

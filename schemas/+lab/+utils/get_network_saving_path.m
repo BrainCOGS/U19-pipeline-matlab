@@ -1,4 +1,7 @@
 function final_data_path = get_network_saving_path(rig_name,subdir)
+%DEPRECATED -> rigs doesn't have a specific path anymore
+%
+%
 %Get the network data path to store a behavior file 
 %Essentially Replaces C:\Data\subdir from the regular local storage to the corresponding bucket\cup location
 % Inputs

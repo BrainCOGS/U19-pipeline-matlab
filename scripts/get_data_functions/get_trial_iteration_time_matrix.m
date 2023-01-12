@@ -1,7 +1,11 @@
 function session_time_matrix = get_trial_iteration_time_matrix(log)
-% Get relative time from session start for all iterations for a given session
+% Get relative time from session start for all iterations for a given session behavior file
 % Input
 % log = behavioral file as stored by Virmen
+% Output
+% session_time_matrix = nx4 matrix where:
+%columns = (iteration_time, block, trial, iteration#)
+%      n = total iterations in session
 
 %Check if timeElapsedFirstTrial is stored on behavior file
 timeElapsedFirstTrial = 0;
@@ -10,7 +14,7 @@ if isfield(log,'timeElapsedFirstTrial') && ~isempty(log.timeElapsedFirstTrial)
     timeElapsedFirstTrial = log.timeElapsedFirstTrial;
 end
 
-
+% For all blocks found
 session_time_matrix = [];
 for i = 1:length(log.block)
     

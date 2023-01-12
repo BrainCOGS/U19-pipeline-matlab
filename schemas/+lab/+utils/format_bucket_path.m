@@ -1,5 +1,5 @@
 function format_dir = format_bucket_path(bucket_dir)
-
+% format_bucket_path
 
 %Get all path table from u19_lab.Path ("official sites")
 [path_table] = lab.utils.get_path_table();

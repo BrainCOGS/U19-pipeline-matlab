@@ -1,5 +1,5 @@
 function compare_virmen_frequency(keys, dif_plots, gauss_smoth_param, legends)
-
+% compare_virmen_frequency
 if nargin < 2
     dif_plots = 0;
 end
