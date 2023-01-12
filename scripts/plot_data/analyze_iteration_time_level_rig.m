@@ -2,7 +2,7 @@ function analyze_iteration_time_level_rig(key)
 % analyze_iteration_time_level_rig, plots meanframete by rig and by level
 % Input
 % key = key that comprises multiple behavior sessions 
-
+ 
 %key = 'subject_fullname like "mioffe%" and session_protocol like "%PoissonBlocksCondensed3m%" and session_date > "2022-01-01" and session_date < "2022-11-10"';
  
 %Get sessions
@@ -13,7 +13,7 @@ session_data = fetch(proj(acquisition.Session, 'session_location') * behavior.To
     'iteration_matrix', 'trial_time', 'level', 'session_location');
  session_table = struct2table(session_data, 'AsArray', true);
 session_table.session_location = categorical(session_table.session_location);
-
+ 
 %Initialize variables
 session_table.mean_framerate = zeros(height(session_table),1);
 session_table.std_framerate = zeros(height(session_table),1);
@@ -68,12 +68,12 @@ set(h, 'AlphaData', 1-isnan(framerate))
  
 set(gcf,'color','w');
 xlabel('Rig', 'FontSize', 16);
+xticks(1:length(rigs))
 xticklabels(rigs)
 ylabel('Level','FontSize', 16);
 yticks(1:length(levels));
 yticklabels(string(levels));
 title("Average block frame rate per level",'FontSize', 22);
- 
- 
+c  = colorbar();
+c.Label.String = 'Mean framerate (Hz)';
 set(gca,'FontSize',16);
-
