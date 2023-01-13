@@ -1,12 +1,13 @@
-
+ 
 function plot_velocity_session(key)
 % plot_velocity_session Plots mean velocity for all trials in sessions from key
 % Inputs
 % key = Session key
-
+ 
 % Get all needed data
+key = fetch(acquisition.Session & key);
 trials = struct2table(get_full_trial_data(key));
-
+ 
 if ~isempty(trials)
     sess = acquisition.Session();
     primary_key = sess.primaryKey;
@@ -25,8 +26,16 @@ if ~isempty(trials)
         std_vel(i) = 0;
     end
     
-     
+    % Identify sessions and build xticklabels
+    subjects = string(unique(trials.subject_fullname))';
     sessions = unique(trials.super_key);
+    if length(subjects) == 1
+        sub_length = length(subjects{1});
+        cell_sessions = cellstr(nominal(sessions))
+        sessions_label = cellfun(@(x) x(sub_length+3:end), cell_sessions, 'Un', 0);
+    else
+        sessions_label = sessions;
+    end
     
     mean_mean_vel = zeros(1, length(sessions));
     min_mean_vel = zeros(1, length(sessions));
@@ -51,20 +60,21 @@ if ~isempty(trials)
     
     plot(1:length(sessions),mean_mean_vel, 'o', 'MarkerFaceColor', 'r', 'MarkerSize',10)
     hold on
-    errorbar(1:length(sessions), mean_mean_vel, mean_mean_vel-min_mean_vel, max_mean_vel-mean_mean_vel,'linewidth',2);
+    errorbar(1:length(sessions), mean_mean_vel, [], max_mean_vel-mean_mean_vel,'linewidth',2);
     set(gcf, 'color', 'w')
     
     ylabel('mean velocity per trial (cm/s) min-max range', 'Fontsize', 14)
     xlabel('Date', 'Fontsize', 14)
-    title(['Velocity for: ', string(unique(trials.subject_fullname))], 'FontSize', 16, 'Interpreter', 'none')
+    title(char(['Velocity for: ', string(unique(trials.subject_fullname))']), 'FontSize', 16, 'Interpreter', 'none')
     
-    xticks(1:length(sessions))
+    xticks(1:length(sessions_label))
     set(gca,'TickLabelInterpreter','none');
     set(gca,'FontSize',14);
-    xticklabels(sessions)
+    xticklabels(sessions_label)
     xtickangle(45)
     
     
 end
-
+ 
 end
+

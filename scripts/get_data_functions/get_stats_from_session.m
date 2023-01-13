@@ -6,7 +6,9 @@ function stat_struct = get_stats_from_session(key, common_stats)
 % StatNames =
 %{'trial_idx';'trial_type';'choice';'trial_abs_start';'trial_duration';'excess_travel';'trial_id';
 % 'trial_abs_start_next';'correct_trial';'good_trial';'left_trial';'trialIndex';'right_trial';
-%'correct_left';'correct_right';'cum_correct_trials';'cum_good_trials';'cum_left_trials';'cum_right_trials';'cum_correct_left_trials';'cum_correct_right_trials';'performance';'goodFraction';'numPerMin';'numRewardsPerMin';'numTrials';'bias'}
+%'correct_left';'correct_right';'cum_correct_trials';'cum_good_trials';
+%'cum_left_trials';'cum_right_trials';'cum_correct_left_trials';'cum_correct_right_trials';
+%'performance';'goodFraction';'numPerMin';'numRewardsPerMin';'numTrials';'bias'}
 % Outputs
 % stat_struct  = MATLAB structure with keys and stats 
 

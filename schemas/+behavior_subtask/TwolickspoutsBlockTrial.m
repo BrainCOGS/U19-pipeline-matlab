@@ -4,7 +4,7 @@
 -> behavior_subtask.TwolickspoutsBlock
 -> acquisition.SessionBlockTrial
 ---
-licks                        : tinyblob                      # all iterations with lick detected and side
+licks                        : blob                          # all iterations with lick detected and side
 trial_difficult_type         : varchar(16)                   # trial type label (easy, medium, difficult, etc)
 forced_automatic_reward=null : tinyint                       # 1 if reward was forced for trial 0 otherwise
 %}
