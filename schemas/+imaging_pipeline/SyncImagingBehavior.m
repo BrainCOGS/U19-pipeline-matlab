@@ -190,11 +190,12 @@ classdef SyncImagingBehavior < dj.Computed
       prevFrames                    = 0;
       for iFile = 1:numel(movieFiles)
         iSync                       = prevFrames + (1:imagingF(iFile).numFrames);
-        imagingF(iFile).block        = syncBlock(iSync);
-        imagingF(iFile).trial        = syncTrial(iSync);
-        imagingF(iFile).iteration    = syncIter(iSync);
+        imagingF(iFile).block        = syncBlock(iSync)
+        imagingF(iFile).trial        = syncTrial(iSync)
+        imagingF(iFile).iteration    = syncIter(iSync)
         prevFrames                  = prevFrames + imagingF(iFile).numFrames;
       end
+      
       
       
       %-------------------------------------------------------------------------------------------------
@@ -228,8 +229,6 @@ classdef SyncImagingBehavior < dj.Computed
       
       % Account for asynchronous clock drifts by using relative positioning
       blockSync                     = blockIndex(imgBlock(hasImg))
-      disp(blockSync)
-      disp(blockIndex)
       iRelative                     = binarySearch(blockSync, blockIndex, -1, 2);
       blockIndex                    = blockIndex - blockSync(iRelative) + hasImg(iRelative);
       
