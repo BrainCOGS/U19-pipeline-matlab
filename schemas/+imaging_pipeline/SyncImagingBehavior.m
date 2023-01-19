@@ -227,7 +227,9 @@ classdef SyncImagingBehavior < dj.Computed
       end
       
       % Account for asynchronous clock drifts by using relative positioning
-      blockSync                     = blockIndex(imgBlock(hasImg));
+      blockSync                     = blockIndex(imgBlock(hasImg))
+      disp(blockSync)
+      disp(blockIndex)
       iRelative                     = binarySearch(blockSync, blockIndex, -1, 2);
       blockIndex                    = blockIndex - blockSync(iRelative) + hasImg(iRelative);
       
