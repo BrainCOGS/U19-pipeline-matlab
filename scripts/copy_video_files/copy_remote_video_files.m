@@ -1,7 +1,7 @@
 function [final_status, msg] = copy_remote_video_files(location, video_type)
 
 if nargin == 1
-    video_type = "pupillometry";
+    video_type = 'pupillometry';
 end
 
 conf = dj.config;
@@ -11,8 +11,8 @@ key = struct();
 key.session_location = location;
 key.video_type = video_type;
 
-if video_type == "pupillometry"
-    raw_dir = conf.custom.PupillometryRootDataDir;
+if strcmp(video_type,'pupillometry')
+    raw_dir = conf.custom.PupillometryRootDataDir{1};
     session_info = fetch(((acquisition.SessionStarted * acquisition.SessionVideo) - pupillometry.PupillometrySession) & key,'*');
     
 else
