@@ -12,7 +12,7 @@ classdef SessionVideo < dj.Manual
     
     methods
         
-        function insertSessionVideo(self,key,video_type, local_file, remote_file)
+        function insertSessionVideo(self,key,video_type, local_file, remote_file, model_id)
             % Insert session video record from behavioralfile in towersTask
             % Called at the end of training or when populating session
             % Input
@@ -25,6 +25,14 @@ classdef SessionVideo < dj.Manual
             key.video_type = video_type;
             key.local_path_video_file = local_file;
             key.remote_path_video_file = remote_file;
+            
+            % For now, hardcoded model for video TODO ALS
+            if nargin < 5
+                model_id =2;
+            end
+            key.model_id = model_id;
+            
+            
             insert(self, key, 'IGNORE');
             
             
