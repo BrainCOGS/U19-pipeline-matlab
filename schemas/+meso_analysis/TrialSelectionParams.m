@@ -16,6 +16,7 @@ classdef TrialSelectionParams < dj.Lookup
     contents = {
                 1, 1, 0.6, 0.4, 0.8, 0.4, 3
                 2, 1, 0.6, 0.4, 0.75,0.4, 3
+                3, 1, 0.58,0.4, 0.8, 0.4, 3
                 }
   end
 end
