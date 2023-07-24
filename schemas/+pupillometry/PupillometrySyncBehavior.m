@@ -18,7 +18,7 @@ classdef PupillometrySyncBehavior < dj.Imported
             
             %Get video filepath
             conf = dj.config;
-            video_root_dir    = conf.custom.pupillometry_root_data_dir;
+            video_root_dir    = conf.custom.PupillometryRootDataDir{1};
             video_filepath    = fetch1(acquisition.SessionVideo & key, 'remote_path_video_file');
             video_filepath    = fullfile(video_root_dir, video_filepath);
             [~, video_filepath] = lab.utils.get_path_from_official_dir(video_filepath);
