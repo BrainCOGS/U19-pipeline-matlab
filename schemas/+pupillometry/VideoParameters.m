@@ -22,7 +22,7 @@ classdef VideoParameters < dj.Lookup
     methods(Static)
         
          function get_video_acq_struct(self, acq_rate, exposure_time, video_gain, video_ext)
-            % Insert a new record for video parameters with description included
+            % Create new video parameters structure with description included
             % Example call
             % insert_video_parameters(deeplabcut_pipeline.VideoParameters, 15, 17, 3)
             
@@ -38,7 +38,7 @@ classdef VideoParameters < dj.Lookup
                 'Gain=', num2str(video_gain), ', ',   ...
                 'Ext=', video_ext];
             
-            self.insert(key)
+            self.insert(key, 'IGNORE')
             
          end
         
