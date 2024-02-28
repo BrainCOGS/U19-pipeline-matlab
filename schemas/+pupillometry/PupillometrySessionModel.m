@@ -29,14 +29,14 @@ classdef PupillometrySessionModel < dj.Imported
         function insertDefaultSessionModel(self, key)
             
             key.model_id = pupillometry.PupillometrySessionModel.DEFAULT_VIDEO_MODEL;
-            insert(pupillometry.PupillometrySessionModel, key);
+            insert(pupillometry.PupillometrySessionModel, key, 'IGNORE');
             
         end
         
         function insertNewSessionModel(self, key, model_id)
             
             key.model_id =model_id;
-            insert(pupillometry.PupillometrySessionModel, key);
+            insert(pupillometry.PupillometrySessionModel, key, 'IGNORE');
             
         end
         

@@ -18,7 +18,6 @@ if strcmp(video_type,'pupillometry')
 else
    error('Video copy not implemented for this video_type yet'); 
 end
-    %session_keys = fetch(((acquisition.SessionStarted * acquisition.SessionVideo) - pupillometry.PupillometrySession) & key);
 
 final_status = 1;
 msg = '';
