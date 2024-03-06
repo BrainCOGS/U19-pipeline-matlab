@@ -23,10 +23,14 @@ syncVideoFrame = NaN(4, v.NumFrames,'single')';
 syncVideoFrame(1:index_first-1,1) = videoTimeVector(1:index_first-1);
 syncVideoFrame(index_first,:) = [videoTimeVector(index_first) timeMatrix(1,2:end)];
 
+
 for i=index_first+1:length(syncVideoFrame)
     time_frame = videoTimeVector(i);
+    
+    % Find closest iteration for each videoFrame
     index_time_matrix = find(timeMatrix(:,1) > time_frame,1,'first');
     
+    %If there is no iteration after video frame
     if ~isempty(index_time_matrix)
         syncVideoFrame(i,:) = [time_frame timeMatrix(index_time_matrix,2:end)];
     else
@@ -40,8 +44,11 @@ syncBehavior = NaN(5, size(timeMatrix,1),'single')';
 
 for i=1:size(timeMatrix,1)
     time_iteration = timeMatrix(i,1);
+    
+    % Find closest video frame for each iteration
     index_time_matrix = find(videoTimeVector < time_iteration,1,'last');
     
+    %If there is no video frame after iteration
     if ~isempty(index_time_matrix)
         syncBehavior(i,:) = [timeMatrix(i,:) index_time_matrix];
     else

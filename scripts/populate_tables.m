@@ -28,6 +28,9 @@ ingest_subtasks()
 % Populate pupillometry tables
 [keys_session_pupil, errors_session_pupil] = populate(pupillometry.PupillometrySession);
 [keys_session_pupilsync, errors_session_pupilsync] = populate(pupillometry.PupillometrySyncBehavior);
+% Ingest PupillometrySessionModel and PupillometrySessionModelData tables
+ingest_pupillometry_sessions
+
 
 % Populate psychometric tables
 [keys_session_psych, errors_session_psych] = populate(behavior.TowersSessionPsych);

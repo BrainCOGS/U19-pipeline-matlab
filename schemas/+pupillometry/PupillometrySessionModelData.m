@@ -21,12 +21,13 @@ classdef PupillometrySessionModelData < dj.Imported
     methods
  
      function restart_pupillometry_failed_job(self, key)
+         % Restart session pupillometry processing
          
         current_job_id = fetch1(self & key, 'pupillometry_job_id');
         
         if current_job_id == -1
-            % Restart job id to 0 
-            update(self & key, 'pupillometry_job_id', 0)
+            % Restart job id to NULL
+            update(self & key, 'pupillometry_job_id')
             % Set NULL blob of pupil diameter
             update(self & key, 'pupil_diameter')
         end
@@ -34,6 +35,7 @@ classdef PupillometrySessionModelData < dj.Imported
      end
      
      function pupillometry_jobs = check_status_pupillometry_jobs(self, key)
+         % Fetch status for sessions queried by key (all if no key is provided)
          
         keys_fetch = self.primaryKey;
         keys_fetch{end+1} = 'pupillometry_job_id';
@@ -57,6 +59,7 @@ classdef PupillometrySessionModelData < dj.Imported
      end
      
      function pupillometry_finished_jobs = get_finished_jobs_pupillometry(self)
+          % Get all sessions that successfully were processed
          
       query = "pupillometry_job_id > 0 and pupil_diameter is not null";
           
