@@ -13,6 +13,11 @@ for i=1:length(keys)
     end
         psm.insertDefaultSessionModel(keys(i))
 end
+
+% Ingest missing PupillometrySessionModel (with default model)
+keys = fetch((pupillometry.PupillometrySessionModel - pupillometry.PupillometrySessionModelData()), 'ORDER BY session_date DESC');
+
+
 %Ingest max 20 sessions to process for PupillometrySessionModelData (to start processing)
  for i=1:length(keys)
      
