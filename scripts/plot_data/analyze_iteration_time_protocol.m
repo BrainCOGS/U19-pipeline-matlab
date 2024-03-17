@@ -1,4 +1,4 @@
-function analyze_iteration_time_level_rig(key)
+function analyze_iteration_time_protocol(key)
 % analyze_iteration_time_level_rig, plots meanframete by rig and by level
 % Input
 % key = key that comprises multiple behavior sessions 
@@ -9,10 +9,11 @@ function analyze_iteration_time_level_rig(key)
 key2 = fetch(acquisition.Session & key,'subject_fullname', 'session_date', 'level', 'session_location');
  
 %Get trial by trial data and level data
-session_data = fetch(proj(acquisition.Session, 'session_location') * acquisition.SessionVideo * behavior.TowersBlock * behavior.SpatialTimeBlobs & key, ...
-    'iteration_matrix', 'trial_time', 'level', 'session_location');
+session_data = fetch(proj(acquisition.Session, 'session_location', 'session_protocol') * acquisition.SessionVideo * behavior.TowersBlock * behavior.SpatialTimeBlobs & key, ...
+    'iteration_matrix', 'trial_time', 'level', 'session_location', 'session_protocol');
  session_table = struct2table(session_data, 'AsArray', true);
 session_table.session_location = categorical(session_table.session_location);
+session_table.session_protocol = categorical(session_table.session_protocol);
  
 %Initialize variables
 session_table.mean_framerate = zeros(height(session_table),1);
@@ -47,7 +48,7 @@ end
  
  
 % Average framerate by levels and rigs
-levels = unique(session_table.level);
+levels = unique(session_table.session_protocol);
 rigs   = unique(session_table.session_location);
  
 framerate = zeros(length(levels), length(rigs));
@@ -56,7 +57,7 @@ for i=1:length(levels)
     
     for j=1:length(rigs)
         
-        mean_frame_rate_final = session_table{session_table.level == levels(i) & session_table.session_location == rigs(j), 'mean_framerate'};
+        mean_frame_rate_final = session_table{session_table.session_protocol == levels(i) & session_table.session_location == rigs(j), 'mean_framerate'};
         
         framerate(i,j) = mean(mean_frame_rate_final);
         framerate_std(i,j) = std(mean_frame_rate_final);

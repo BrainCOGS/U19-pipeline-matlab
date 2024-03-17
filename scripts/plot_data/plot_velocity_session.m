@@ -16,12 +16,18 @@ if ~isempty(trials)
     
     
     mean_vel = zeros(1, height(trials));
+    mean_fr = zeros(1, height(trials));
     std_vel = zeros(1, height(trials));
     for i = 1:height(trials)
         %Calculate velocity from position from start to arm_entry
         i_arm_entry = trials{i,'i_arm_entry'};
         position = trials{i,'position'}{:};
-        calc_vel = diff(position(2:i_arm_entry,2))*120;
+        time = trials{i,'trial_time'}{:};
+        diff_pos = diff(position(1:i_arm_entry,2));
+        diff_time = diff(time(1:i_arm_entry));
+        calc_vel = diff_pos ./ diff_time;
+        calc_fr = 1 ./ diff_time;
+        mean_fr(i) = mean(calc_fr);
         mean_vel(i) = mean(calc_vel);
         std_vel(i) = 0;
     end
@@ -41,6 +47,12 @@ if ~isempty(trials)
     min_mean_vel = zeros(1, length(sessions));
     max_mean_vel = zeros(1, length(sessions));
     std_mean_vel = zeros(1, length(sessions));
+    
+    mean_mean_fr = zeros(1, length(sessions));
+    min_mean_fr = zeros(1, length(sessions));
+    max_mean_fr = zeros(1, length(sessions));
+    std_mean_fr = zeros(1, length(sessions));
+    
     %Calculate mean, min, max & std velocity for each session
     for j = 1:length(sessions)
         current_session = sessions(j);
@@ -50,12 +62,17 @@ if ~isempty(trials)
         min_mean_vel(j)  =  min(mean_vel(idx));
         max_mean_vel(j)  =  min(mean_vel(idx));
         
+        mean_mean_fr(j) =  mean(mean_fr(idx));
+        std_mean_fr(j) =  std(mean_fr(idx));
+        min_mean_fr(j)  =  min(mean_fr(idx));
+        max_mean_fr(j)  =  min(mean_fr(idx));
+        
     end
     
     %Plot results
     close all
     f = figure;
-    set(f, 'Units', 'normalized', 'Position', [0 0 1 1])
+    set(f, 'Units', 'normalized', 'Position', [0.05 0.05 0.85 0.85])
     
     
     plot(1:length(sessions),mean_mean_vel, 'o', 'MarkerFaceColor', 'r', 'MarkerSize',10)
@@ -66,6 +83,25 @@ if ~isempty(trials)
     ylabel('mean velocity per trial (cm/s) min-max range', 'Fontsize', 14)
     xlabel('Date', 'Fontsize', 14)
     title(char(['Velocity for: ', string(unique(trials.subject_fullname))']), 'FontSize', 16, 'Interpreter', 'none')
+    
+    xticks(1:length(sessions_label))
+    set(gca,'TickLabelInterpreter','none');
+    set(gca,'FontSize',14);
+    xticklabels(sessions_label)
+    xtickangle(45)
+    
+    f2 = figure;
+    set(f2, 'Units', 'normalized', 'Position', [0.05 0.05 0.85 0.85])
+    
+    
+    plot(1:length(sessions),mean_mean_fr, 'o', 'MarkerFaceColor', 'r', 'MarkerSize',10)
+    hold on
+    errorbar(1:length(sessions), mean_mean_fr, [], max_mean_fr-mean_mean_fr,'linewidth',2);
+    set(gcf, 'color', 'w')
+    
+    ylabel('mean frame rate per trial (1/s) min-max range', 'Fontsize', 14)
+    xlabel('Date', 'Fontsize', 14)
+    title(char(['Frame Rate for: ', string(unique(trials.subject_fullname))']), 'FontSize', 16, 'Interpreter', 'none')
     
     xticks(1:length(sessions_label))
     set(gca,'TickLabelInterpreter','none');
