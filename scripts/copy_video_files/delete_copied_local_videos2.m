@@ -29,6 +29,11 @@ for u_idx = 1:length(users)
             this_session = session_videos(j).name;
             final_dir = fullfile(video_dir_s, this_session);
 
+            if numel(dir(final_dir)) <= 2
+                rmdir(final_dir)
+                continue
+            end
+
             video_name = dir(final_dir);
             video_name = video_name(3:end);
 
@@ -41,7 +46,9 @@ for u_idx = 1:length(users)
                 key.session_date = strcat(this_session(1:4),'-',this_session(5:6),'-',this_session(7:8));
                 key.session_number = str2double(this_session(11));
 
+                key
                 session_video_key =  fetch(acquisition.SessionVideo & key,'*')
+                
 
                 if ~isempty(session_video_key)
 
@@ -56,7 +63,10 @@ for u_idx = 1:length(users)
                     %hash_remote = splitlines(hash_remote);
                     %hash_remote = hash_remote{2};
                     size_remote = dir(video_remote_path);
+
+                    size_remote
                     if isempty(size_remote)
+                        del(pupillometry.PupillometrySession & session_video_key)
                         continue
                     end
 
@@ -67,12 +77,18 @@ for u_idx = 1:length(users)
                     %[status_local,hash_local] = system(command);
                     %hash_local = splitlines(hash_local);
                     %hash_local = hash_local{2};
-                    %size_local = dir(video_local_path);
+                    size_local = dir(video_local_path);
                     size_local = size_local.bytes;
+
+                    size_remote
+                    size_local
                     
                      if (size_remote - size_local) == 0
                         video_local_path
                         delete(video_local_path)
+                        if numel(dir(final_dir)) <= 2
+                            rmdir(final_dir)
+                        end
                      end
 
                     %if status_remote == 0 && ...
