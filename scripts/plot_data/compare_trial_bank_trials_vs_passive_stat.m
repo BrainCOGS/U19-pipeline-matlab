@@ -56,16 +56,54 @@ for iblock = 1:length(beh_file_passive.log.block)
             
             num_trial_comparison = num_trial_comparison + 1;
             
-            if num_trial_comparison == 500
-            figure
+            if num_trial_comparison > 1
+            figure('units','normalized','outerposition',[0 0 1 1])
+            subplot(2,2,1)
             plot(this_trial.velocity(2:this_trial.iArmEntry,2))
             hold on
             plot(trial_bank_trial_data.velocity(1:trial_bank_trial_data.iArmEntry,2),'r')
-
-            figure
+            set(gca, 'FontSize', 14);
+            xlabel('Iteration #');
+            ylabel('Velocity cm/s');
+            title('Velocity vs Iteration')
+            legend({'Passive/stat trial', 'Trial bank trial (Active)'})
+            
+            subplot(2,2,2)
+            plot(this_trial.position(2:this_trial.iArmEntry,2))
+            hold on
+            plot(trial_bank_trial_data.position(1:trial_bank_trial_data.iArmEntry,2),'r')
+            set(gca, 'FontSize', 14);
+            xlabel('Iteration #');
+            ylabel('Position (cm)');
+            title('Position vs Iteration')
+            legend({'Passive/stat trial', 'Trial bank trial (Active)'},'Location', 'southeast')
+            
+            subplot(2,2,3)
+            plot(this_trial.position(2:this_trial.iArmEntry,2),this_trial.velocity(2:this_trial.iArmEntry,2))
+            hold on
+            plot(trial_bank_trial_data.position(1:trial_bank_trial_data.iArmEntry,2),trial_bank_trial_data.velocity(1:trial_bank_trial_data.iArmEntry,2),'r')
+            set(gca, 'FontSize', 14);
+            xlabel('Position (cm)');
+            ylabel('Velocity (cm/s)');
+            title('Velocity vs Position')
+            legend({'Passive/stat trial', 'Trial bank trial (Active)'},'Location', 'southeast')
+                
+            subplot(2,2,4)
             plot(1./diff(this_trial.time(2:this_trial.iArmEntry)))
             hold on
-            plot(1./diff(trial_bank_trial_data.time(1:trial_bank_trial_data.iArmEntry)),'r')
+            plot(1./diff(trial_bank_trial_data.time(1:trial_bank_trial_data.iArmEntry)),'r');
+            set(gca, 'FontSize', 14);
+            xlabel('Iteration #');
+            ylabel('Refresh rate (hz)');
+            title('Refresh rate vs Iteration')
+            legend({'Passive/stat trial', 'Trial bank trial (Active)'},'Location', 'southeast')
+            
+            
+            set(gcf, 'color', 'w')
+            set(gca, 'FontSize', 14);
+            keyboard
+            close all
+            
             end
                    
         else
