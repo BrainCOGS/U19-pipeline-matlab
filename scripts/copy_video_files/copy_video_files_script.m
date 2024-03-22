@@ -4,3 +4,4 @@
 if ~final_status
     error_video_backup_notification_slack(RigParameters.rig, msg)
 end
+delete_copied_local_videos
