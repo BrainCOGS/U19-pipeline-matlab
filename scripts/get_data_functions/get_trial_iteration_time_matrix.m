@@ -29,7 +29,7 @@ for i = 1:length(log.block)
         if i > 1
             %Check if it's a restart case scenario
             if j==1
-                if current_trial.start < end_block_relative_time
+                if (current_trial.start + timeElapsedFirstTrial) < end_block_relative_time
                     offset_time = seconds(datetime(log.block(i).start) - datetime(log.block(1).start));
                 else
                     offset_time = 0;
