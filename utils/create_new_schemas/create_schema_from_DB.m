@@ -34,14 +34,26 @@ end
 
 cd(curr_schema_dir);
 getSchema_fun = str2func([schema_name '.getSchema']);
-schemaObject = getSchema_fun();
+try
+    schemaObject = getSchema_fun();
+catch err
+    disp([schema_name, ' directory not found '])
+    %Go back to original directory
+    cd(curr_dir)
+    dj.config('safemode', safemode_now)
+    return
+end
 
 %Check every table and create file for each of them if missing
 for i =1:length(schemaObject.classNames)
     this_class = schemaObject.classNames{i};
     class_name = strrep(this_class, [schema_name '.'],'');
     this_class_file = fullfile(curr_schema_dir, [class_name '.m']);
-    plain_table_name = schemaObject.v.(class_name).plainTableName;
+    try
+        plain_table_name = schemaObject.v.(class_name).plainTableName;
+    catch err
+         lo = 0 
+    end
     {schema_name class_name}
     
     if ~startsWith(plain_table_name,'~')
