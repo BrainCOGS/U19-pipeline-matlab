@@ -75,8 +75,9 @@ end
 
 %Go back to original directory
 cd(curr_dir)
-dj.config('safemode', safemode_now)
-
+if sync_schema
+    dj.config('safemode', safemode_now)
+end
 end
 
 
