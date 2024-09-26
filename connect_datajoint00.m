@@ -10,6 +10,15 @@ cd(u19_pipeline_dir)
 
 
 if isfile('dj_local_conf.json')
+    disp(fileparts(which('dj_local_conf.json')))
+    dj.config.load()
+    dj.conn()
+elseif isfile('.datajoint_config.json')
+    disp(fileparts(which('.datajoint_config.json')))
+    dj.config.load()
+    dj.conn()
+elseif isfile(fullfile(getenv("HOME"), '.datajoint_config.json'))
+    disp(((fullfile(getenv("HOME"), '.datajoint_config.json'))))
     dj.config.load()
     dj.conn()
 else
