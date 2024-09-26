@@ -13,7 +13,7 @@ end
 curr_dir = pwd;
 
 this_dir = fileparts(mfilename('fullpath'));
-schemas_dir = fullfile(fileparts(this_dir), 'schemas');
+schemas_dir = fullfile(fileparts(fileparts(this_dir)), 'schemas');
 
 %Create this schema directory
 curr_schema_dir = fullfile(schemas_dir, ['+' schema_name]);
@@ -75,8 +75,9 @@ end
 
 %Go back to original directory
 cd(curr_dir)
-dj.config('safemode', safemode_now)
-
+if sync_schema
+    dj.config('safemode', safemode_now)
+end
 end
 
 
