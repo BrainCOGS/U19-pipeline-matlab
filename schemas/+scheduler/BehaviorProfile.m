@@ -1,13 +1,12 @@
 %{
 # 
-profile_id                  : int                           # 
+behavior_profile_id                  : int autoincrement                          # 
 ---
 -> lab.User
--> lab.User
--> lab.User
 date_created                : date                          # 
-profile_description         : varchar(255)                  # Profile description
-profile_variables           : longblob                      # Encoded for the variables
+behavior_profile_name         : varchar(255)                  # Profile name
+behavior_profile_description         : varchar(255)                  # Profile description
+behavior_profile_variables           : longblob                      # Encoded for the variables
 %}
 
 

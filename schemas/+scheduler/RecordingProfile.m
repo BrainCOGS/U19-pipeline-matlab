@@ -1,13 +1,11 @@
 %{
 # 
-profile_id                  : int                           # 
+recording_profile_id                  : int  AUTO_INCREMENT                         # 
 ---
--> lab.User
--> lab.User
--> lab.User
-date_created                : date                          # 
-profile_description         : varchar(255)                  # Profile description
-profile_variables           : longblob                      # Encoded for the variables
+date_created                          : date                          # 
+recording_profile_name         : varchar(255)                  # Profile name
+recording_profile_description         : varchar(255)                  # Profile description
+recording_profile_variables           : longblob                      # Encoded for the variables
 %}
 
 
