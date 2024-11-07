@@ -27,7 +27,7 @@ for i=1:length(session_info)
     % Check if local file exists
     if isfile(session_info(i).local_path_video_file)
         new_video_file = fullfile(raw_dir, session_info(i).remote_path_video_file);
-        [status, this_msg] = copy_single_video_file_cup(session_info(i).local_path_video_file, ...
+        [status, this_msg] = copy_delete_single_video_file_cup_robocopy(session_info(i).local_path_video_file, ...
             new_video_file);
         % Report when something happened while copying files
         if ~status
