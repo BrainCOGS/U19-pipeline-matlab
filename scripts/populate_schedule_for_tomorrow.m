@@ -1,24 +1,27 @@
-% This is the nightly update comand for the scheduler
+function populate_schedule_for_tomorrow()
 
-today = char(datetime('now','Format','yyyy-MM-dd') + caldays(0));
-query = struct;
-query.date = today;
+    % This is the nightly update comand for the scheduler
 
-one_date = fetch(scheduler.Schedule & 'subject_fullname is not NULL'& query,'*');
-tomorrow = char(datetime('now','Format','yyyy-MM-dd') + caldays(1));
-[one_date(:).date] = deal(tomorrow);
+    today = char(datetime('now','Format','yyyy-MM-dd') + caldays(0));
+    query = struct;
+    query.date = today;
+    
+    one_date = fetch(scheduler.Schedule & 'subject_fullname is not NULL'& query,'*');
+    tomorrow = char(datetime('now','Format','yyyy-MM-dd') + caldays(1));
+    [one_date(:).date] = deal(tomorrow);
+    
+    
+    connection = dj.conn();
+    
+    try 
+    
+        connection.startTransaction;
+        insert(scheduler.Schedule,one_date);    
+        connection.commitTransaction;
+    
+    catch e
+        disp(e.message)
+        connection.cancelTransaction;
+    end
 
-
-connection = dj.conn();
-
-try 
-
-    connection.startTransaction;
-    insert(scheduler.Schedule,one_date);    
-    connection.commitTransaction;
-
-catch e
-    disp(e.message)
-    connection.cancelTransaction;
 end
-

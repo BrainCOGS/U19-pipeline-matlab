@@ -40,3 +40,4 @@ ingest_pupillometry_sessions
 
 % Populate scheduling tables
 populate_schedule_for_tomorrow()
+populate_technician_schedule()
