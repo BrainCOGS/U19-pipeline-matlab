@@ -8,6 +8,7 @@ timeslot                    : int                           # timeslot by number
 -> scheduler.BehaviorProfile
 -> scheduler.RecordingProfile
 -> scheduler.InputOutputProfile
+experimenters_instructions : varchar(64532)
 %}
 
 

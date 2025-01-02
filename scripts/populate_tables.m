@@ -37,3 +37,6 @@ ingest_pupillometry_sessions
 [keys_subject_psych, errors_subject_psych] = populate(behavior.TowersSubjectCumulativePsych);
 [keys_psych_level, errors_psych_level] = populate(behavior.TowersSubjectCumulativePsychLevel);
 [keys_psych_task, errors_psych_task] = populate(behavior.TowersSessionPsychTask);
+
+% Populate scheduling tables
+populate_schedule_for_tomorrow()
