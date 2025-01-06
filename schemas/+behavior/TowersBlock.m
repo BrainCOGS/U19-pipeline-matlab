@@ -12,6 +12,7 @@ reward_mil                  : float                         # in mL, reward volu
 reward_scale                : tinyint                       # scale of the reward in this block
 easy_block                  : tinyint                          # true if the difficulty reduces during the session
 block_performance           : float                         # performance in the current block
+trial_duration_median       : float                         # median duriation of all the trials in the block
 %}
 
 classdef TowersBlock < dj.Imported
@@ -88,6 +89,7 @@ classdef TowersBlock < dj.Imported
             tuple.main_level = block.mainMazeID;
             tuple.level      = block.mazeID;
             tuple.set_id = 1;
+            tuple.trial_duration_median = median([block.trial.duration]);
             tuple.easy_block = exists_helper(block,'easyBlockFlag'); %if it doesn't exist, difficulty was uniform
             correct_counter = 0;
             nTrials = length([block.trial.choice]);
