@@ -34,8 +34,8 @@ classdef SessionStarted < dj.Manual
  
             %find if animal exists
             status               = subject.utils.check_subject(key.subject_fullname);
-            session_start_time     = datestr(datetime('now'), 'YYYY-mm-dd HH:MM');
- 
+            session_start_time   = char(datetime('now', 'Format','yyyy-MM-dd HH:mm'));
+            
             if status
                 % Check location, if there is no there yet, insert it
                 location_info =  lab.utils.check_location(trainingRig);

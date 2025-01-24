@@ -19,11 +19,13 @@ end
 
 %Check if key references too many or too few sessions.
 if length(data_dir) > 1
-   error('Multiple behavior files from given key'); 
+   warning('Multiple behavior files from given key');
+   return
 end
 
 if isempty(data_dir)
-   error('No session found from given key'); 
+   warning('No session found from given key'); 
+   return
 end
 
 %Load behavioral file
