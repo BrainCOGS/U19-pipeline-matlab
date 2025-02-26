@@ -10,7 +10,9 @@ function populate_technician_schedule
     if ~isempty(fetch(scheduler.TechSchedule & check_if_next_month_exists))
         return;
     end
-    
+    max_shift_id = fetch(scheduler.TechSchedule().proj('max(shift_index)->max_shift_id'),'max_shift_id').max_shift_id;
+
+
     
     
     reference_point = eom - caldays(13);
@@ -41,7 +43,7 @@ function populate_technician_schedule
     
     days_next_month = nnz(calendar(next_month));
     for i = 1:days_next_month 
-    
+        temp_calendar(i).shift_index = max_shift_id + i;
         temp_calendar(i).date = char(datetime(subset_shifted(i),'Format','yyyy-MM-dd'));
     
     end
