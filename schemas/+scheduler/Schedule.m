@@ -5,7 +5,7 @@ date                        : date                          # Full date
 timeslot                    : int                           # timeslot by number
 ---
 -> subject.Subject
--> scheduler.BehaviorProfile
+-> scheduler.TrainingProfile
 -> scheduler.RecordingProfile
 -> scheduler.InputOutputProfile
 experimenters_instructions : varchar(64532)
