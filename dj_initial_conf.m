@@ -38,6 +38,7 @@ end
 
 % Clean custom because cell arrays have to be tranformed to string arrays
 dj.config('custom', [])
+dj.config('queryBigint_to_double', true)
  
 dj.config.saveLocal()
  
