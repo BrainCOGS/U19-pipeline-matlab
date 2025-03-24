@@ -55,6 +55,31 @@ classdef WaterAdministrationIndividual < dj.Manual
             
         end
 
+        % function insert_previous_earned_from_all_files_subject_out(self)
+% 
+%          fname = 'missing_wai.json'; 
+%          fid = fopen(fname); 
+%          raw = fread(fid,inf); 
+%          str = char(raw'); 
+%          fclose(fid); 
+%          sessions = jsondecode(str);
+%          for i =1:numel(sessions)
+%              this_session = struct;
+%              this_session.subject_fullname = sessions(i).subject_fullname;
+%              this_session.session_date = sessions(i).administration_date;
+%              this_session
+%                 try
+%                     [status, data] = lab.utils.read_behavior_file(this_session);
+%                     if status
+%                         insertWaterEarnedFromFile_subject_out(self, data.log, this_session.subject_fullname);
+%                     end
+%                 catch err
+%                     err
+%                     err.stack
+%                 end
+%          end
+%         end
+
         function insert_previous_supplement_from_db(self)
             
             % Check if earned water was already on the database
