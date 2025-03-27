@@ -123,7 +123,7 @@ classdef Session < dj.Imported
             water_earned_key.subject_fullname = key.subject_fullname;
             water_earned_key.session_date = key.session_date;
             updateWaterEarnedFromFile(action.WaterAdministration, water_earned_key, log);
-            insertWaterEarnedFromFile(action.WaterAdministrationIndividual, log);
+            updateIndividualWaterEarnedFromFile(action.WaterAdministrationIndividual, log);
  
             %Insert sessionManipulation if present
             session_key = struct();
@@ -186,7 +186,7 @@ classdef Session < dj.Imported
             water_earned_key.subject_fullname = key.subject_fullname;
             water_earned_key.session_date = key.session_date;
             updateWaterEarnedFromFile(action.WaterAdministration, water_earned_key, log);
-            insertWaterEarnedFromFile(action.WaterAdministrationIndividual, log);
+            updateIndividualWaterEarnedFromFile(action.WaterAdministrationIndividual, log);
  
             %Insert sessionManipulation if present
             session_key = struct();
