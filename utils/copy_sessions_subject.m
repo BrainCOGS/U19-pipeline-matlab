@@ -59,7 +59,7 @@ insert(acquisition.SessionStarted, table2struct(ss_data));
 [keys_session, errors_session] = populate(acquisition.Session, new_subject_query);
 [keys_session_block, errors_session_block] = populate(acquisition.SessionBlock, new_subject_query);
 [keys_towers_session, errors_towers_session] = populate(behavior.TowersSession, new_subject_query);
-[keys_spatialtimeblobs, errors_spatialtimeblobs] = populate(behavior.SpatialTimeBlobs, new_subject_query);
+%[keys_spatialtimeblobs, errors_spatialtimeblobs] = populate(behavior.SpatialTimeBlobs, new_subject_query);
 [keys_block, errors_block] = populate(behavior.TowersBlock, new_subject_query);
 
 
@@ -67,14 +67,14 @@ insert(acquisition.SessionStarted, table2struct(ss_data));
 if ~isempty(errors_session) > 0 || ...
     ~isempty(errors_session_block) > 0 || ...
     ~isempty(errors_towers_session) > 0 || ...
-    ~isempty(errors_block) > 0 || ...
-    ~isempty(errors_spatialtimeblobs) > 0
+    ~isempty(errors_block) > 0
+ %   ~isempty(errors_spatialtimeblobs) > 0
     warning('Some population failed')
     errors_session
     errors_session_block
     errors_towers_session
     errors_block
-    errors_spatialtimeblobs
+%    errors_spatialtimeblobs
 end
 
 
