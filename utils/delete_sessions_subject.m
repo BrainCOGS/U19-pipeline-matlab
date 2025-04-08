@@ -25,6 +25,8 @@ for i=1:height(ss_data)
 end
 
 
+
+
 del(behavior.TowersSession & new_subject_query);
 del(acquisition.SessionStarted & new_subject_query);
 

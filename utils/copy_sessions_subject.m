@@ -1,7 +1,14 @@
 function [missing_files_names, failed_copies_names] = copy_sessions_subject(subject_2_copy,test_subject)
 
+if ~contains(test_subject,'test','IgnoreCase',true)
+    error('Cannot copy sessions on not test subjects ')
+end
+
 subject_query.subject_fullname = subject_2_copy;
 new_subject_query.subject_fullname = test_subject;
+
+del(behavior.TowersSession & new_subject_query);
+del(acquisition.SessionStarted & new_subject_query);
 
 ss_data = struct2table(fetch(acquisition.SessionStarted * proj(behavior.TowersSession) & subject_query, '*'),'AsArray', true);
 
