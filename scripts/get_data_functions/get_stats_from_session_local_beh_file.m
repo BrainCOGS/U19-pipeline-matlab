@@ -62,6 +62,11 @@ for i=1:length(data.log.block)
     n_trials = length(data.log.block(i).trial);
     if n_trials > 0
 
+    % Not real behavior file, file stock in 500 trials but empty
+    if n_trials == 500 & length(reshape([data.log.block(i).trial.trialType],[],1)) ~= 500
+        break
+    end
+
     this_block_table = table('Size', [n_trials length(all_table_fields)], ...
     'VariableNames',all_table_fields,'VariableTypes',all_table_types);
 
