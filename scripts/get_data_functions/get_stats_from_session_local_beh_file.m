@@ -60,12 +60,17 @@ table_data = table('Size', [0 length(all_table_fields)], ...
 for i=1:length(data.log.block)
 
     n_trials = length(data.log.block(i).trial);
+
+    %Case when something failed that "fixed" n_trials to default value
+    if n_trials ~= length([data.log.block(i).trial.trialType])
+        n_trials = length([data.log.block(i).trial.trialType]);
+    end
     if n_trials > 0
 
     % Not real behavior file, file stock in 500 trials but empty
-    if n_trials == 500 & length(reshape([data.log.block(i).trial.trialType],[],1)) ~= 500
-        break
-    end
+    %if n_trials == 500 & length(reshape([data.log.block(i).trial.trialType],[],1)) ~= 500
+    %    break
+    %end
 
     this_block_table = table('Size', [n_trials length(all_table_fields)], ...
     'VariableNames',all_table_fields,'VariableTypes',all_table_types);
@@ -79,9 +84,11 @@ for i=1:length(data.log.block)
     this_block_table.trial_type = arrayfun(@(v) Choice(v).char, reshape([data.log.block(i).trial.trialType],[],1) ,'un',0);
     this_block_table.choice = arrayfun(@(v) Choice(v).char, reshape([data.log.block(i).trial.choice],[],1),'un',0);
 
-    this_block_table.trial_abs_start = reshape([data.log.block(i).trial.start],[],1);
+    start_data = [data.log.block(i).trial.start];
+    duration_data = [data.log.block(i).trial.duration];
+    this_block_table.trial_abs_start = reshape(start_data(1:n_trials),[],1);
     this_block_table.excess_travel = reshape([data.log.block(i).trial.excessTravel],[],1);
-    this_block_table.trial_duration = reshape([data.log.block(i).trial.duration],[],1);
+    this_block_table.trial_duration = reshape(duration_data(1:n_trials),[],1);
     this_block_table.trial_id = reshape([data.log.block(i).trial.trialID],[],1);
 
     table_data = [table_data; this_block_table];

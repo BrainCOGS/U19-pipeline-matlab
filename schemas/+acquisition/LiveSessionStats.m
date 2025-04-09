@@ -12,12 +12,12 @@ level                       : int
 sublevel=null               : int
 num_trials_left             : int
 num_trials_right            : int
-performance                 : float
-performance_right           : float
-performance_left            : float
-bias                        : float
-mean_duration_trial         : float
-median_duration_trial       : float
+performance=null            : float
+performance_right=null      : float
+performance_left=null       : float
+bias=null                   : float
+mean_duration_trial=null    : float
+median_duration_trial=null  : float
 %}
  
 classdef LiveSessionStats < dj.Manual
