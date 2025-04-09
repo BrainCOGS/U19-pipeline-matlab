@@ -197,7 +197,7 @@ classdef TowersBlock < dj.Imported
                 self.schema.conn.startTransaction()
                 try
                     self.insert(tuple);
-                    insert(behavior.TowersBlockTrial, struct_trials)
+                    %insert(behavior.TowersBlockTrial, struct_trials)
                     %self.schema.conn.commitTransaction
                     toc
                 catch err
