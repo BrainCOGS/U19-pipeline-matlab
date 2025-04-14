@@ -9,6 +9,8 @@ function populate_schedule_for_tomorrow()
     one_date = fetch(scheduler.Schedule & 'subject_fullname is not NULL'& query,'*');
     tomorrow = char(datetime('now','Format','yyyy-MM-dd') + caldays(1));
     [one_date(:).date] = deal(tomorrow);
+    [one_date(:).level] = deal(0);
+    [one_date(:).sublevel] = deal(0);
     
     
     connection = dj.conn();
