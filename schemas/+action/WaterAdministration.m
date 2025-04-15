@@ -69,6 +69,45 @@ classdef WaterAdministration < dj.Manual
             
             
         end
+
+        function insert_previous_supplement_from_db_missing_wa(self)
+
+            % Check if earned water was already on the database
+            query_file = fullfile(fileparts(mfilename('fullpath')),'water_admin_individual_supplement_query.sql');
+            subjectwater_admin_ind_query= char(join(readlines(query_file),newline));
+            curr_conn = dj.conn();
+            water_ind_sup_data = curr_conn.query(subjectwater_admin_ind_query);
+            water_ind_sup_data = dj.struct.fromFields(water_ind_sup_data);
+            
+            for i =1:numel(water_ind_sup_data)
+                i
+
+                check_wa = struct;
+                check_wa.subject_fullname = water_ind_sup_data(i).subject_fullname;
+                check_wa.administration_date = water_ind_sup_data(i).admin_date;
+
+                previous_record = fetch(self & check_wa,'*');
+
+                if isempty(previous_record)
+                    water_key = struct;
+                    water_key.subject_fullname = water_ind_sup_data(i).subject_fullname;
+                    water_key.administration_date = water_ind_sup_data(i).admin_date;
+                    water_key.earned = 0;
+                    water_key.supplement = water_ind_sup_data(i).water_amount;
+                    water_key.received = water_ind_sup_data(i).water_amount;
+                    water_key.watertype_name = 'Unknown';
+
+                    insert(self, water_key,'IGNORE');
+                elseif previous_record.supplement == 0 && water_ind_sup_data(i).water_amount ~= 0
+                    water_key = struct;
+                    water_key.subject_fullname = water_ind_sup_data(i).subject_fullname;
+                    water_key.administration_date = water_ind_sup_data(i).admin_date;
+                    update(self & water_key,'supplement',water_ind_sup_data(i).water_amount);
+                    update(self & water_key,'received',water_ind_sup_data(i).water_amount+previous_record.earned);
+                end
+
+            end
+        end
         
     end
     
