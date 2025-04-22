@@ -65,7 +65,9 @@ classdef SessionBlock < dj.Imported
             
             %Single insert for all session
             self.insert(block_struct);
-            insert(acquisition.SessionBlockTrial, trial_struct)
+            if ~startsWith(block_struct(1).subject_fullname, 'testuser')
+                insert(acquisition.SessionBlockTrial, trial_struct)
+            end
             
         end
     end

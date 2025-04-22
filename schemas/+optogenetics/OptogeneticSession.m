@@ -99,7 +99,9 @@ classdef OptogeneticSession < dj.Imported
             
             
             insert(self, key);
-            insert(optogenetics.OptogeneticSessionTrial, opto_trial_structure);
+            if ~startsWith(key(1).subject_fullname, 'testuser')
+                insert(optogenetics.OptogeneticSessionTrial, opto_trial_structure);
+            end
             
         end
         

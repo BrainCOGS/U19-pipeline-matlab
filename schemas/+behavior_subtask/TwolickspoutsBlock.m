@@ -67,7 +67,9 @@ classdef TwolickspoutsBlock < dj.Imported
                 self.schema.conn.startTransaction()
                 try
                     self.insert(tuple);
-                    insert(behavior_subtask.TwolickspoutsBlockTrial, trial_data);
+                    if ~startsWith(tuple(1).subject_fullname, 'testuser')
+                        insert(behavior_subtask.TwolickspoutsBlockTrial, trial_data);
+                    end
                     %self.schema.conn.commitTransaction
                     toc
                 catch err
