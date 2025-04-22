@@ -8,6 +8,7 @@ subject_query.subject_fullname = subject_2_copy;
 new_subject_query.subject_fullname = test_subject;
 
 del(behavior.TowersSession & new_subject_query);
+del(optogenetics.OptogeneticSession & new_subject_query);
 del(acquisition.SessionStarted & new_subject_query);
 
 ss_data = struct2table(fetch(acquisition.SessionStarted * proj(behavior.TowersSession) & subject_query, '*'),'AsArray', true);
@@ -63,11 +64,11 @@ end
 
 
 insert(acquisition.SessionStarted, table2struct(ss_data));
-[keys_session, errors_session] = populate(acquisition.Session, new_subject_query);
-[keys_session_block, errors_session_block] = populate(acquisition.SessionBlock, new_subject_query);
-[keys_towers_session, errors_towers_session] = populate(behavior.TowersSession, new_subject_query);
+[~, errors_session] = populate(acquisition.Session, new_subject_query);
+[~, errors_session_block] = populate(acquisition.SessionBlock, new_subject_query);
+[~, errors_towers_session] = populate(behavior.TowersSession, new_subject_query);
 %[keys_spatialtimeblobs, errors_spatialtimeblobs] = populate(behavior.SpatialTimeBlobs, new_subject_query);
-[keys_block, errors_block] = populate(behavior.TowersBlock, new_subject_query);
+[~, errors_block] = populate(behavior.TowersBlock, new_subject_query);
 
 
 
