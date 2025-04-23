@@ -80,7 +80,7 @@ classdef WaterAdministration < dj.Manual
             water_ind_sup_data = dj.struct.fromFields(water_ind_sup_data);
             
             for i =1:numel(water_ind_sup_data)
-                i
+                
 
                 check_wa = struct;
                 check_wa.subject_fullname = water_ind_sup_data(i).subject_fullname;
