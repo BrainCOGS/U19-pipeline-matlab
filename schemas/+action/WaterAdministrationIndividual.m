@@ -10,10 +10,10 @@ classdef WaterAdministrationIndividual < dj.Manual
 
     methods
 
-        function insertIndividualWaterEarnedFromFile(self, log)
+        function insertIndividualWaterEarnedFromFile(self, water_key, log)
 
             % Check if earned water was already on the database
-            water_key.subject_fullname    = log.animal.name;
+            water_key.subject_fullname    = water_key.subject_fullname;
             water_key.administration_time = char(datetime(log.session.start,'Format','uuuu-MM-dd HH:mm:ss'));
 
             %Earned water from behavioral file
@@ -23,10 +23,10 @@ classdef WaterAdministrationIndividual < dj.Manual
 
         end
 
-        function updateIndividualWaterEarnedFromFile(self, log)
+        function updateIndividualWaterEarnedFromFile(self, water_key, log)
 
             % Check if earned water was already on the database
-            water_key.subject_fullname    = log.animal.name;
+            water_key.subject_fullname    = water_key.subject_fullname;
             water_key.administration_time = char(datetime(log.session.start,'Format','uuuu-MM-dd HH:mm:ss'));
             water_key.administation_type = 'earned';
 
@@ -63,23 +63,23 @@ classdef WaterAdministrationIndividual < dj.Manual
         end
 
 
-        function insert_previous_earned_from_all_files(self)
-
-            % Check if earned water was already on the database
-            sessions = fetch(acquisition.SessionStarted * proj(acquisition.Session) & 'session_date>"2025-03-10"','ORDER BY subject_fullname desc');
-            for i =1:numel(sessions)
-                sessions(i)
-                try
-                    [status, data] = lab.utils.read_behavior_file(sessions(i));
-                    if status
-                        updateIndividualWaterEarnedFromFile(self, data.log);
-                    end
-                catch err
-                end
-            end
-
-
-        end
+        % function insert_previous_earned_from_all_files(self)
+        % 
+        %     % Check if earned water was already on the database
+        %     sessions = fetch(acquisition.SessionStarted * proj(acquisition.Session) & 'session_date>"2025-03-10"','ORDER BY subject_fullname desc');
+        %     for i =1:numel(sessions)
+        %         sessions(i)
+        %         try
+        %             [status, data] = lab.utils.read_behavior_file(sessions(i));
+        %             if status
+        %                 updateIndividualWaterEarnedFromFile(self, data.log);
+        %             end
+        %         catch err
+        %         end
+        %     end
+        % 
+        % 
+        % end
 
 
         function insert_previous_supplement_from_db(self)

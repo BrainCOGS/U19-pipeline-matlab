@@ -2,18 +2,19 @@
 -> subject.Subject
 capture_time:  datetime		  # date time
 ---
-ml_position:        float                     # mediolateral position for motor
-ap_position:        float                     # anterioposterior position for motor
-dv_position:        float                     # dorsoventral position for motor
-lateral_image=null: blob@old_dailyposition    # lateral photo taken for reference
-top_image=null:     blob@old_dailyposition    # top     photo taken for reference
+-> lab.Location
+ml_position:        float                        # mediolateral position for motor
+ap_position:        float                        # anterioposterior position for motor
+dv_position:        float                        # dorsoventral position for motor
+lateral_image=null: blob@dailyposition           # lateral photo taken for reference
+top_image=null:     blob@dailyposition           # top     photo taken for reference
 %}
 
 % AX1 ML Mediolateral
 % AX2 AP Anteroposterior
 % AX3 DV Dorsoventral
 
-classdef DailyPositionData < dj.Manual
+classdef DailySubjectPositionData < dj.Manual
     
     properties (Constant = true)
         
@@ -28,9 +29,11 @@ classdef DailyPositionData < dj.Manual
             
             key.subject_fullname = subject_fullname;
             key.capture_time     = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:SS'));
+            key.location         = RigParameters.rig;
             key.ml_position      = motor_position.ml_position;
             key.ap_position      = motor_position.ap_position;
             key.dv_position      = motor_position.dv_position;
+
             
             if nargin >= 3 && ~isempty(lateral_image)
                 key.lateral_image = lateral_image;
@@ -39,7 +42,7 @@ classdef DailyPositionData < dj.Manual
                 key.top_image = top_image;
             end
             
-            insert(action.DailyPositionData,key);
+            insert(action.DailySubjectPositionData,key);
             
         end
         
