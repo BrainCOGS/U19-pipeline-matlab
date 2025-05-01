@@ -27,7 +27,7 @@ classdef DailyPositionData < dj.Manual
             
             
             key.subject_fullname = subject_fullname;
-            key.capture_time     = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:SS'));
+            key.capture_time     = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm:ss'));
             key.ml_position      = motor_position.ml_position;
             key.ap_position      = motor_position.ap_position;
             key.dv_position      = motor_position.dv_position;
