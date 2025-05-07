@@ -1,4 +1,4 @@
-function [stat_struct, stat_table] = get_stats_from_session_local_beh_file(session_key, behavior_file, common_stats)
+function [stat_struct, stat_table, animal_struct] = get_stats_from_session_local_beh_file(session_key, behavior_file, common_stats)
 %GET_STATS_FROM_SESSION get VirmenLike trial by trial Behavior File stats from DB data
 % Inputs
 % key          = Session keys to fetch data from.
@@ -14,14 +14,15 @@ function [stat_struct, stat_table] = get_stats_from_session_local_beh_file(sessi
 
 stat_struct = struct;
 stat_table = table;
+animal_struct = struct;
 
 default_maxExcessTravel = 0.1;
 
 %All neded fields for computation
 fields = {'trial_type', 'choice', 'trial_abs_start', 'excess_travel', 'trial_duration', 'trial_id'};
 field_types = {'cell',   'cell',      'single',         'single',       'single',         'single'};
-block_keys = {'subject_fullname', 'session_date', 'session_number', 'block'};
-block_types = {'cell',               'cell',         'double',         'double'};
+block_keys = {'subject_fullname', 'session_date', 'session_number',    'block',   'mazeID'};
+block_types = {'cell',               'cell',         'double',         'double',   'double'};
 trial_field = {'trial_idx'};
 trial_field_type = {'double'};
 all_table_fields = [block_keys, trial_field,      fields     ];
@@ -53,7 +54,7 @@ else
     data = load(behavior_file);
 end
 
-
+animal_struct = data.log.animal;
 table_data = table('Size', [0 length(all_table_fields)], ...
     'VariableNames',all_table_fields,'VariableTypes',all_table_types);
 
@@ -80,6 +81,7 @@ for i=1:length(data.log.block)
     this_block_table.session_number = repmat(session_key.session_number, n_trials, 1);
     this_block_table.block = repmat(i, n_trials, 1);
     this_block_table.trial_idx = reshape(1:n_trials,[],1);
+    this_block_table.mazeID = repmat(data.log.block(i).mazeID, n_trials, 1);
 
     this_block_table.trial_type = arrayfun(@(v) Choice(v).char, reshape([data.log.block(i).trial.trialType],[],1) ,'un',0);
     this_block_table.choice = arrayfun(@(v) Choice(v).char, reshape([data.log.block(i).trial.choice],[],1),'un',0);
@@ -129,6 +131,7 @@ if ~isempty(table_data)
     key_data = unique(table_data(:, block_keys), 'rows');
     key_data = sortrows(key_data,idx_block_keys);
     table_data = sortrows(table_data,idx_sort_keys);
+    table_data.total_trial_idx = [1:height(table_data)]';
     
     %% Calculate stats for each block
     for i=1:size(key_data,1)
@@ -147,6 +150,8 @@ if ~isempty(table_data)
         block_data.cum_right_trials = cumsum(block_data.right_trial);
         block_data.cum_correct_left_trials = cumsum(block_data.correct_left);
         block_data.cum_correct_right_trials = cumsum(block_data.correct_right);
+        block_data.performance_left = block_data.cum_correct_left_trials ./ block_data.cum_left_trials;
+        block_data.performance_right = block_data.cum_correct_right_trials ./ block_data.cum_right_trials;
         
         block_data.performance = block_data.cum_correct_trials ./ block_data.trial_idx;
         block_data.goodFraction = block_data.cum_good_trials ./ block_data.trial_idx;
@@ -178,6 +183,7 @@ if ~isempty(table_data)
         end
         
     end
+    stat_table.performance_session = cumsum(stat_table.correct_trial) ./ stat_table.total_trial_idx;
     %Output as structure 
     stat_struct = table2struct(stat_table);
 end

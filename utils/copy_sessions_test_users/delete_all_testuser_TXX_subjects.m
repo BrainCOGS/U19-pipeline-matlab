@@ -18,6 +18,7 @@ for i=1:length(txx_subjects)
         delete_behavior_parent_dir_subject(this_subject)
         delete_sessions_subject(this_subject);
         action.WaterAdministration;
+        del(action.DailySubjectPositionData & txx_subjects(i))
         del(subject.Subject & txx_subjects(i));
     end
 
