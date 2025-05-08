@@ -13,8 +13,8 @@ sublevel=null               : int
 num_trials_left             : int
 num_trials_right            : int
 performance=null            : float
-performance_right=null      : float
 performance_left=null       : float
+performance_right=null      : float
 bias=null                   : float
 mean_duration_trial=null    : float
 median_duration_trial=null  : float
