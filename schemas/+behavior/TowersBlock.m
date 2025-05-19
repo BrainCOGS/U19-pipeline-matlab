@@ -4,6 +4,7 @@
 ---
 main_level                  : int                           # main level on current block
 -> task.TaskLevelParameterSet
+sublevel=null               : int                           # sublevel info of current block     
 n_trials                    : int                           # number of trials in this block
 first_trial                 : int                           # trial_idx of the first trial in this block
 block_duration              : float                         # in secs, duration of the block
@@ -88,6 +89,9 @@ classdef TowersBlock < dj.Imported
             end
             tuple.main_level = block.mainMazeID;
             tuple.level      = block.mazeID;
+            if isfield(block, 'sublevel')
+                tuple.sublevel = block.sublevel;
+            end
             tuple.set_id = 1;
             tuple.trial_duration_median = median([block.trial.duration]);
             tuple.easy_block = exists_helper(block,'easyBlockFlag'); %if it doesn't exist, difficulty was uniform

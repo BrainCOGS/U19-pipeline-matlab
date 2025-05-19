@@ -14,12 +14,15 @@ beh_files = struct2table(get_behaviorfile_as_db(sessions_write_live_stats),'AsAr
 
 close all;
 beh_files.timeWriteLiveStats = beh_files.timeWriteLiveStats*1000;
-histogram(beh_files.timeWriteLiveStats);
+histogram(beh_files.timeWriteLiveStats, 100);
 set(gcf, 'Color', [1 1 1]);
 set(gca, 'FontSize',16)
 title('Histogram of times to write LiveStats to DB');
 xlabel('Time (ms)', 'FontSize',18);
 ylabel('# Trials', 'FontSize',18);
+
+
+text(max(beh_files.timeWriteLiveStats)-20,800,['# Trials' newline num2str(height(beh_files))]);
 
 text(max(beh_files.timeWriteLiveStats)-20,100,['Max time' newline num2str(max(beh_files.timeWriteLiveStats)) ' ms']);
 
