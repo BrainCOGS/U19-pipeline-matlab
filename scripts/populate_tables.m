@@ -8,6 +8,8 @@ connect_datajoint00
 
 reset_reweight_subjects();
 
+updateProtocolLevelTable;
+updateTrainingProfileProtocol;
 
 % Populate behavior tables
 [keys_session, errors_session] = populate(acquisition.Session);

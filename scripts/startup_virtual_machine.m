@@ -4,6 +4,19 @@
 curr_dir = pwd;
 u19_pipeline_dir = fileparts(fileparts(mfilename('fullpath')));
 dj_lib_dir = fullfile(fileparts(u19_pipeline_dir), 'datajoint_matlab_libs');
+virmen_dir = fullfile(fileparts(u19_pipeline_dir), 'ViRMEn');
+
+%Try to pull latest changes on repo (Virmen)
+cd(virmen_dir);
+try
+    [status,info] = system('git pull');
+catch err
+    displayException(err);
+    warning('Pulling latest changes was not possible')
+end
+
+addpath (genpath(fullfile(virmen_dir)));
+rmpath  (genpath(fullfile(virmen_dir, '.git')));
 
 %Try to pull latest changes on repo
 cd(u19_pipeline_dir);
