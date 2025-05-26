@@ -98,8 +98,14 @@ classdef Session < dj.Imported
             key.session_protocol = session_protocol;
  
             %Get commit version of session
-            commit = strsplit(log.version.repository);
-            commit = commit{1};
+            if isfield(log.version, 'repository')
+                commit = strsplit(log.version.repository);
+                commit = commit{1};
+            else
+                commit = '';
+            end
+
+            
             key.stimulus_commit   = commit;
  
  
