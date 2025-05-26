@@ -99,8 +99,12 @@ classdef Session < dj.Imported
  
             %Get commit version of session
             if isfield(log.version, 'repository')
-                commit = strsplit(log.version.repository);
-                commit = commit{1};
+                if ischar(log.version.repository)
+                    commit = strsplit(log.version.repository);
+                    commit = commit{1};
+                else
+                    commit = '';
+                end
             else
                 commit = '';
             end
