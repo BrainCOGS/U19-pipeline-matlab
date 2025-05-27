@@ -13,7 +13,7 @@ num_towers_l=null:     blob      # Number of towers shown to the left x tumber o
 classdef TowersSession < dj.Imported
     
     properties
-        keySource = acquisition.Session & struct('task', 'Towers');
+        keySource = acquisition.Session & struct('task', 'Towers') & struct('is_bad_session', 0);
     end
     
     methods(Access=protected)
