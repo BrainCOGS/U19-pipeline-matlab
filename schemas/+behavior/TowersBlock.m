@@ -132,17 +132,22 @@ classdef TowersBlock < dj.Imported
                 tuple_trial.trial_time = trial.time;
                 tuple_trial.trial_abs_start = trial.start;
                 tuple_trial.collision = trial.collision;
-                if iscell(trial.cueCombo)
-                    if all(cellfun(@isempty, trial.cueCombo))
-                        tuple_trial.cue_presence_left = {[]};
-                        tuple_trial.cue_presence_right = {[]};
-                    else
-                        tuple_trial.cue_presence_left = trial.cueCombo(1);
-                        tuple_trial.cue_presence_right = trial.cueCombo(2);
-                    end
+                if ~isfield(trial, 'cueCombo')
+                    tuple_trial.cue_presence_left = trial.cuePos(1);
+                    tuple_trial.cue_presence_right = trial.cuePos(2);
                 else
-                    tuple_trial.cue_presence_left = {trial.cueCombo(1, :)};
-                    tuple_trial.cue_presence_right = {trial.cueCombo(2, :)};
+                    if iscell(trial.cueCombo)
+                        if all(cellfun(@isempty, trial.cueCombo))
+                            tuple_trial.cue_presence_left = {[]};
+                            tuple_trial.cue_presence_right = {[]};
+                        else
+                            tuple_trial.cue_presence_left = trial.cueCombo(1);
+                            tuple_trial.cue_presence_right = trial.cueCombo(2);
+                        end
+                    else
+                        tuple_trial.cue_presence_left = {trial.cueCombo(1, :)};
+                        tuple_trial.cue_presence_right = {trial.cueCombo(2, :)};
+                    end
                 end
                 tuple_trial.cue_onset_left = trial.cueOnset(1);
                 tuple_trial.cue_onset_right = trial.cueOnset(2);
