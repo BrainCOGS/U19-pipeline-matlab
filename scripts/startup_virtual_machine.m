@@ -8,6 +8,7 @@ virmen_dir = fullfile(fileparts(u19_pipeline_dir), 'ViRMEn');
 
 %Try to pull latest changes on repo (Virmen)
 cd(virmen_dir);
+virmen_dir
 try
     [status,info] = system('git pull');
 catch err
