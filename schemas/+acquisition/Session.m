@@ -124,6 +124,10 @@ classdef Session < dj.Imported
                 key.num_trials       = -1;
                 key.num_trials_try   = [];
             end
+
+            if key.num_trials == -1 || key.num_trials == 0
+                key.is_bad_session = 1;
+            end
  
             %and insert this session:
             insert(acquisition.Session, key)
