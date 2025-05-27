@@ -93,29 +93,35 @@ classdef TowersSession < dj.Imported
                     
                     %Separate cueCombo to get towersR and towersL
                     some_empty_towers = 0;
-                    cueCombo = {trialstruct.trial.cueCombo};
-                    %Check for trials without any towers
-                    if iscell(cueCombo{1})
-                        for j=1:length(cueCombo)
-                            if all(cellfun(@isempty, cueCombo{j}))
-                                some_empty_towers = 1;
-                                break
+                    if ~isfield(trialstruct.trial, 'cueCombo')
+                        allCues = {trialstruct.trial.cuePos};
+                        num_towers_l = cellfun(@(v) length(v{1}), allCues);
+                        num_towers_r = cellfun(@(v) length(v{2}), allCues);
+
+                    else
+                        cueCombo = {trialstruct.trial.cueCombo};
+                        %Check for trials without any towers
+                        if iscell(cueCombo{1})
+                            for j=1:length(cueCombo)
+                                if all(cellfun(@isempty, cueCombo{j}))
+                                    some_empty_towers = 1;
+                                    break
+                                end
+                            end
+                        end
+
+                        if ~some_empty_towers
+                            num_towers_r = cellfun(@(x) sum(x(Choice.R,:)), cueCombo);
+                            num_towers_l = cellfun(@(x) sum(x(Choice.L,:)), cueCombo);
+                        else
+                            num_towers_l = [];
+                            num_towers_r = [];
+                            for j=1:length(cueCombo)
+                                num_towers_l = [num_towers_l sum(cueCombo{j}{Choice.L})];
+                                num_towers_r = [num_towers_r sum(cueCombo{j}{Choice.R})];
                             end
                         end
                     end
-                    
-                    if ~some_empty_towers
-                        num_towers_r = cellfun(@(x) sum(x(Choice.R,:)), cueCombo);
-                        num_towers_l = cellfun(@(x) sum(x(Choice.L,:)), cueCombo);
-                    else
-                        num_towers_l = [];
-                        num_towers_r = [];
-                        for j=1:length(cueCombo)
-                            num_towers_l = [num_towers_l sum(cueCombo{j}{Choice.L})];
-                            num_towers_r = [num_towers_r sum(cueCombo{j}{Choice.R})];
-                        end
-                    end
-                    
                     
                     %Concatenate variables
                     key.rewarded_side = [key.rewarded_side rewarded_side];
