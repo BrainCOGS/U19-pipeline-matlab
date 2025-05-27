@@ -21,7 +21,7 @@ updateTrainingProfileProtocol;
 
 % Populate optogenetics tables
 sm = acquisition.SessionManipulation;
-ref_date = datetime(datetime('now') - days(14),'Format', 'uuuu-MM-dd');
+ref_date = char(datetime(datetime('now') - days(14),'Format', 'uuuu-MM-dd'));
 query_sessions = ['session_date > "', ref_date, '"'];
 sm.ingest_previous_optogenetic_sessions(query_sessions);
 
