@@ -7,7 +7,7 @@
 classdef PupillometrySession < dj.Imported
     
     properties
-        keySource =  acquisition.Session & (acquisition.SessionVideo & struct('video_type', 'pupillometry'));
+        keySource =  acquisition.Session & struct('is_bad_session', 0) & (acquisition.SessionVideo & struct('video_type', 'pupillometry'));
     end
     
     methods(Access=protected)
