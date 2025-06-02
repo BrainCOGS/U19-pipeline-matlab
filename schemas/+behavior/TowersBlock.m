@@ -18,6 +18,7 @@ trial_duration_median       : float                         # median duriation o
 
 classdef TowersBlock < dj.Imported
     properties
+        keySource = (acquisition.SessionBlock & struct('is_bad_block', 0)) * behavior.TowersSession;
         %keySource = acquisition.Session & acquisition.SessionStarted
         %keySource = proj(acquisition.Session, 'level->na_level') * ...
         %         proj(acquisition.SessionStarted, 'session_location->na_location', 'new_remote_path_behavior_file')

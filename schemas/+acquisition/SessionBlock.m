@@ -2,6 +2,7 @@
 -> acquisition.Session
 block                       : tinyint                       # block number
 ---
+is_bad_block               : tinyint                       #check if block has              
 %}
 
 classdef SessionBlock < dj.Imported
@@ -61,6 +62,10 @@ classdef SessionBlock < dj.Imported
                     
                 end
                 
+            end
+
+            if nTrials == 0
+                block_struct.is_bad_block = 1;
             end
             
             %Single insert for all session
