@@ -13,7 +13,7 @@ sensor_dots:                blob@behaviortimespatialblobs   # raw recordings of 
 
 classdef SpatialTimeBlobs < dj.Imported
     properties
-        keySource = acquisition.Session & struct('is_bad_session', 0);
+        keySource = acquisition.Session & struct('is_bad_session', 0) & struct('task', 'Towers');
     end
     methods(Access=protected)
         function makeTuples(self, key)
