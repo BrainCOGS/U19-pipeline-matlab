@@ -156,8 +156,8 @@ classdef TowersBlock < dj.Imported
                     tuple_trial.cue_offset_left = trial.cueOffset(1);
                     tuple_trial.cue_offset_right = trial.cueOffset(2);
                 else
-                    tuple_trial.cue_offset_left = trial.cueOnset(1);
-                    tuple_trial.cue_offset_right = trial.cueOnset(2);
+                    tuple_trial.cue_offset_left = repmat({NaN},size(trial.cueOnset(1)));
+                    tuple_trial.cue_offset_right = repmat({NaN},size(trial.cueOnset(2)));
                 end
                 tuple_trial.cue_pos_left = trial.cuePos(1);
                 tuple_trial.cue_pos_right = trial.cuePos(2);
