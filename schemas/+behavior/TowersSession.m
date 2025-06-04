@@ -47,6 +47,11 @@ classdef TowersSession < dj.Imported
                     disp(err.message)
                     sprintf('Error in here: %s, %s, %d',err.stack(1).file, err.stack(1).name, err.stack(1).line )
                 end
+            else
+                days_from_session = days(datetime('now') - datetime(key.session_date));
+                if days_from_session > 3
+                    update(acquisition.Session & key, 'is_bad_session', 1);
+                end
             end
             
         end
