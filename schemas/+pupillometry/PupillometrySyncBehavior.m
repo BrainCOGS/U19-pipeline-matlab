@@ -43,7 +43,7 @@ classdef PupillometrySyncBehavior < dj.Imported
                 disp(['Could not open video file: ', video_filepath])
                 status_v = 0;
                 days_from_session = days(datetime('now') - datetime(key.session_date));
-                if days_from_session > 3
+                if days_from_session > 10
                     update(pupillometry.PupillometrySession & key, 'is_bad_video', 1);
                 end
             end
