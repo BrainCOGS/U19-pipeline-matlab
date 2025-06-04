@@ -2,6 +2,7 @@
 # Information of a pupillometry session
 ->acquisition.Session
 ---
+is_bad_video=0            : tinyint                       # Flag that indicates if this session had a failed video
 %}
 
 classdef PupillometrySession < dj.Imported
@@ -20,6 +21,7 @@ classdef PupillometrySession < dj.Imported
           raw_dir = conf.custom.PupillometryRootDataDir{1};  
           new_video_file = fullfile(raw_dir, video_key.remote_path_video_file);
           if isfile(new_video_file)
+            key.is_bad_video = 0;
             insert(self, key)
           end
             

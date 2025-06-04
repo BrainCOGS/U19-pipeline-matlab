@@ -9,7 +9,7 @@ sync_behavior_matrix:        longblob               # matrix with corresponding 
 classdef PupillometrySyncBehavior < dj.Imported
 
     properties
-        keySource =  acquisition.Session & struct('is_bad_session', 0) & pupillometry.PupillometrySession;
+        keySource =  pupillometry.PupillometrySession & struct('is_bad_video', 0);
     end
     
     methods(Access=protected)
@@ -31,13 +31,24 @@ classdef PupillometrySyncBehavior < dj.Imported
             try
                 data = load(behavior_filepath,'log');
                 log = data.log;
-                v = VideoReader(video_filepath);
-                status = 1;
+                status_b = 1;
             catch
-                disp(['Could not open behavioral file or video file: ', behavior_filepath, video_filepath])
-                status = 0;
+                disp(['Could not open behavioral file ', behavior_filepath])
+                status_b = 0;
             end
-            if status
+            try 
+                v = VideoReader(video_filepath);
+                status_v = 1;
+            catch 
+                disp(['Could not open video file: ', video_filepath])
+                status_v = 0;
+                days_from_session = days(datetime('now') - datetime(key.session_date));
+                if days_from_session > 3
+                    update(pupillometry.PupillometrySession & key, 'is_bad_video', 1);
+                end
+            end
+
+            if status_v && status_b
                 %Check if it is a real behavioral file
                 if isfield(log, 'session')
                     
