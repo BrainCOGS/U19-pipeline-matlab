@@ -12,7 +12,7 @@ session_pright_fit=null      : blob   # (%) fitting results for percent went rig
 classdef TowersSessionPsych < dj.Computed
 
     properties
-        keySource = (acquisition.Session & struct('task', 'Towers') & struct('is_bad_session', 0) * behavior.TowersSession);
+        keySource = ((acquisition.Session & struct('task', 'Towers') & struct('is_bad_session', 0)) * behavior.TowersSession);
     end
 
     methods(Access=protected)
