@@ -9,6 +9,10 @@ trial_params              : blob                          # maze features of cur
 %}
 
 classdef TwolickspoutsBlock < dj.Imported
+
+    properties
+        keySource = (acquisition.SessionBlock & struct('is_bad_block', 0)) * behavior_subtask.TwolickspoutsSession;
+    end
     
     methods(Access=protected)
         function makeTuples(self, key)
