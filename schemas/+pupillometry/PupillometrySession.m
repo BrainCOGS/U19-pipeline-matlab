@@ -26,12 +26,12 @@ classdef PupillometrySession < dj.Imported
             else
                 days_from_session = days(datetime('now') - datetime(key.session_date));
                 if days_from_session > 10
-                  key.is_bad_video = 1;
-                  insert(self, key)
+                    key.is_bad_video = 1;
+                    insert(self, key)
                 end
-
-
             end
 
         end
+
     end
+end
