@@ -10,6 +10,10 @@ subject_pright_fit=null      : blob   # fitting results for percent went right
 %}
 
 classdef TowersSubjectCumulativePsych < dj.Computed
+
+    properties
+        keySource = (acquisition.Session & struct('task', 'Towers') & struct('is_bad_session', 0) * behavior.TowersSession);
+    end
     
     methods(Access=protected)
         

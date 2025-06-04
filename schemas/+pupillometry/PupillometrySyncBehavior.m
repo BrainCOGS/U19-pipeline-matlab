@@ -7,6 +7,10 @@ sync_behavior_matrix:        longblob               # matrix with corresponding 
 %}
 
 classdef PupillometrySyncBehavior < dj.Imported
+
+    properties
+        keySource =  acquisition.Session & struct('is_bad_session', 0) & pupillometry.PupillometrySession;
+    end
     
     methods(Access=protected)
         
