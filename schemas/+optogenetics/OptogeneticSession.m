@@ -10,7 +10,7 @@
 classdef OptogeneticSession < dj.Imported
     
     properties
-        keySource =  acquisition.Session & (acquisition.SessionManipulation & struct('manipulation_type', 'optogenetics'));
+        keySource =  (acquisition.Session & struct('task', 'Towers') & struct('is_bad_session', 0)) & (acquisition.SessionManipulation & struct('manipulation_type', 'optogenetics'));
     end
     
     methods(Access=protected)
