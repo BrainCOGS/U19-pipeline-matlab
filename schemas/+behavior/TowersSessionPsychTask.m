@@ -49,10 +49,22 @@ classdef TowersSessionPsychTask < dj.Computed
             if ~iscell(trial_info.cue_presence_right)
                 trial_info.cue_presence_right = num2cell(trial_info.cue_presence_right);
             end
-            trial_info.num_towers_l = cellfun(@sum, trial_info.cue_presence_left);
-            trial_info.num_towers_r = cellfun(@sum, trial_info.cue_presence_right);
+            try
+                trial_info.num_towers_l = cellfun(@sum, trial_info.cue_presence_left);
+            catch
+                trial_info.num_towers_l = cellfun(@length, trial_info.cue_presence_left);
+            end
+            try
+                trial_info.num_towers_r = cellfun(@sum, trial_info.cue_presence_right);
+            catch
+                trial_info.num_towers_r = cellfun(@length, trial_info.cue_presence_right);
+            end
 
             trial_info.choice = double(cellfun(@Choice,  trial_info.choice));
+
+            trial_info.na_trials = isinf(trial_info.choice);
+
+            trial_info = trial_info(trial_info.na_trials==0,:);
 
             %For each of the kind of level types:
             blocks_types = {'main', 'guiding'};
@@ -60,8 +72,20 @@ classdef TowersSessionPsychTask < dj.Computed
             for iblocks = 1:length(blocks)
 
                 if size(blocks{iblocks}, 1)
+
+                    key_subtype = key;
                     %Filter corresponding trials
                     ac_trial_info = trial_info(ismember(trial_info.block,blocks{iblocks}),:);
+
+                    if height(ac_trial_info) == 0
+                        f = {'delta_data', 'pright_data', 'delta_error', 'pright_error', 'delta_fit', 'pright_fit'};
+                        for i = 1:length(f)
+                            key_subtype.(strcat('blocks_', f{i})) = NaN;
+                        end
+                        key_subtype.blocks_type = blocks_types{iblocks};
+                        self.insert(key_subtype)
+                    else
+
 
                     %Fit and insert results
                     fit_results = behavior.utils.psychFit(deltaBins, ac_trial_info.num_towers_r, ...
@@ -69,12 +93,12 @@ classdef TowersSessionPsychTask < dj.Computed
 
                     f = fieldnames(fit_results);
 
-                    key_subtype = key;
                     for i = 1:length(f)
                         key_subtype.(strcat('blocks_', f{i})) = fit_results.(f{i});
                     end
                     key_subtype.blocks_type = blocks_types{iblocks};
                     self.insert(key_subtype)
+                    end
                 end
             end
         end
