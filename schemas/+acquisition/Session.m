@@ -46,6 +46,11 @@ classdef Session < dj.Imported
                 end
                 
                 
+            else
+                days_from_session = days(datetime('now') - datetime(key.session_date));
+                if days_from_session > 3
+                    update(acquisition.SessionStarted & key, 'invalid_session', 1);
+                end
             end
             
         end
