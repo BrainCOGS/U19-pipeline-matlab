@@ -11,15 +11,15 @@ classdef PupillometrySyncBehavior < dj.Imported
     properties
         keySource =  pupillometry.PupillometrySession & struct('is_bad_video', 0);
     end
-    
+
     methods(Access=protected)
-        
+
         function makeTuples(self, key)
-            
+
             %Get behavior filepath
             behavior_filepath = fetch1(acquisition.SessionStarted & key, 'new_remote_path_behavior_file');
             [~, behavior_filepath] = lab.utils.get_path_from_official_dir(behavior_filepath);
-            
+
             %Get video filepath
             conf = dj.config;
             video_root_dir    = conf.custom.PupillometryRootDataDir{1};
@@ -36,10 +36,10 @@ classdef PupillometrySyncBehavior < dj.Imported
                 disp(['Could not open behavioral file ', behavior_filepath])
                 status_b = 0;
             end
-            try 
+            try
                 v = VideoReader(video_filepath);
                 status_v = 1;
-            catch 
+            catch
                 disp(['Could not open video file: ', video_filepath])
                 status_v = 0;
                 days_from_session = days(datetime('now') - datetime(key.session_date));
@@ -51,17 +51,26 @@ classdef PupillometrySyncBehavior < dj.Imported
             if status_v && status_b
                 %Check if it is a real behavioral file
                 if isfield(log, 'session')
-                    
+
                     %Get sync matrices
                     [key.sync_video_frame_matrix, key.sync_behavior_matrix] = sync_pupillometry_video(log, v);
-                    insert(self, key);
+
+                    %If it was not possible to sync, write as badVideo
+                    if isempty(key.sync_video_frame_matrix) && isempty(key.sync_behavior_matrix)
+                        days_from_session = days(datetime('now') - datetime(key.session_date));
+                        if days_from_session > 10
+                            update(pupillometry.PupillometrySession & key, 'is_bad_video', 1);
+                        end
+                    else
+                        insert(self, key);
+                    end
                 end
-                
+
             end
-            
+
         end
-        
+
     end
-    
+
 end
 

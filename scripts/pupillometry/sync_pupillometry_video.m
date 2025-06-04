@@ -13,9 +13,22 @@ videoTimeVector = linspace(0, v.Duration, v.NumFrames)' + log.timeElapsedVideoSt
 %Get time matrix for each iteration on behavior file
 timeMatrix = get_trial_iteration_time_matrix(log);
 
+if isempty(timeMatrix)
+    syncVideoFrame = [];
+    syncBehavior = [];
+    return
+end
+
 %% Sync matrix for video frames
 temp_vect = videoTimeVector - timeMatrix(1,1);
 temp_vect(temp_vect > 0) = [];
+
+if isempty(temp_vect)
+    syncVideoFrame = [];
+    syncBehavior = [];
+    return
+end
+
 index_first = length(temp_vect);
 
 %Sync signal for first video frame
