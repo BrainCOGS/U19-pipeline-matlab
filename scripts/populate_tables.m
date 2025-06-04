@@ -23,7 +23,7 @@ updateTrainingProfileProtocol;
 sm = acquisition.SessionManipulation;
 ref_date = char(datetime(datetime('now') - days(14),'Format', 'uuuu-MM-dd'));
 query_sessions = ['session_date > "', ref_date, '"'];
-sm.ingest_previous_optogenetic_sessions(query_sessions);
+%sm.ingest_previous_optogenetic_sessions(query_sessions);
 
 [keys_session_opto, errors_session_opto] = populate(optogenetics.OptogeneticSession);
 
