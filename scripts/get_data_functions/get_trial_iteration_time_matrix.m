@@ -20,6 +20,10 @@ for i = 1:length(log.block)
     
     trials = log.block(i).trial;
     nTrials = length([trials.choice]);
+
+    if nTrials == 0 && i==1
+        end_block_relative_time = 0;
+    end
         
     for j = 1:nTrials
         
