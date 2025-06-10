@@ -25,7 +25,7 @@ classdef  TwolickspoutsBlockTrial < dj.Part
             % trial_structure = structure array with trial information for the specific subtask: Twolickspouts
             
             total_trials = 0;
-            trial_structure = struct;
+            %trial_structure = struct;
             nTrials = length([block_data.trial.choice]);
             for itrial = 1:nTrials
                 
