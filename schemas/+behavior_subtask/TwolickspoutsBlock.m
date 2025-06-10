@@ -75,7 +75,7 @@ classdef TwolickspoutsBlock < dj.Imported
                         insert(behavior_subtask.TwolickspoutsBlockTrial, trial_data);
                     end
                     %self.schema.conn.commitTransaction
-                    toc
+                    
                 catch err
                     %Cancel previous transaction but start a new one to prevent DJ to fail
                     self.schema.conn.cancelTransaction
