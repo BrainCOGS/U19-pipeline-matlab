@@ -19,11 +19,11 @@ classdef TwolickspoutsSession < dj.Imported
             data_dir = fetch(acquisition.SessionStarted & key, 'task', 'new_remote_path_behavior_file');
             
             %Load behavioral file
-            [status, data] = lab.utils.read_behavior_file(key, data_dir);
+            [status, data] = lab.utils.read_behavior_file(key, []);
             if status
                 log = data.log;
             else
-                disp(['Could not open behavioral file: ', data_dir])
+                disp(['Could not open behavioral file: ', data_dir.new_remote_path_behavior_file])
             end
             if status
                 try
