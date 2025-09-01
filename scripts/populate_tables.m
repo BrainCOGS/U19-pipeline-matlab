@@ -8,8 +8,15 @@ connect_datajoint00
 
 reset_reweight_subjects();
 
-updateProtocolLevelTable;
-updateTrainingProfileProtocol;
+% Populate scheduling tables
+populate_schedule_for_tomorrow()
+populate_technician_schedule()
+
+try
+    updateProtocolLevelTable;
+    updateTrainingProfileProtocol;
+catch
+end
 
 % Populate behavior tables
 [keys_session, errors_session] = populate(acquisition.Session);
@@ -28,13 +35,21 @@ sm.ingest_previous_optogenetic_sessions(query_sessions);
 [keys_session_opto, errors_session_opto] = populate(optogenetics.OptogeneticSession);
 
 %Populate all corresponding subtasks tables
-ingest_subtasks()
+try
+    ingest_subtasks()
+catch
+
+end
 
 % Populate pupillometry tables
 [keys_session_pupil, errors_session_pupil] = populate(pupillometry.PupillometrySession);
 [keys_session_pupilsync, errors_session_pupilsync] = populate(pupillometry.PupillometrySyncBehavior);
 % Ingest PupillometrySessionModel and PupillometrySessionModelData tables
-ingest_pupillometry_sessions
+try
+    ingest_pupillometry_sessions
+catch
+
+end
 
 
 % Populate psychometric tables
@@ -43,6 +58,3 @@ ingest_pupillometry_sessions
 [keys_psych_level, errors_psych_level] = populate(behavior.TowersSubjectCumulativePsychLevel);
 [keys_psych_task, errors_psych_task] = populate(behavior.TowersSessionPsychTask);
 
-% Populate scheduling tables
-populate_schedule_for_tomorrow()
-populate_technician_schedule()
