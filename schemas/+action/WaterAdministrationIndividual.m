@@ -4,6 +4,7 @@ administration_time:      datetime
 ---
 administation_type:       enum("earned","supplement","extra_supplement")
 water_amount:             float
+(water_person)=null       -> lab.User
 %}
 
 classdef WaterAdministrationIndividual < dj.Manual
