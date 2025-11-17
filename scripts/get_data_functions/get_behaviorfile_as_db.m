@@ -41,8 +41,11 @@ for i=1:length(key)
                 session_data = [block_key_table, session_data];
                 
                 %Non concatenable varialbe
-                if ismember('state_ports', session_data.Properties.VariableNames);
-                    session_data= removevars(session_data,{'state_ports'});
+                noncat_vars = {'finalchoice', 'state_ports', 'trial_bank_session'};
+                for jj=1:length(noncat_vars)
+                    if ismember(noncat_vars{jj}, session_data.Properties.VariableNames);
+                        session_data= removevars(session_data,noncat_vars(jj));
+                    end
                 end
                     
                 %Concatenate sessions

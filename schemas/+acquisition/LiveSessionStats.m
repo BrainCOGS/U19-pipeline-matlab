@@ -18,6 +18,8 @@ performance_right=null      : float
 bias=null                   : float
 mean_duration_trial=null    : float
 median_duration_trial=null  : float
+violation_trial             : int
+consecutive_violation_trials : int
 %}
  
 classdef LiveSessionStats < dj.Manual
