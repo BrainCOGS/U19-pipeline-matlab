@@ -21,16 +21,16 @@ function send_slack_notification(webhook_name, message)
     
     % Prepare the JSON payload for Slack
     payload = struct('text', message);
-    json_payload = jsonencode(payload);
     
-    % Set up HTTP options
+    % Set up HTTP options for JSON POST request
     options = weboptions('MediaType', 'application/json', ...
                         'RequestMethod', 'post', ...
                         'Timeout', 10);
     
     try
         % Send the POST request to Slack webhook
-        webwrite(webhook_url, json_payload, options);
+        % webwrite with 'application/json' MediaType automatically encodes the struct
+        webwrite(webhook_url, payload, options);
         fprintf('Slack notification sent successfully to %s\n', webhook_name);
     catch e
         warning('Failed to send Slack notification: %s', e.message);
