@@ -27,7 +27,8 @@ function populate_schedule_for_tomorrow()
         
         % Attempt to insert records one at a time
         fprintf('Bulk insert failed. Attempting individual inserts...\n');
-        failed_entries = {};
+        failed_entries = cell(1, length(one_date)); % Preallocate for efficiency
+        failed_count = 0;
         
         for i = 1:length(one_date)
             try
@@ -39,25 +40,31 @@ function populate_schedule_for_tomorrow()
                 connection.cancelTransaction;
                 fprintf('Failed to insert entry %d/%d: %s\n', i, length(one_date), insert_error.message);
                 % Store the failed entry information
+                failed_count = failed_count + 1;
                 failed_info = struct();
                 failed_info.index = i;
                 failed_info.subject_fullname = one_date(i).subject_fullname;
                 failed_info.date = one_date(i).date;
                 failed_info.error_message = insert_error.message;
-                failed_entries{end+1} = failed_info;
+                failed_entries{failed_count} = failed_info;
             end
         end
         
+        % Trim unused preallocated cells
+        failed_entries = failed_entries(1:failed_count);
+        
         % Send Slack notification if there are failed entries
-        if ~isempty(failed_entries)
-            message = sprintf('Schedule insertion failures for %s:\n', tomorrow);
-            for i = 1:length(failed_entries)
+        if failed_count > 0
+            % Use the date from the first entry (they should all be the same)
+            target_date = one_date(1).date;
+            message = sprintf('Schedule insertion failures for %s:\n', target_date);
+            for i = 1:failed_count
                 entry = failed_entries{i};
                 message = sprintf('%s- Entry %d: Subject %s, Date %s\n  Error: %s\n', ...
                     message, entry.index, entry.subject_fullname, entry.date, entry.error_message);
             end
             message = sprintf('%sTotal failed entries: %d out of %d', ...
-                message, length(failed_entries), length(one_date));
+                message, failed_count, length(one_date));
             
             % Send notification to rig_scheduling channel
             scheduler.utils.send_slack_notification('rig_scheduling', message);

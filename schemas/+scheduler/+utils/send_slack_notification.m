@@ -8,9 +8,17 @@ function send_slack_notification(webhook_name, message)
 % Example:
 %   send_slack_notification('rig_scheduling', 'Schedule insertion failed')
 
+    % Constants
+    HTTP_TIMEOUT_SECONDS = 10;
+
     % Fetch the webhook URL from the database
-    webhook_query = struct('webhook_name', webhook_name);
-    webhook_data = fetch(lab.SlackWebhooks & webhook_query, 'webhook_url');
+    try
+        webhook_query = struct('webhook_name', webhook_name);
+        webhook_data = fetch(lab.SlackWebhooks & webhook_query, 'webhook_url');
+    catch e
+        warning('Failed to fetch webhook from database: %s', e.message);
+        return;
+    end
     
     if isempty(webhook_data)
         warning('Webhook "%s" not found in lab.SlackWebhooks table', webhook_name);
@@ -25,7 +33,7 @@ function send_slack_notification(webhook_name, message)
     % Set up HTTP options for JSON POST request
     options = weboptions('MediaType', 'application/json', ...
                         'RequestMethod', 'post', ...
-                        'Timeout', 10);
+                        'Timeout', HTTP_TIMEOUT_SECONDS);
     
     try
         % Send the POST request to Slack webhook
