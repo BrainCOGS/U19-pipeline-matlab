@@ -78,7 +78,7 @@ function populate_schedule_for_tomorrow()
             message = strjoin(message_parts, '');
             
             % Send notification to rig_scheduling channel
-            scheduler.utils.send_slack_notification('rig_scheduling', message);
+            send_slack_notification('rig_scheduling', message);
         else
             fprintf('All entries inserted successfully after individual retry.\n');
         end
