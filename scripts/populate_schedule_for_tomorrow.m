@@ -55,16 +55,27 @@ function populate_schedule_for_tomorrow()
         
         % Send Slack notification if there are failed entries
         if failed_count > 0
-            % Use the date from the first entry (they should all be the same)
-            target_date = one_date(1).date;
-            message = sprintf('Schedule insertion failures for %s:\n', target_date);
+            % Build error message
+            if ~isempty(one_date)
+                target_date = one_date(1).date;
+            else
+                target_date = 'unknown';
+            end
+            
+            % Build message parts in a cell array for efficiency
+            message_parts = cell(failed_count + 2, 1);
+            message_parts{1} = sprintf('Schedule insertion failures for %s:\n', target_date);
+            
             for i = 1:failed_count
                 entry = failed_entries{i};
-                message = sprintf('%s- Entry %d: Subject %s, Date %s\n  Error: %s\n', ...
-                    message, entry.index, entry.subject_fullname, entry.date, entry.error_message);
+                message_parts{i+1} = sprintf('- Entry %d: Subject %s, Date %s\n  Error: %s\n', ...
+                    entry.index, entry.subject_fullname, entry.date, entry.error_message);
             end
-            message = sprintf('%sTotal failed entries: %d out of %d', ...
-                message, failed_count, length(one_date));
+            
+            message_parts{failed_count + 2} = sprintf('Total failed entries: %d out of %d', ...
+                failed_count, length(one_date));
+            
+            message = strjoin(message_parts, '');
             
             % Send notification to rig_scheduling channel
             scheduler.utils.send_slack_notification('rig_scheduling', message);
