@@ -37,7 +37,7 @@ function send_slack_notification(webhook_name, message)
     
     try
         % Send the POST request to Slack webhook
-        % webwrite with 'application/json' MediaType automatically encodes the struct
+        % When MediaType is 'application/json', webwrite converts the struct to JSON
         webwrite(webhook_url, payload, options);
         fprintf('Slack notification sent successfully to %s\n', webhook_name);
     catch e
