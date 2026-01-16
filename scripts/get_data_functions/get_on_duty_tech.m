@@ -1,11 +1,30 @@
 function duty_tech_slack = get_on_duty_tech()
 
 duty_tech_slack = {};
-tech_schedule_query.date =  char(datetime('now','Format','yyyy-MM-dd'));
-tech_today = fetch(scheduler.TechSchedule * lab.User & tech_schedule_query,'slack');
 
-if ~isempty(tech_today)
-    duty_tech_slack = {tech_today.slack};
+% Fetch technician info from WhenIWork iCal feed
+tech_info = fetchWhenIWorkTech(datetime('today'));
+
+% If a technician was found and has an ID, get their slack handle
+if ~isempty(tech_info) && isfield(tech_info, 'ID') && ~isempty(tech_info.ID)
+    try
+        user_data = fetch(lab.User & sprintf('user_id = "%s"', tech_info.ID), 'slack');
+        if ~isempty(user_data)
+            duty_tech_slack = {user_data.slack};
+        end
+    catch ME
+        warning('get_on_duty_tech:SlackLookupError', 'Could not fetch slack info: %s', ME.message);
+    end
+elseif ~isempty(tech_info) && isfield(tech_info, 'Name')
+    % Try to lookup by full name if ID not available
+    try
+        user_data = fetch(lab.User & sprintf('full_name = "%s"', tech_info.Name), 'slack');
+        if ~isempty(user_data)
+            duty_tech_slack = {user_data.slack};
+        end
+    catch ME
+        warning('get_on_duty_tech:SlackLookupError', 'Could not fetch slack info: %s', ME.message);
+    end
 end
 
 % def fetch_tech_today() -> list[dict]:
