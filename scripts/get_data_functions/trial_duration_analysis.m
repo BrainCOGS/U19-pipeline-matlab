@@ -1,4 +1,4 @@
-function  num_trial_analysis()
+function  trial_duration_analysis()
 %NUM_TRIAL_ANALYSIS Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -13,7 +13,7 @@ keys = fetch(acquisition.Session & key);
 
 trials = struct2table(fetch((proj(acquisition.Session,'session_protocol','num_trials') *...
     behavior.TowersBlock * behavior.TowersBlockTrial & key), ...
-    'session_protocol','level','sublevel','trial_duration','ORDER BY session_date'));
+    'session_protocol','level','sublevel','trial_duration','choice','trial_type','ORDER BY session_date'));
 
 researcher = trials{1,'subject_fullname'};
 researcher = strsplit(researcher{1},'_');
@@ -22,6 +22,8 @@ researcher = researcher(1);
 trials = trials(trials.trial_idx>1,:);
 
 trials.subject_fullname = string(trials.subject_fullname);
+trials.correct_trial = trials.choice == trials.trial_type;
+
 trials.session_date = string(trials.session_date);
 trials.session_number = string(trials.session_number);
 trials.session_id = trials.session_date+"_"+trials.session_number;
@@ -29,12 +31,12 @@ trials.session_id = trials.session_date+"_"+trials.session_number;
 trials.session_id = categorical(trials.session_id);
 trials.level = categorical(trials.level);
 
-subjects = groupsummary(trials, 'subject_fullname');
+trials.duration_min = categorical(floor(trials.trial_duration/60));
 
-levels = groupsummary(trials, 'level');
 
-subject_dates = groupsummary(trials, {'subject_fullname','session_date','session_number'});
+summary_duration = groupsummary(trials(:,{'duration_min','correct_trial'}), {'duration_min'},'mean');
 
+G = groupsummary(T,"HealthStatus","mean")
 
 boxplot(trials.trial_duration, trials.level);
 hold on;
