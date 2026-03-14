@@ -3,7 +3,7 @@
 
 set "this_pwd=%cd%"
 
-cd C:\Experiments\ViRMEn
-matlab -nosplash -nodesktop -batch "run '..\U19-pipeline-matlab\scripts\copy_noDB_files\copy_noDB_files_script.m';"
+cd C:\Experiments\U19-pipeline-matlab
+matlab -nosplash -nodesktop -batch "run '.\scripts\copy_noDB_files\copy_noDB_files_script.m';"
 
 cd %this_pwd%
