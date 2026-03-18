@@ -1,8 +1,8 @@
-function [syncVideoFrame, syncBehavior] = sync_pupillometry_video(log, v)
-%Get synchronization matrices for pupillometry video
+function [syncVideoFrame, syncBehavior] = sync_virmen_behavior_video(log, v)
+%Get synchronization matrices for behavior acquired video
 %Inputs
 % log = behavior file from Virmen
-% v   = video object from pupillometry video
+% v   = video object from video acquisition
 %Outputs
 % syncVideoFrame = matrix with corresponding iteration for each video frame
 % syncBehavior:  = matrix with corresponding video frame for each iteration

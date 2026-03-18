@@ -44,6 +44,11 @@ end
 % Populate pupillometry tables
 [keys_session_pupil, errors_session_pupil] = populate(pupillometry.PupillometrySession);
 [keys_session_pupilsync, errors_session_pupilsync] = populate(pupillometry.PupillometrySyncBehavior);
+
+%Populate posture_tracking tables
+[keys_session_pt, errors_session_pt] = populate(posture_tracking.PostureTrackingSession);
+[keys_session_ptsync, errors_session_ptsync] = populate(posture_tracking.PostureTrackingSyncBehavior);
+
 % Ingest PupillometrySessionModel and PupillometrySessionModelData tables
 try
     ingest_pupillometry_sessions

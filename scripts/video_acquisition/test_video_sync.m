@@ -1,4 +1,4 @@
-function test_pupillometry_sync(key)
+function test_video_sync(key)
 %TEST_PUPILLOMETRY_SYNC check if pupillometry video is correctly synced (with laser visible on video)
 % Input
 % key = reference to behavior session
@@ -10,11 +10,6 @@ video_data = fetch(pupillometry.PupillometrySyncBehavior & key,'*');
 
 
 for i=1:length(opto_data)
-    
-    
-    
-    
-
 
 end
 

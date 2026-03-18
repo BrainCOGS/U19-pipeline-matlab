@@ -1,15 +1,15 @@
 %{
-# Matrix to sync behavior and pupillometry videos
-->pupillometry.PupillometrySession
+# Matrix to sync behavior and posture_tracking videos
+->posture_tracking.PostureTrackingSession
 ---
 sync_video_frame_matrix:     longblob               # matrix with corresponding iteration for each video frame
 sync_behavior_matrix:        longblob               # matrix with corresponding video frame for each iteration
 %}
 
-classdef PupillometrySyncBehavior < dj.Imported
+classdef PostureTrackingSyncBehavior < dj.Imported
 
     properties
-        keySource =  pupillometry.PupillometrySession & struct('is_bad_video', 0);
+        keySource =  posture_tracking.PostureTrackingSession & struct('is_bad_video', 0);
     end
 
     methods(Access=protected)
@@ -22,7 +22,7 @@ classdef PupillometrySyncBehavior < dj.Imported
 
             %Get video filepath
             conf = dj.config;
-            video_root_dir    = conf.custom.PupillometryRootDataDir{1};
+            video_root_dir    = conf.custom.PostureTrackingRootDataDir{1};
             video_filepath    = fetch1(acquisition.SessionVideo & key, 'remote_path_video_file');
             video_filepath    = fullfile(video_root_dir, video_filepath);
             [~, video_filepath] = lab.utils.get_path_from_official_dir(video_filepath);
@@ -44,7 +44,7 @@ classdef PupillometrySyncBehavior < dj.Imported
                 status_v = 0;
                 days_from_session = days(datetime('now') - datetime(key.session_date));
                 if days_from_session > 10
-                    update(pupillometry.PupillometrySession & key, 'is_bad_video', 1);
+                    update(posture_tracking.PostureTrackingSession & key, 'is_bad_video', 1);
                 end
             end
 
@@ -59,7 +59,7 @@ classdef PupillometrySyncBehavior < dj.Imported
                     if isempty(key.sync_video_frame_matrix) && isempty(key.sync_behavior_matrix)
                         days_from_session = days(datetime('now') - datetime(key.session_date));
                         if days_from_session > 10
-                            update(pupillometry.PupillometrySession & key, 'is_bad_video', 1);
+                            update(posture_tracking.PostureTrackingSession & key, 'is_bad_video', 1);
                         end
                     else
                         insert(self, key);
