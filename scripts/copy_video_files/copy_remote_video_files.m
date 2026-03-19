@@ -15,6 +15,9 @@ if strcmp(video_type,'pupillometry')
     raw_dir = conf.custom.PupillometryRootDataDir{1};
     session_info = fetch(((acquisition.SessionStarted * acquisition.SessionVideo) - pupillometry.PupillometrySession) & key,'*');
     
+elseif strcmp(video_type,'posture_tracking')
+    raw_dir = conf.custom.PostureTrackingRootDataDir{1};
+    session_info = fetch(((acquisition.SessionStarted * acquisition.SessionVideo) - posture_tracking.PostureTrackingSession) & key,'*');
 else
    error('Video copy not implemented for this video_type yet'); 
 end
