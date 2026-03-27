@@ -1,7 +1,4 @@
 function compare_salient_distract_protocols()
-% check_num_towers_side check if sessions have more towers on the "wrong side" of trial_type
-% Inputs
-% key = Session(s) key
 
 %% Regular towers protocols
 session_protocols = ["poisson_blocks.m poisson_blocks_reboot_3m.mat PoissonBlocksCondensed3m", ...
@@ -11,14 +8,14 @@ session_protocol_key = ['session_protocol in ("' char(session_protocol_key) ,'")
 
 protocol_block_key = 'level =11';
 
-[bar_logs, bar_difs, ~] = plot_salient_vs_distract(session_protocol_key, protocol_block_key);
+[bar_logs, bar_difs, ~] = plot_salient_vs_distract(session_protocol_key, protocol_block_key,true);
 
 
 %% LSTT PRotocol
 session_key = 'subject_fullname like "%efonseca%" and session_date > "2026-01-01"';
 block_key = 'level >=4';
 
-[bar_logs2, bar_difs2, edges_logs] = plot_salient_vs_distract(session_key, block_key);
+[bar_logs2, bar_difs2, edges_logs] = plot_salient_vs_distract(session_key, block_key,true);
 
 
 close all;

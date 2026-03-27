@@ -269,10 +269,10 @@ xticklabels(["Easy", "Medium", "Hard"]);
 
 % Get coordinates
 xtips = b.XEndPoints;
-ytips = b.YEndPoints;
+ytips = b.YData/2;
 
 % Create labels as strings
-barlabels = string(round(y)); % Using round for cleaner integer display
+barlabels = num2str(bars(:), '%0.1f%%');
 
 % Add the text labels to the plot
 text(xtips, ytips, barlabels, ...
