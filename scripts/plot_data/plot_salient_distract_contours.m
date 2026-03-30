@@ -95,18 +95,13 @@ if plot_on
     title('Log (salient/distractor) value for each trial type');
 
     z2 = z;
-    z2(z2==-minimum_value) = -5;
-    z2(z2==maximum_value+minimum_value) = 5;
+    z2(z2==-minimum_value) = -99;
+    z2(z2==maximum_value+minimum_value) = 99;
 
-    if max_towers > 20
-        textStrings = num2str(z2(:), '%0.1f');
-        mino = '-5.0';
-        maxo = '5.0';
-    else
-        textStrings = num2str(z2(:), '%0.2f');
-        mino = '-5.00';
-        maxo = '5.00';
-    end
+
+    textStrings = num2str(z2(:), '%0.1f');
+    mino = '-99.0';
+    maxo = '99.0';
     % 2. Create strings from matrix values
 
     textStrings = strtrim(cellstr(textStrings)); % Remove space padding

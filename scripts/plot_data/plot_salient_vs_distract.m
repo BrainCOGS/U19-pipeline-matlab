@@ -131,7 +131,13 @@ if(~isempty(idxo))
 end
 end
 
+stairs(stairplot_aux(1,:)-0.1,y+0.1,'y','LineWidth',3)
 stairs(stairplot_aux(1,:),y,'g','LineWidth',3)
+plot([1.5, 1.5],[0.5,1.5],'g','LineWidth',3)
+plot([1.5 max_towers+1.5],[0.5 0.5],'g','LineWidth',3)
+
+
+stairs(stairplot_aux(2,:)-0.1,y+0.1,'r','LineWidth',3)
 stairs(stairplot_aux(2,:),y,'y','LineWidth',3)
 else
     plot([0,max_towers+1.5],[0,max_towers+1.5],'r');
