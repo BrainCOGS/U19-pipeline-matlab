@@ -11,6 +11,7 @@ if nargin < 4
 end
 
 for i=1:length(keys)
+    keys(i)
     [status,data] = lab.utils.read_behavior_file(keys(i));
     if status
         times = get_trial_iteration_time_matrix(data.log);
@@ -30,6 +31,7 @@ set(f, 'Units', 'pixels')
 pos = get(gcf, 'Position'); %// gives x left, y bottom, width, height
 [rows, cols] = get_rows_cols_figure(length(keys), pos(3:4));
 colors= get(gca, 'ColorOrder');
+%colors = parula(length(keys))
 darkcolors= brighten(colors, -.5);
 
 
