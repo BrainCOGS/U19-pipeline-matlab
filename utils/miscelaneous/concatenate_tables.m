@@ -5,7 +5,10 @@ function output_table = concatenate_tables(table1,table2)
 %% First add missing columns from each table
 columns1 = table1.Properties.VariableNames;
 columns2 = table2.Properties.VariableNames;
- 
+
+if any(contains(columns2, 'baseCycles'))
+    lo = 1
+end
 [t1colmissing, index_miss_t2] = setdiff(columns2, columns1);
 [t2colmissing, index_miss_t1] = setdiff(columns1, columns2);
  
