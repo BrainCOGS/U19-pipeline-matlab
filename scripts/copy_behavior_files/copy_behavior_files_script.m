@@ -1,6 +1,7 @@
 
 % Script to run in cronjob to do behavior backup copying files 
 
+startup_copybehavior_files
 
 [final_status, msg] = copy_remote_behavior_files(RigParameters.rig);
 if ~final_status

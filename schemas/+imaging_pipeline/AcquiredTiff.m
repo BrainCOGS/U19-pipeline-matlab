@@ -629,7 +629,7 @@ classdef AcquiredTiff < dj.Imported
                     
                     tiff_split_directory                   = fov_key.tiff_split_directory;
                     conf = dj.config;
-                    imaging_root = conf.custom.imaging_root_data_dir;
+                    imaging_root = conf.custom.ImagingRootDataDir{1};
                     tiff_split_directory = fullfile(imaging_root, tiff_split_directory);
                     
                     %fov_directory                   = lab.utils.format_bucket_path(fov_directory);
