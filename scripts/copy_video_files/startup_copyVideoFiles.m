@@ -25,6 +25,7 @@ end
 tbxlist = com.mathworks.addons_toolbox.ToolboxManagerForAddOns().getInstalled();
 idx = arrayfun(@(x)startsWith(x.getName(),'mym'),tbxlist);
 path = tbxlist(idx).getInstalledFolder();
+path = 'C:\Experiments\mym-mariadbconn';
 mym_folder = fullfile(char(path), 'distribution', 'mexw64');
 addpath(mym_folder);
 
@@ -44,13 +45,13 @@ end
 
 clearvars;
 
-for i=1:3
-    [status,out]    = system('mount_network_drives.BAT');
-    if status == 0
-        break
-    end
-    pause(1)
-end
+% for i=1:3
+%     [status,out]    = system('mount_network_drives.BAT');
+%     if status == 0
+%         break
+%     end
+%     pause(1)
+% end
 
 
 
