@@ -21,13 +21,19 @@ for i=1:length(projects_update)
 end
 
 
-% If matlab version < 2016 add datajoint matlab folder to path
 tbxlist = com.mathworks.addons_toolbox.ToolboxManagerForAddOns().getInstalled();
-idx = arrayfun(@(x)startsWith(x.getName(),'mym'),tbxlist);
-path = tbxlist(idx).getInstalledFolder();
+%idx = arrayfun(@(x)startsWith(x.getName(),'mym'),tbxlist);
+%path = tbxlist(idx).getInstalledFolder();
 path = 'C:\Experiments\mym-mariadbconn';
 mym_folder = fullfile(char(path), 'distribution', 'mexw64');
 addpath(mym_folder);
+
+toolbox_load = {'DataJoint', 'GHToolbox', 'compareVersions'};
+for i =1:length(toolbox_load)
+    idx = arrayfun(@(x)startsWith(x.getName(),toolbox_load{i}),tbxlist);
+    folder = char(tbxlist(idx).getInstalledFolder());
+    addpath(folder);
+end
 
 
 setenv('DB_PREFIX', 'u19_')
