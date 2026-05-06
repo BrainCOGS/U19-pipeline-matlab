@@ -1,6 +1,5 @@
-parent_path = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
+parent_path = 'C:/Experiments';
 projects_update = {'ViRMEn', 'U19-pipeline-matlab'};
-
 pipeline_path = fullfile(parent_path, 'U19-pipeline-matlab');
 
 % Update Virmen and pipeline projects
@@ -23,20 +22,19 @@ end
 
 
 tbxlist = com.mathworks.addons_toolbox.ToolboxManagerForAddOns().getInstalled();
-%idx = arrayfun(@(x)startsWith(x.getName(),'mym'),tbxlist);
-%path = tbxlist(idx).getInstalledFolder();
+
+%Add new mym
 path = 'C:\Experiments\mym-mariadbconn';
 mym_folder = fullfile(char(path), 'distribution', 'mexw64');
 addpath(mym_folder);
 
+%Add other toolboxes to path
 toolbox_load = {'DataJoint', 'GHToolbox', 'compareVersions'};
 for i =1:length(toolbox_load)
     idx = arrayfun(@(x)startsWith(x.getName(),toolbox_load{i}),tbxlist);
     folder = char(tbxlist(idx).getInstalledFolder());
     addpath(folder);
 end
-
-
 
 setenv('DB_PREFIX', 'u19_')
 cd(pipeline_path)
@@ -50,16 +48,8 @@ if ~isfield(dj.config,'stores') || ~isfield(dj.config('stores'),'extstorage')
     dj_initial_conf()
 end
 
-
 clearvars;
 
-% for i=1:3
-%     [status,out]    = system('mount_network_drives.BAT');
-%     if status == 0
-%         break
-%     end
-%     pause(1)
-% end
 
 
 
