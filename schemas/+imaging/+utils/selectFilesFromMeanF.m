@@ -27,7 +27,11 @@ for iFile = 1:nFiles
   readObj.setDirectory(1);
   thisstack  = readObj.read();
   readObj.close();
-  meanF(iFile)      = mean(mean(thisstack(1:512,:,:),1),2);
+  if size(thisstack,1) < 512
+    meanF(iFile)      = mean(mean(thisstack(:,:,:),1),2);
+  else
+    meanF(iFile)      = mean(mean(thisstack(1:512,:,:),1),2);
+  end
   frameID(iFile)    = ct;
   ct                = ct + nFrames;                
 end
