@@ -33,12 +33,12 @@ classdef InputOutputRigParameters < dj.Lookup
     'Lickometer',       'nidaqLickPort',            'integer';            
     'Lickometer',       'leftLickChannel',          'integer';
     'Lickometer',       'rightLickChannel',         'integer';
-    'LateralCamera',    'lateral_cam_adaptor_name', 'string (e.g. gentl)';
-    'LateralCamera',    'lateral_cam_format',       'string (e.g. Mono8)';
+    %'LateralCamera',    'lateral_cam_adaptor_name', 'string (e.g. gentl)';
+    %'LateralCamera',    'lateral_cam_format',       'string (e.g. Mono8)';
     'LateralCamera',    'video_acquisition_rate',   'float value';
     'LateralCamera',    'video_gain',               'float value';
-    'TopCamera',        'top_cam_adaptor_name',     'string (e.g. windvideo)';
-    'TopCamera',        'top_cam_format',           'string (e.g. MJPG_800x600)';
+    %'TopCamera',        'top_cam_adaptor_name',     'string (e.g. windvideo)';
+    %'TopCamera',        'top_cam_format',           'string (e.g. MJPG_800x600)';
             }
     end
 
