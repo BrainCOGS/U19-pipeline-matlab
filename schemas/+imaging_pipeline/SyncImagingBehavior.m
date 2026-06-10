@@ -65,11 +65,18 @@ classdef SyncImagingBehavior < dj.Computed
       
       fprintf('==[ SYNCHRONIZATION ]==   %s\n', fov_directory);
       
+      empty_sync = 0;
       for iFile = 1:numel(movieFiles)        
         
         % Synchronization info
         [imagingF(iFile).acquisition, imagingF(iFile).epoch, imagingF(iFile).frameTime, imagingF(iFile).syncTime, data]   ...
                                     = getSyncInfo(movieFiles{iFile}, 'uint16', []);
+
+        if all(isnan(imagingF(iFile).syncTime))
+            empty_sync = 1;
+            break;
+        end
+
         fileAcquis                  = regexp(movieFiles{iFile}, '_([0-9]+)_[0-9]+[.][^.]+$', 'tokens', 'once');
         if ~isempty(fileAcquis)
           fileAcquis                = str2double(fileAcquis{:});
@@ -115,6 +122,15 @@ classdef SyncImagingBehavior < dj.Computed
         syncGlobal(end + frames)    = totalFrames + frames;
         totalFrames                 = totalFrames + imagingF(iFile).numFrames;
       end
+
+      if empty_sync
+          warning('Sync data was not found')
+          empty_key = create_empty_sync_key(key);
+          self.insert(empty_key)
+          return
+      end
+
+
       meta.imagingF                  = imagingF;
       
       %-------------------------------------------------------------------------------------------------
@@ -378,6 +394,20 @@ classdef SyncImagingBehavior < dj.Computed
   
 end
 
+function empty_key = create_empty_sync_key(key)
+
+      empty_key = key;
+
+      empty_key.sync_im_frame                     = NaN;
+      empty_key.sync_im_frame_global              = NaN;
+      empty_key.sync_behav_block_by_im_frame      = NaN;
+      empty_key.sync_behav_trial_by_im_frame      = NaN;
+      empty_key.sync_behav_iter_by_im_frame       = NaN;
+      empty_key.sync_im_frame_span_by_behav_block = NaN;
+      empty_key.sync_im_frame_span_by_behav_trial = NaN;
+      empty_key.sync_im_frame_span_by_behav_iter  = NaN;
+
+end
 
 % %---------------------------------------------------------------------------------------------------
 function sync = mergeTrials(sync, nTrials, iBlock, trialDur, frameDeltaT)
