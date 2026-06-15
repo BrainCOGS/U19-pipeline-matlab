@@ -34,7 +34,14 @@ classdef SyncImagingBehavior < dj.Computed
       
       [~, acqsession_file] = lab.utils.get_path_from_official_dir(...
                            fetch1(acquisition.SessionStarted & session_key, 'new_remote_path_behavior_file'));
-      behavdata = load(acqsession_file, 'log');
+      try
+        behavdata = load(acqsession_file, 'log');
+      catch
+          warning('Behavior data was not found')
+          empty_key = create_empty_sync_key(key);
+          self.insert(empty_key)
+          return
+      end
       block     = behavdata.log.block;
       
       %% add some stuff that for whatever reason isn't on some mesosocope logs
@@ -72,7 +79,7 @@ classdef SyncImagingBehavior < dj.Computed
         [imagingF(iFile).acquisition, imagingF(iFile).epoch, imagingF(iFile).frameTime, imagingF(iFile).syncTime, data]   ...
                                     = getSyncInfo(movieFiles{iFile}, 'uint16', []);
 
-        if all(isnan(imagingF(iFile).syncTime))
+        if iFile== 1 && all(isnan(imagingF(iFile).syncTime))
             empty_sync = 1;
             break;
         end

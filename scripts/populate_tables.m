@@ -56,6 +56,12 @@ catch
 
 end
 
+try
+     [keys_syncimaging, errors_syncimaging] = populate(imaging_pipeline.SyncImagingBehavior);
+catch
+
+end
+
 
 % Populate psychometric tables
 [keys_session_psych, errors_session_psych] = populate(behavior.TowersSessionPsych);
