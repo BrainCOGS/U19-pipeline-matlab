@@ -56,6 +56,7 @@ catch
 
 end
 
+%SyncImagingBehavior done here
 try
      [keys_syncimaging, errors_syncimaging] = populate(imaging_pipeline.SyncImagingBehavior);
 catch
