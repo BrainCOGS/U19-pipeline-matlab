@@ -12,6 +12,20 @@ for i=1:length(projects_update)
             ' directory does not exist, please downlowad repository'])
     else
         cd(project_path);
+
+        % Try to pull latest changes on repo; do not fail startup if this
+        % is not possible (e.g. no network, local changes, detached HEAD).
+        try
+            [git_status, git_info] = system('git pull');
+            if git_status ~= 0
+                warning(['Pulling latest changes for ' project_path ...
+                    ' failed: ' git_info]);
+            end
+        catch err
+            warning(['Pulling latest changes for ' project_path ...
+                ' was not possible: ' err.message]);
+        end
+
         addpath(genpath(project_path));
         rmpath(genpath(fullfile(project_path, '.git')));
 
