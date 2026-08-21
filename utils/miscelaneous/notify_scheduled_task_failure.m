@@ -8,7 +8,7 @@ function notify_scheduled_task_failure(task_name, rig, message, varargin)
 %   message: description of the failure
 %   varargin: optional name-value pairs
 %       'webhook_name' - lab.SlackWebhooks entry to post to
-%                        (default: 'rig_scheduled_tasks')
+%                        (default: 'dev_notifications')
 %       'error_info'   - struct with .message/.stack (from a caught MException)
 %
 % This both writes the failure to the scheduled-task log / Windows Event
@@ -20,7 +20,7 @@ function notify_scheduled_task_failure(task_name, rig, message, varargin)
 %   notify_scheduled_task_failure('copy_Video_Files', RigParameters.rig, msg)
 
     p = inputParser;
-    addParameter(p, 'webhook_name', 'rig_scheduled_tasks', @ischar);
+    addParameter(p, 'webhook_name', 'dev_notifications', @ischar);
     addParameter(p, 'error_info', struct(), @isstruct);
     parse(p, varargin{:});
 
