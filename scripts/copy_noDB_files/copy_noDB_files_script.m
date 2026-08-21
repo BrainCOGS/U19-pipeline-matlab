@@ -9,6 +9,14 @@ try
     successful_task = 1;
     rig = RigParameters.rig;
 
+    % Report a stale/failed git pull separately from copy failures: it is
+    % a warning, not a task failure, since the job still runs against
+    % whatever code was already on disk.
+    for i = 1:numel(startup_git_pull_warnings)
+        notify_scheduled_task_failure(task_name, rig, ...
+            sprintf('git pull warning: %s', startup_git_pull_warnings{i}));
+    end
+
     log_scheduled_task_event(task_name, 'INFO', ...
         sprintf('rig=%s: starting noDB backup copy', rig));
 

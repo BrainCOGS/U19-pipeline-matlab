@@ -2,6 +2,12 @@ parent_path = 'C:/Experiments';
 projects_update = {'ViRMEn', 'U19-pipeline-matlab'};
 pipeline_path = fullfile(parent_path, 'U19-pipeline-matlab');
 
+% Collected here (rather than thrown) so callers can report git-pull
+% problems separately from other startup/copy failures, e.g. via
+% notify_scheduled_task_failure. Empty means all pulls succeeded/were
+% up to date.
+startup_git_pull_warnings = {};
+
 % Update Virmen and pipeline projects
 for i=1:length(projects_update)
     project_path = fullfile(parent_path, projects_update{i});
@@ -15,15 +21,22 @@ for i=1:length(projects_update)
 
         % Try to pull latest changes on repo; do not fail startup if this
         % is not possible (e.g. no network, local changes, detached HEAD).
+        % Any problem is recorded in startup_git_pull_warnings instead of
+        % just emitting a MATLAB warning, so callers can surface it
+        % distinctly from other failures.
         try
             [git_status, git_info] = system('git pull');
             if git_status ~= 0
-                warning(['Pulling latest changes for ' project_path ...
-                    ' failed: ' git_info]);
+                git_pull_msg = ['Pulling latest changes for ' project_path ...
+                    ' failed: ' strtrim(git_info)];
+                warning(git_pull_msg);
+                startup_git_pull_warnings{end+1} = git_pull_msg; %#ok<SAGROW>
             end
         catch err
-            warning(['Pulling latest changes for ' project_path ...
-                ' was not possible: ' err.message]);
+            git_pull_msg = ['Pulling latest changes for ' project_path ...
+                ' was not possible: ' err.message];
+            warning(git_pull_msg);
+            startup_git_pull_warnings{end+1} = git_pull_msg; %#ok<SAGROW>
         end
 
         addpath(genpath(project_path));
@@ -62,7 +75,7 @@ if ~isfield(dj.config,'stores') || ~isfield(dj.config('stores'),'extstorage')
     dj_initial_conf()
 end
 
-clearvars;
+clearvars -except startup_git_pull_warnings;
 
 
 
