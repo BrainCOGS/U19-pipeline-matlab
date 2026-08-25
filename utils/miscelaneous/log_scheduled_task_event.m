@@ -8,8 +8,10 @@ function log_scheduled_task_event(task_name, level, message)
 %   message: human-readable message describing the event
 %
 % Every event is echoed to stdout, which Task Scheduler captures, and
-% mirrored to a local fallback log file (see scheduled_task_log_path) so
-% there is always a durable record even when Event Viewer is unavailable.
+% mirrored to a local log file so there is always a durable record even when
+% Event Viewer is unavailable. That log rotates daily -- see
+% scheduled_task_log_path -- so files stay bounded while a whole day of
+% activity remains greppable in one place.
 %
 % On Windows the event is additionally written to the Application event log
 % via eventcreate. That requires the "U19-pipeline-matlab" event source to
@@ -67,19 +69,6 @@ function write_fallback_log(timestamp, task_name, level, message)
     catch
         % Deliberately silent; stdout already carries the event.
     end
-end
-
-
-function log_path = scheduled_task_log_path()
-% Location of the fallback log. Kept alongside the pipeline on the rigs, with
-% a temp-dir fallback so this also works off-rig (e.g. in tests).
-    default_dir = fullfile('C:', 'Experiments', 'scheduled_task_logs');
-    if ispc && exist(fullfile('C:', 'Experiments'), 'dir')
-        log_dir = default_dir;
-    else
-        log_dir = fullfile(tempdir, 'u19_scheduled_task_logs');
-    end
-    log_path = fullfile(log_dir, 'scheduled_tasks.log');
 end
 
 
