@@ -48,7 +48,12 @@ if ~isfield(dj.config,'stores') || ~isfield(dj.config('stores'),'extstorage')
     dj_initial_conf()
 end
 
-clearvars;
+% Clear only this script's own temporaries. A bare `clearvars` would wipe the
+% entire caller workspace, because this is a script and shares the workspace
+% of whatever invoked it -- that silently destroyed variables the nightly
+% copy scripts set before calling here (e.g. task_name).
+clearvars parent_path projects_update pipeline_path project_path i ...
+    tbxlist path mym_folder toolbox_load idx folder;
 
 
 

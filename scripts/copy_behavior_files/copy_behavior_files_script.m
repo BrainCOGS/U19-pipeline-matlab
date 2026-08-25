@@ -3,10 +3,18 @@
 
 task_name = 'copy_Behavior_Files';
 
+% Assigned before the try so an early failure (e.g. the cd below) still
+% leaves the trailing success check and the registry insert well defined.
+successful_task = 0;
+
 try
     cd('C:/Experiments/U19-pipeline-matlab/')
     startup_scheduled_tasks
     successful_task = 1;
+
+    % startup_scheduled_tasks shares this workspace; re-assert task_name in
+    % case a future change there clears it again.
+    task_name = 'copy_Behavior_Files';
     rig = RigParameters.rig;
 
     log_scheduled_task_event(task_name, 'INFO', ...
@@ -23,6 +31,10 @@ try
     end
 catch err
     successful_task = 0;
+    if ~exist('task_name', 'var')
+        % Never let a missing task_name mask the error we are reporting.
+        task_name = 'copy_Behavior_Files';
+    end
     try
         rig = RigParameters.rig;
     catch
