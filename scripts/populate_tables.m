@@ -6,11 +6,14 @@ addpath(genpath(repository_dir));
 
 connect_datajoint00
 
-reset_reweight_subjects();
+% Moved to U19-pipeline-python (BrainCOGS/U19-pipeline-python#151):
+% u19_pipeline/alert_system/scheduler_nightly, run nightly by cronjob_alert.py.
+% Keep these commented out; running both copies tomorrow's schedule twice.
+% reset_reweight_subjects();
 
 % Populate scheduling tables
-populate_schedule_for_tomorrow()
-populate_technician_schedule()
+% populate_schedule_for_tomorrow()
+% populate_technician_schedule()
 
 try
     updateProtocolLevelTable;
