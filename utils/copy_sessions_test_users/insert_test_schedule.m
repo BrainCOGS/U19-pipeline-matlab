@@ -11,6 +11,12 @@ max_timeslot = max(schedule_today.timeslot);
 
 schedule_today_abv = schedule_today(idx_schedule, :);
 
+% Test rows are hand-made, not owned by a ScheduleRule; a copied rule_id would make
+% the schedule generator treat them as stale rule rows and delete them.
+if ismember('rule_id', schedule_today_abv.Properties.VariableNames)
+    schedule_today_abv = removevars(schedule_today_abv, 'rule_id');
+end
+
 
 for i=1:height(schedule_today_abv)
     this_subject = schedule_today_abv{i,'subject_fullname'}{:};
