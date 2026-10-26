@@ -304,6 +304,8 @@ classdef SyncImagingBehavior < dj.Computed
       
       
       %% Record behav block based sync index
+      frameAcq                      = [sync.acquisition];
+      framePeriod                   = median(diff(frameTime));
       behav                      = struct( 'span'  , cell(size(block))                               ...
                                             , 'trial' , repmat( {struct('span', {}, 'iteration', {})}   ...
                                             , size(block) )                                             ...
@@ -334,6 +336,19 @@ classdef SyncImagingBehavior < dj.Computed
         trial(trialIndex(sel))      = trialSpan(sel);
         trial                       = struct('span', trial, 'iteration', repmat({zeros(0,2)},size(trial)));
         
+        % Trials that imaging only partly covered (it started or stopped during
+        % them, or they fall in a gap between acquisitions) get no span, like
+        % trials that were not imaged at all
+        for iTrial = 1:min(numel(trial), numel(block(iBlock).trial))
+          if ~isempty(trial(iTrial).span) && isfield(block(iBlock).trial, 'time')                  ...
+              && ~trialFullyImaged(block(iBlock).trial(iTrial).time    ...
+                , trial(iTrial).span(1):trial(iTrial).span(2), frameTime, syncTime, syncIter         ...
+                , frameAcq, framePeriod)
+            warning('processimagingInfo:partialTrial', 'Block %d trial %d was only partly imaged in %s; it gets no frame span.', iBlock, iTrial, fov_directory);
+            trial(iTrial).span      = [];
+          end
+        end
+
         for iTrial = 1:numel(trial)
           % Locate iteration ranges
           if isempty(trial(iTrial).span)
