@@ -11,6 +11,7 @@ timeslot                    : int                           # timeslot by number
 experimenters_instructions : varchar(64532)
 level: int
 sublevel: int
+-> [nullable] scheduler.ScheduleRule                      # rule that generated this row; NULL for manual or copy-forward rows
 %}
 
 
